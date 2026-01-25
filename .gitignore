@@ -4,3 +4,5 @@
 bin
 */.air.toml
 */tmp
+
+*/gui/.git*
