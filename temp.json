@@ -1,0 +1,84 @@
+{
+  "requestId": "4b7efb3f-7c35-46b2-bab8-012c503f7308",
+  "results": [
+    {
+      "ticker": "VGK",
+      "name": "",
+      "isin": "",
+      "exchange": "",
+      "provider": "",
+      "assetClass": "",
+      "trackingIndex": "",
+      "geographicFocus": "",
+      "ter": 0.06,
+      "aum": 37100000000,
+      "currency": "",
+      "averageDailyVolume": 0,
+      "eligibility": {
+        "status": "eligible",
+        "isEligible": true,
+        "confidence": "medium",
+        "justification": "Standard account - no specific eligibility restrictions; "
+      },
+      "matchScore": 0,
+      "rankingScore": 70.6,
+      "rank": 1,
+      "assetBreakdown": {
+        "equities": 0,
+        "bonds": 0,
+        "cash": 0,
+        "commodities": 0,
+        "other": 0
+      },
+      "geographicBreakdown": {
+        "regions": null
+      },
+      "topHoldings": [
+        {
+          "name": "ASML HOLDING NV",
+          "ticker": "n/a",
+          "weight": 2.87
+        },
+        {
+          "name": "ASTRAZENECA PLC",
+          "ticker": "n/a",
+          "weight": 1.92
+        },
+        {
+          "name": "ROCHE HOLDING AG",
+          "ticker": "n/a",
+          "weight": 1.8499999999999999
+        }
+      ],
+      "dataSources": [
+        {
+          "type": "API",
+          "provider": "Alpha Vantage",
+          "url": "https://www.alphavantage.co/query?function=ETF_PROFILE&symbol=VGK",
+          "date": "2026-01-11"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalSearched": 2,
+    "totalEligible": 2,
+    "totalIneligible": 0,
+    "totalUnknown": 0,
+    "searchDurationMs": 0,
+    "dataSourcesQueried": [
+      "JSE",
+      "FactSheets",
+      "Provider APIs"
+    ]
+  },
+  "warnings": [
+    {
+      "code": "LOW_CONFIDENCE_RESULTS",
+      "message": "2 results have medium or low confidence. Verify eligibility with your platform before investing.",
+      "severity": "info"
+    }
+  ],
+  "generatedAt": "2026-01-11T00:24:21Z",
+  "cacheHit": false
+}

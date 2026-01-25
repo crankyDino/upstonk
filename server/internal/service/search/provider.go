@@ -97,7 +97,7 @@ func (p *LiveProvider) searchJSE(ctx context.Context, criteria Criteria) ([]doma
 		// Add .JO suffix for JSE listings on Yahoo Finance
 		yahooTicker := ticker + ".JO"
 		log.Printf("Fetching JSE ETF: %s (Yahoo ticker: %s)", ticker, yahooTicker)
-		
+
 		etf, err := p.fetchYahooFinanceETF(ctx, yahooTicker)
 		if err != nil {
 			log.Printf("Failed to fetch %s: %v", yahooTicker, err)
@@ -292,34 +292,34 @@ func (p *LiveProvider) getJSETickersForCriteria(criteria Criteria) []string {
 	// Map markets to JSE ETF tickers
 	for _, market := range criteria.Markets {
 		marketLower := strings.ToLower(market)
-		
+
 		// Check for emerging markets, China, India first (most specific)
 		if strings.Contains(marketLower, "emerging") || strings.Contains(marketLower, "china") || strings.Contains(marketLower, "india") {
 			// JSE ETFs for emerging markets exposure
 			tickers = append(tickers, "STXEMG") // Satrix MSCI Emerging Markets
 			tickers = append(tickers, "COREEM") // CoreShares MSCI Emerging Markets
 		}
-		
+
 		// Check for Africa/South Africa
 		if strings.Contains(marketLower, "africa") || strings.Contains(marketLower, "south africa") {
 			// JSE ETFs for South African exposure
-			tickers = append(tickers, "STX40") // Satrix Top 40 (SA equity)
+			tickers = append(tickers, "STX40")  // Satrix Top 40 (SA equity)
 			tickers = append(tickers, "STXRES") // Satrix RESI 10
 		}
-		
+
 		// Check for US markets
 		if strings.Contains(marketLower, "usa") || strings.Contains(marketLower, "us") || strings.Contains(marketLower, "united states") {
 			// JSE ETFs for US exposure
 			tickers = append(tickers, "STXNDQ") // Satrix NASDAQ 100
 			tickers = append(tickers, "STX500") // Satrix S&P 500
 		}
-		
+
 		// Check for world/global markets
 		if strings.Contains(marketLower, "world") || strings.Contains(marketLower, "global") {
 			// JSE ETFs for global exposure
 			tickers = append(tickers, "STXWDM") // Satrix MSCI World
 		}
-		
+
 		// Check for European markets
 		if strings.Contains(marketLower, "europe") {
 			// JSE ETFs for European exposure
@@ -558,7 +558,7 @@ func (p *LiveProvider) matchesCriteria(etf domain.ETF, criteria Criteria) bool {
 		matched := false
 		hasGeographicData := (etf.GeographicExposure.Regions != nil && len(etf.GeographicExposure.Regions) > 0) ||
 			(etf.GeographicExposure.Countries != nil && len(etf.GeographicExposure.Countries) > 0)
-		
+
 		// If no geographic data available, be lenient and allow through
 		// (Yahoo Finance may not always return geographic exposure data)
 		if !hasGeographicData {
@@ -567,7 +567,7 @@ func (p *LiveProvider) matchesCriteria(etf domain.ETF, criteria Criteria) bool {
 		} else {
 			for _, market := range criteria.Markets {
 				marketLower := strings.ToLower(market)
-				
+
 				// Check regions
 				if etf.GeographicExposure.Regions != nil {
 					for region := range etf.GeographicExposure.Regions {
@@ -578,7 +578,7 @@ func (p *LiveProvider) matchesCriteria(etf domain.ETF, criteria Criteria) bool {
 						}
 					}
 				}
-				
+
 				// Check countries
 				if !matched && etf.GeographicExposure.Countries != nil {
 					for country := range etf.GeographicExposure.Countries {
@@ -589,7 +589,7 @@ func (p *LiveProvider) matchesCriteria(etf domain.ETF, criteria Criteria) bool {
 						}
 					}
 				}
-				
+
 				// Special handling for common market names
 				if !matched {
 					if (marketLower == "china" || marketLower == "cn") && etf.GeographicExposure.Countries != nil {
@@ -611,21 +611,21 @@ func (p *LiveProvider) matchesCriteria(etf domain.ETF, criteria Criteria) bool {
 						}
 					}
 					// USA/US is common - if ETF is from US exchange, likely matches
-					if (marketLower == "usa" || marketLower == "us" || marketLower == "united states") {
-						if etf.ExchangeCountry == "US" || strings.Contains(strings.ToUpper(etf.Exchange), "NYSE") || 
-						   strings.Contains(strings.ToUpper(etf.Exchange), "NASDAQ") || 
-						   strings.Contains(strings.ToUpper(etf.Exchange), "NMS") {
+					if marketLower == "usa" || marketLower == "us" || marketLower == "united states" {
+						if etf.ExchangeCountry == "US" || strings.Contains(strings.ToUpper(etf.Exchange), "NYSE") ||
+							strings.Contains(strings.ToUpper(etf.Exchange), "NASDAQ") ||
+							strings.Contains(strings.ToUpper(etf.Exchange), "NMS") {
 							matched = true
 						}
 					}
 				}
-				
+
 				if matched {
 					break
 				}
 			}
 		}
-		
+
 		// Only reject if we have geographic data and it doesn't match
 		if !matched && hasGeographicData {
 			return false
