@@ -1,0 +1,6002 @@
+{
+  "requestId": "6483f2dd-0e60-48f5-a32d-cdaf6276746c",
+  "results": [
+    {
+      "ticker": "VGK",
+      "name": "",
+      "isin": "",
+      "exchange": "",
+      "provider": "",
+      "assetClass": "",
+      "trackingIndex": "",
+      "geographicFocus": "",
+      "ter": 0.06,
+      "aum": 37100000000,
+      "currency": "",
+      "averageDailyVolume": 0,
+      "eligibility": {
+        "status": "eligible",
+        "isEligible": true,
+        "confidence": "medium",
+        "justification": "Standard account - no specific eligibility restrictions; "
+      },
+      "matchScore": 0,
+      "rankingScore": 70.6,
+      "rank": 1,
+      "assetBreakdown": {
+        "equities": 0,
+        "bonds": 0,
+        "cash": 0,
+        "commodities": 0,
+        "other": 0
+      },
+      "geographicBreakdown": {
+        "regions": null
+      },
+      "topHoldings": [
+        {
+          "name": "ASML HOLDING NV",
+          "ticker": "n/a",
+          "weight": 2.87
+        },
+        {
+          "name": "ASTRAZENECA PLC",
+          "ticker": "n/a",
+          "weight": 1.92
+        },
+        {
+          "name": "ROCHE HOLDING AG",
+          "ticker": "n/a",
+          "weight": 1.8499999999999999
+        },
+        {
+          "name": "NESTLE SA",
+          "ticker": "n/a",
+          "weight": 1.7399999999999998
+        },
+        {
+          "name": "SAP SE",
+          "ticker": "n/a",
+          "weight": 1.71
+        },
+        {
+          "name": "HSBC HOLDINGS PLC",
+          "ticker": "n/a",
+          "weight": 1.7000000000000002
+        },
+        {
+          "name": "NOVARTIS AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 1.68
+        },
+        {
+          "name": "SHELL PLC",
+          "ticker": "n/a",
+          "weight": 1.49
+        },
+        {
+          "name": "SIEMENS AG",
+          "ticker": "n/a",
+          "weight": 1.34
+        },
+        {
+          "name": "LVMH MOET HENNESSY LOUIS VUITTON SE",
+          "ticker": "n/a",
+          "weight": 1.3
+        },
+        {
+          "name": "ALLIANZ SE",
+          "ticker": "n/a",
+          "weight": 1.15
+        },
+        {
+          "name": "BANCO SANTANDER SA",
+          "ticker": "n/a",
+          "weight": 1.0999999999999999
+        },
+        {
+          "name": "NOVO NORDISK AS CLASS B",
+          "ticker": "n/a",
+          "weight": 1.09
+        },
+        {
+          "name": "SCHNEIDER ELECTRIC SE",
+          "ticker": "n/a",
+          "weight": 1.01
+        },
+        {
+          "name": "UNILEVER PLC",
+          "ticker": "n/a",
+          "weight": 1
+        },
+        {
+          "name": "IBERDROLA SA",
+          "ticker": "n/a",
+          "weight": 0.97
+        },
+        {
+          "name": "AIRBUS SE",
+          "ticker": "n/a",
+          "weight": 0.95
+        },
+        {
+          "name": "UBS GROUP AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.8500000000000001
+        },
+        {
+          "name": "BANCO BILBAO VIZCAYA ARGENTARIA SA",
+          "ticker": "n/a",
+          "weight": 0.8500000000000001
+        },
+        {
+          "name": "TOTALENERGIES SE",
+          "ticker": "n/a",
+          "weight": 0.84
+        },
+        {
+          "name": "ROLLS-ROYCE HOLDINGS PLC",
+          "ticker": "n/a",
+          "weight": 0.83
+        },
+        {
+          "name": "SAFRAN SA",
+          "ticker": "n/a",
+          "weight": 0.8099999999999999
+        },
+        {
+          "name": "BRITISH AMERICAN TOBACCO PLC",
+          "ticker": "n/a",
+          "weight": 0.8099999999999999
+        },
+        {
+          "name": "UNICREDIT SPA",
+          "ticker": "n/a",
+          "weight": 0.8
+        },
+        {
+          "name": "ABB LTD",
+          "ticker": "n/a",
+          "weight": 0.7799999999999999
+        },
+        {
+          "name": "SANOFI SA",
+          "ticker": "n/a",
+          "weight": 0.74
+        },
+        {
+          "name": "DEUTSCHE TELEKOM AG",
+          "ticker": "n/a",
+          "weight": 0.73
+        },
+        {
+          "name": "ESSILORLUXOTTICA",
+          "ticker": "n/a",
+          "weight": 0.7100000000000001
+        },
+        {
+          "name": "ZURICH INSURANCE GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.7100000000000001
+        },
+        {
+          "name": "INTESA SANPAOLO",
+          "ticker": "n/a",
+          "weight": 0.7000000000000001
+        },
+        {
+          "name": "BP PLC",
+          "ticker": "n/a",
+          "weight": 0.66
+        },
+        {
+          "name": "GSK PLC",
+          "ticker": "n/a",
+          "weight": 0.66
+        },
+        {
+          "name": "BNP PARIBAS ACT. CAT.A",
+          "ticker": "n/a",
+          "weight": 0.59
+        },
+        {
+          "name": "SIEMENS ENERGY AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.59
+        },
+        {
+          "name": "HERMES INTERNATIONAL SA",
+          "ticker": "n/a",
+          "weight": 0.5700000000000001
+        },
+        {
+          "name": "PROSUS NV ORDINARY SHARES CLASS N",
+          "ticker": "n/a",
+          "weight": 0.5599999999999999
+        },
+        {
+          "name": "ENEL SPA",
+          "ticker": "n/a",
+          "weight": 0.5499999999999999
+        },
+        {
+          "name": "BARCLAYS PLC",
+          "ticker": "n/a",
+          "weight": 0.5499999999999999
+        },
+        {
+          "name": "AXA SA",
+          "ticker": "n/a",
+          "weight": 0.54
+        },
+        {
+          "name": "LLOYDS BANKING GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.53
+        },
+        {
+          "name": "RHEINMETALL AG",
+          "ticker": "n/a",
+          "weight": 0.53
+        },
+        {
+          "name": "ING GROEP NV",
+          "ticker": "n/a",
+          "weight": 0.53
+        },
+        {
+          "name": "NATIONAL GRID PLC",
+          "ticker": "n/a",
+          "weight": 0.52
+        },
+        {
+          "name": "RELX PLC",
+          "ticker": "n/a",
+          "weight": 0.51
+        },
+        {
+          "name": "RIO TINTO PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.51
+        },
+        {
+          "name": "VINCI SA",
+          "ticker": "n/a",
+          "weight": 0.49
+        },
+        {
+          "name": "NATWEST GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.47000000000000003
+        },
+        {
+          "name": "SLBBH1142",
+          "ticker": "n/a",
+          "weight": 0.45999999999999996
+        },
+        {
+          "name": "BAE SYSTEMS PLC",
+          "ticker": "n/a",
+          "weight": 0.44999999999999996
+        },
+        {
+          "name": "AIR LIQUIDE(L')",
+          "ticker": "n/a",
+          "weight": 0.44999999999999996
+        },
+        {
+          "name": "DEUTSCHE BANK AG",
+          "ticker": "n/a",
+          "weight": 0.43
+        },
+        {
+          "name": "LONDON STOCK EXCHANGE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.41000000000000003
+        },
+        {
+          "name": "NORDEA BANK ABP",
+          "ticker": "n/a",
+          "weight": 0.4
+        },
+        {
+          "name": "ANHEUSER-BUSCH INBEV SA/NV",
+          "ticker": "n/a",
+          "weight": 0.4
+        },
+        {
+          "name": "INVESTOR AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.4
+        },
+        {
+          "name": "DANONE SA",
+          "ticker": "n/a",
+          "weight": 0.38999999999999996
+        },
+        {
+          "name": "ARGENX SE",
+          "ticker": "n/a",
+          "weight": 0.38
+        },
+        {
+          "name": "INFINEON TECHNOLOGIES AG",
+          "ticker": "n/a",
+          "weight": 0.38
+        },
+        {
+          "name": "L'OREAL",
+          "ticker": "n/a",
+          "weight": 0.37
+        },
+        {
+          "name": "COMPASS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.37
+        },
+        {
+          "name": "RECKITT BENCKISER GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.36
+        },
+        {
+          "name": "SWISS RE AG",
+          "ticker": "n/a",
+          "weight": 0.36
+        },
+        {
+          "name": "DIAGEO PLC",
+          "ticker": "n/a",
+          "weight": 0.35000000000000003
+        },
+        {
+          "name": "GLENCORE PLC",
+          "ticker": "n/a",
+          "weight": 0.35000000000000003
+        },
+        {
+          "name": "MERCEDES-BENZ GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.35000000000000003
+        },
+        {
+          "name": "DEUTSCHE BOERSE AG",
+          "ticker": "n/a",
+          "weight": 0.33999999999999997
+        },
+        {
+          "name": "SOCIETE GENERALE SA",
+          "ticker": "n/a",
+          "weight": 0.33999999999999997
+        },
+        {
+          "name": "DEUTSCHE POST AG",
+          "ticker": "n/a",
+          "weight": 0.33999999999999997
+        },
+        {
+          "name": "LONZA GROUP LTD",
+          "ticker": "n/a",
+          "weight": 0.33
+        },
+        {
+          "name": "FERRARI NV",
+          "ticker": "RACE",
+          "weight": 0.32
+        },
+        {
+          "name": "HOLCIM LTD",
+          "ticker": "n/a",
+          "weight": 0.32
+        },
+        {
+          "name": "L'OREAL SA",
+          "ticker": "n/a",
+          "weight": 0.32
+        },
+        {
+          "name": "BASF SE",
+          "ticker": "n/a",
+          "weight": 0.32
+        },
+        {
+          "name": "VOLVO AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.32
+        },
+        {
+          "name": "COMPAGNIE DE SAINT-GOBAIN SA",
+          "ticker": "n/a",
+          "weight": 0.31
+        },
+        {
+          "name": "AIR LIQUIDE SA",
+          "ticker": "n/a",
+          "weight": 0.31
+        },
+        {
+          "name": "HALEON PLC",
+          "ticker": "n/a",
+          "weight": 0.31
+        },
+        {
+          "name": "DSV AS",
+          "ticker": "n/a",
+          "weight": 0.3
+        },
+        {
+          "name": "ATLAS COPCO AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.3
+        },
+        {
+          "name": "ADYEN NV",
+          "ticker": "n/a",
+          "weight": 0.29
+        },
+        {
+          "name": "ANGLO AMERICAN PLC",
+          "ticker": "n/a",
+          "weight": 0.27999999999999997
+        },
+        {
+          "name": "STANDARD CHARTERED PLC",
+          "ticker": "n/a",
+          "weight": 0.27999999999999997
+        },
+        {
+          "name": "CAIXABANK SA",
+          "ticker": "n/a",
+          "weight": 0.27999999999999997
+        },
+        {
+          "name": "EXPERIAN PLC",
+          "ticker": "n/a",
+          "weight": 0.27999999999999997
+        },
+        {
+          "name": "ALCON INC",
+          "ticker": "ALC",
+          "weight": 0.27
+        },
+        {
+          "name": "3I GROUP ORD",
+          "ticker": "n/a",
+          "weight": 0.27
+        },
+        {
+          "name": "E.ON SE",
+          "ticker": "n/a",
+          "weight": 0.27
+        },
+        {
+          "name": "GENERALI",
+          "ticker": "n/a",
+          "weight": 0.27
+        },
+        {
+          "name": "ASSA ABLOY AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "TESCO PLC",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "KONINKLIJKE AHOLD DELHAIZE NV",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "PRUDENTIAL PLC",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "LEGRAND SA",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "ENI SPA",
+          "ticker": "n/a",
+          "weight": 0.25
+        },
+        {
+          "name": "GALDERMA GROUP AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.24
+        },
+        {
+          "name": "SSE PLC",
+          "ticker": "n/a",
+          "weight": 0.24
+        },
+        {
+          "name": "ORANGE SA",
+          "ticker": "n/a",
+          "weight": 0.24
+        },
+        {
+          "name": "BAYER AG",
+          "ticker": "n/a",
+          "weight": 0.24
+        },
+        {
+          "name": "UCB SA",
+          "ticker": "n/a",
+          "weight": 0.22999999999999998
+        },
+        {
+          "name": "RWE AG CLASS A",
+          "ticker": "n/a",
+          "weight": 0.22999999999999998
+        },
+        {
+          "name": "GIVAUDAN SA",
+          "ticker": "n/a",
+          "weight": 0.22
+        },
+        {
+          "name": "SIKA AG",
+          "ticker": "n/a",
+          "weight": 0.22
+        },
+        {
+          "name": "HEIDELBERG MATERIALS AG",
+          "ticker": "n/a",
+          "weight": 0.22
+        },
+        {
+          "name": "IMPERIAL BRANDS PLC",
+          "ticker": "n/a",
+          "weight": 0.22
+        },
+        {
+          "name": "AMADEUS IT GROUP SA",
+          "ticker": "n/a",
+          "weight": 0.22
+        },
+        {
+          "name": "SWISS LIFE HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.22
+        },
+        {
+          "name": "ADIDAS AG",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "SKANDINAVISKA ENSKILDA BANKEN AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "SANDVIK AB",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "FERROVIAL SE",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "NOKIA OYJ",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "ERSTE GROUP BANK AG.",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "DANSKE BANK AS",
+          "ticker": "n/a",
+          "weight": 0.2
+        },
+        {
+          "name": "PRYSMIAN SPA",
+          "ticker": "n/a",
+          "weight": 0.2
+        },
+        {
+          "name": "BAYERISCHE MOTOREN WERKE AG",
+          "ticker": "n/a",
+          "weight": 0.2
+        },
+        {
+          "name": "SANDOZ GROUP AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.2
+        },
+        {
+          "name": "COMMERZBANK AG",
+          "ticker": "n/a",
+          "weight": 0.2
+        },
+        {
+          "name": "KBC GROUPE NV",
+          "ticker": "n/a",
+          "weight": 0.19
+        },
+        {
+          "name": "ENGIE",
+          "ticker": "n/a",
+          "weight": 0.19
+        },
+        {
+          "name": "ASHTEAD GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.19
+        },
+        {
+          "name": "SAMPO OYJ CLASS A",
+          "ticker": "n/a",
+          "weight": 0.19
+        },
+        {
+          "name": "AMRIZE LTD REGISTERED SHARE",
+          "ticker": "AMRZ",
+          "weight": 0.18
+        },
+        {
+          "name": "AVIVA PLC",
+          "ticker": "n/a",
+          "weight": 0.18
+        },
+        {
+          "name": "ASM INTERNATIONAL NV",
+          "ticker": "n/a",
+          "weight": 0.18
+        },
+        {
+          "name": "TELEFONAKTIEBOLAGET L M ERICSSON CLASS B",
+          "ticker": "n/a",
+          "weight": 0.18
+        },
+        {
+          "name": "SWEDBANK AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.18
+        },
+        {
+          "name": "PARTNERS GROUP HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.18
+        },
+        {
+          "name": "WOLTERS KLUWER NV",
+          "ticker": "n/a",
+          "weight": 0.16999999999999998
+        },
+        {
+          "name": "UNIVERSAL MUSIC GROUP NV",
+          "ticker": "n/a",
+          "weight": 0.16999999999999998
+        },
+        {
+          "name": "CAPGEMINI SE",
+          "ticker": "n/a",
+          "weight": 0.16999999999999998
+        },
+        {
+          "name": "VESTAS WIND SYSTEMS AS",
+          "ticker": "n/a",
+          "weight": 0.16999999999999998
+        },
+        {
+          "name": "GEBERIT AG",
+          "ticker": "n/a",
+          "weight": 0.16999999999999998
+        },
+        {
+          "name": "HEXAGON AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.16999999999999998
+        },
+        {
+          "name": "VOLKSWAGEN AG PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "KERING SA",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "VODAFONE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "ATLAS COPCO AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "FRESENIUS SE & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "THALES",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "STELLANTIS NV",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "HEINEKEN NV",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "DNB BANK ASA",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "REPSOL SA",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "BANCO BPM SPA",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "MICHELIN",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "VONOVIA SE",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "AIB GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "MTU AERO ENGINES AG",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "NEXT PLC",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "NOVONESIS (NOVOZYMES) B CLASS B",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "KONE OYJ CLASS B",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "LEONARDO SPA AZ NOM POST RAGGRUPPAMENTO",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "KONINKLIJKE PHILIPS NV",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "PUBLICIS GROUPE SA",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "DAIMLER TRUCK HOLDING AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "COCA-COLA EUROPACIFIC PARTNERS PLC",
+          "ticker": "CCEP",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "BANCA MONTE DEI PASCHI DI SIENA",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "EQT AB ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "SVENSKA HANDELSBANKEN AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "VEOLIA ENVIRONNEMENT SA",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "GENMAB AS",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "ENGIE SA",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "SGS AG",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "BANCO DE SABADELL SA",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "SWISSCOM AG",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "LEGAL & GENERAL GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "AENA SME SA",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "NN GROUP NV",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "PKO BANK POLSKI SA",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "INTERCONTINENTAL HOTELS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "ARCELORMITTAL SA NEW REG.SHS EX-ARCELOR",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "INVESTOR AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "DASSAULT SYSTEMES SE",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "HALMA PLC",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "HANNOVER RUECK SE REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "INFORMA PLC",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "ABN AMRO BANK NV NLDR",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "MERCK KGAA",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "PERNOD RICARD SA",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "BANK OF IRELAND GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "CELLNEX TELECOM SA",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "KONINKLIJKE KPN NV",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "CREDIT AGRICOLE SA",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "BPER BANCA SPA",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "TELEFONICA SA",
+          "ticker": "TEF",
+          "weight": 0.12
+        },
+        {
+          "name": "SAAB AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "LOGITECH INTERNATIONAL SA",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "KERRY GROUP PLC CLASS A",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "CHOCOLADEFABRIKEN LINDT & SPRUENGLI AG",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "ESSITY AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "EQUINOR ASA",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "SCHINDLER HOLDING AG NON VOTING",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "JULIUS BAER GRUPPE AG",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "STMICROELECTRONICS NV",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "SMITH & NEPHEW PLC",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "DSM-FIRMENICH AG",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "TERNA SPA",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "RENTOKIL INITIAL PLC",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "UPM-KYMMENE OYJ",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "ORLEN SA",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "MONCLER SPA",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "FINECOBANK SPA",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "US DOLLAR",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "WARTSILA CORP",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "COVESTRO AG",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "ALFA LAVAL AB",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "BT GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "BOLIDEN AB",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "EURONEXT NV",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "SEGRO PLC",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "STRAUMANN HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "KINGSPAN GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "EPIROC AB ORDINARY SHARES CLASS A",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "SNAM SPA",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "ANTOFAGASTA PLC",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "EDP-ENERGIAS DE PORTUGAL SA",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "SAGE GROUP (THE) PLC",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "UNITED UTILITIES GROUP PLC CLASS A",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "AKZO NOBEL NV",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "AGEAS SA/ NV",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "ROCHE HOLDING AG BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "BEIERSDORF AG",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "BALOISE HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "SYMRISE AG",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "SONOVA HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "ENDESA SA",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "VAT GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "CARLSBERG AS CLASS B",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "BUREAU VERITAS SA",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "CENTRICA PLC",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "COLOPLAST AS CLASS B",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "ACCOR SA",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "POSTE ITALIANE SPA",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "METSO CORP",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "SWISS PRIME SITE AG",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "COCA-COLA HBC AG",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "MOWI ASA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "MELROSE INDUSTRIES PLC",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "QIAGEN NV",
+          "ticker": "QGEN",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "POWSZECHNY ZAKLAD UBEZPIECZEN SA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "AEGON LTD",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "WEIR GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "EVOLUTION AB",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "ADMIRAL GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "CARREFOUR",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "FRESENIUS MEDICAL CARE AG",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "GEA GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "ASR NEDERLAND NV",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "INTERTEK GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "ST JAMES'S PLACE PLC",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "BAWAG GROUP AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "KONGSBERG GRUPPEN ASA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "BE SEMICONDUCTOR INDUSTRIES NV",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "BELIMO HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "SEVERN TRENT PLC",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "DIPLOMA PLC",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "BANK POLSKA KASA OPIEKI SA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "BANKINTER SA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "SMITHS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "ORSTED AS",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "UNIPOL ASSICURAZIONI SPA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "ALSTOM SA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "BUNZL PLC",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "BOUYGUES",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "FORTUM OYJ",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "M&G PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "MARKS & SPENCER GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "NORSK HYDRO ASA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "PEARSON PLC",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "PANDORA AS",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "WISE PLC CLASS A",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "LIFCO AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "PSP SWISS PROPERTY AG",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "TRELLEBORG AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "HELVETIA BALOISE HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "ASSOCIATED BRITISH FOODS PLC",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "KLEPIERRE",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "SKANSKA AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "REXEL SA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "KUEHNE & NAGEL INTERNATIONAL AG",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "EXOR NV",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "SKF AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "CONTINENTAL AG",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "GALP ENERGIA SGPS SA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "HEINEKEN HOLDING NV",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "HENNES & MAURITZ AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "TELE2 AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "TELIA COMPANY AB",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "GAMES WORKSHOP GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "TELENOR ASA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "ENDEAVOUR MINING PLC",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "SPIE SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "SWISSQUOTE GROUP HOLDING SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "EPIROC AB SHARE B",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "TENARIS SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "SCOUT24 SE",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "A P MOLLER MAERSK AS CLASS B",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "GAZTRANSPORT ET TECHNIGAZ SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "TALANX AG",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "AUTO TRADER GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "INDUTRADE AB",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "SWEDISH ORPHAN BIOVITRUM AB",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "ITALGAS SPA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "SVENSKA CELLULOSA AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "BARRATT REDROW PLC",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "BEIJER REF AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "KNORR-BREMSE AG BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "SAINSBURY (J) PLC",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "NESTE OYJ",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "ORKLA ASA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "ORION OYJ CLASS B",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "OMV AG",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "ACCELLERON INDUSTRIES AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "EUROFINS SCIENTIFIC SE",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "AKER BP ASA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "RENAULT SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "BRENNTAG SE",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "PHOENIX GROUP HOLDINGS PLC",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "REDEIA CORPORACION SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "ADDTECH AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "SECURITAS AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "JERONIMO MARTINS SGPS SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "IMI PLC",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "ICG PLC",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "GROUPE BRUXELLES LAMBERT SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "HENKEL AG & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "TRYG AS",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "STORA ENSO OYJ CLASS R",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "SCHINDLER HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "SARTORIUS STEDIM BIOTECH SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "KINGFISHER PLC",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "KONECRANES OYJ",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "KGHM POLSKA MIEDZ SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "ACKERMANS & VAN HAAREN NV",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "BUZZI SPA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "WHITBREAD PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "ALLEGRO.EU SA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "VOESTALPINE AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "ELISA OYJ CLASS A",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "VOLVO AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "ZEALAND PHARMA AS",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "ZALANDO SE",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "YARA INTERNATIONAL ASA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "FLUGHAFEN ZUERICH AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "PERSIMMON PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "RAIFFEISEN BANK INTERNATIONAL AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "BURBERRY GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "BRITISH LAND CO PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "LPP SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "LONDONMETRIC PROPERTY PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "LOTTOMATICA GROUP SPA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "RECORDATI SPA AZ NOM POST RAGGRUPPAMENTO",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "MKTLIQ 12/31/2049",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "METLEN ENERGY & METALS PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "MERLIN PROPERTIES SOCIMI SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "NORDNET AB (PUBL) ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "NIBE INDUSTRIER AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "NKT AS",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "NEMETSCHEK SE",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "NEXANS",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "AEROPORTS DE PARIS SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "KION GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "SANTANDER BANK POLSKA SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "LAND SECURITIES GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "LEG IMMOBILIEN SE",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "CONVATEC GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "CTS EVENTIM AG & CO. KGAA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "JDE PEET'S NV ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "KESKO OYJ CLASS B",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "SCOR SE ACT. PROV. REGPT.",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "BIOMERIEUX SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "BEAZLEY PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "BARRY CALLEBAUT AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "RIGHTMOVE PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "INDUSTRIVARDEN AB CLASS C",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "DEUTSCHE LUFTHANSA AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "DELIVERY HERO SE",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "DINO POLSKA SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "DASSAULT AVIATION SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "DCC PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "JYSKE BANK AS",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "HISCOX LTD",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "SPECTRIS PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "STOREBRAND ASA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "AVANZA BANK HOLDING AB",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "ELIA GROUP SA/NV",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "HOWDEN JOINERY GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "SPIRAX GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "INDUSTRIVARDEN AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "IMCD NV",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "HOCHTIEF AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "EDENRED SE",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "SYENSQO SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "GETLINK SE ACT. PROVENANT REGROUPEMENT",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "THE SWATCH GROUP AG BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "THYSSENKRUPP AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "TECHNIP ENERGIES NV ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "TELECOM ITALIA SPA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "GJENSIDIGE FORSIKRING ASA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "FRESNILLO PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "GALENICA LTD",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "GEORG FISCHER AG",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "ENTAIN PLC",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "ELIS SA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "A P MOLLER MAERSK AS CLASS A",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "AAK AB",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "SODEXO",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "WAREHOUSES DE PAUW SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ABERDEEN GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "A2A SPA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ACCIONA SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "VERBUND AG CLASS A",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "VEND MARKETPLACES ASA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "AB SAGAX CLASS B",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "EVONIK INDUSTRIES AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "FASTIGHETS AB BALDER CLASS B",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "FINANCIERE DE TUBIZE SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "EMS-CHEMIE HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "TRITAX BIG BOX ORD",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "UMICORE SA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "TUI AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "TEMENOS AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ANDRITZ AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "AMUNDI SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "TELEPERFORMANCE SE",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "TELECOM ITALIA SPA AZ.DI RISP. NON CONV.",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "AZIMUT HOLDING SPA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SOFINA SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SSAB AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "AVOLTA AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "GECINA NOM",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SECTRA AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SALMAR ASA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SBM OFFSHORE NV",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SCHRODERS PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BABCOCK INTERNATIONAL GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "AYVENS",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BANCA MEDIOLANUM",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "HERA SPA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "HENSOLDT AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SIG GROUP AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BALFOUR BEATTY PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SYDBANK A/S",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "GETINGE AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "TAYLOR WIMPEY PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "VALMET OYJ",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "SUBSEA 7 SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "AURUBIS AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "FREENET AG AKT. NAMEN-AKT.",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BECHTLE AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "EDP RENOVAVEIS SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "RS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ROYAL UNIBREW AS",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ROTORK PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "IVECO GROUP NV ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ITV PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "L E LUNDBERGFORETAGEN AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "MBANK SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "MAPFRE SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "LAGERCRANTZ GROUP AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "MONDI PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "NORDEX SE AKT. NACH KAPITALHERABSETZUNG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "JOHNSON MATTHEY PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "INTERPUMP GROUP SPA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "INVESTEC PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "INDRA SISTEMAS SA SHS CLASS -A-",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "IG GROUP HOLDINGS PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "CASTELLUM AB",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "CD PROJEKT SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "IPSEN SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ISS AS",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "RENK GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "RATIONAL AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BKW AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BOLLORE SE",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BRUNELLO CUCINELLI SPA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "RANDSTAD NV",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ALK-ABELLO AS CLASS B",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ALLREAL HOLDING LTD",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "VERISURE PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "WPP PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "ADECCO GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "AEDIFICA SA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "LION FINANCE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "CRODA INTERNATIONAL PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BELLWAY PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BERKELEY GROUP HOLDINGS (THE) PLC",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BILFINGER SE",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "EXAIL TECHNOLOGIES SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "FDJ UNITED ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "TOMRA SYSTEMS ASA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ARKEMA SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "AROUNDTOWN SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ALTEN",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "THULE GROUP AB",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ARCADIS NV",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ENAGAS SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "FORVIA SE",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "FRAPORT AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "FLATEX AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "FLSMIDTH & CO AS",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VALEO SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VALLOUREC SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "TP ICAP GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ACERINOX SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VAR ENERGI ASA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ADDLIFE AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "UNITE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "EURAZEO",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "FLUIDRA SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "UNICAJA BANCO SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VALIANT HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VZ HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "UNITED INTERNET AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VISTRY GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "AALBERTS NV",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VOLKSWAGEN AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SAIPEM SPA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SACYR SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SES SA DR",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SEB SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "AXFOOD AB",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "BANCA GENERALI",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "B&M EUROPEAN VALUE RETAIL SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SERCO GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "GRIFOLS SA PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "GRIFOLS SA ORDINARY SHARES CLASS A",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "GRUPA KETY SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "BANK MILLENNIUM SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SHAFTESBURY CAPITAL PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SIEGFRIED HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "BAKKAFROST P/F",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "HILL & SMITH PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "HOLMEN AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "HIKMA PHARMACEUTICALS PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "HEXPOL AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "GENUS PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SWECO AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "AUMOVIO SE",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SUNRISE COMMUNICATIONS AG CLASS A",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ASSECO POLAND SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "AUTO1 GROUP BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SOLVAY SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SPAREBANK 1 SMN DEPOSITORY RECEIPTS",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SPAREBANKEN NORGE DEPOSITORY RECEIPTS",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SPAREBANK 1 SOR NORGE ASA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SOFTCAT PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SIGNIFY NV",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "TECAN GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "TAG IMMOBILIEN AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "GLANBIA PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "TBC BANK GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "FRONTLINE PLC",
+          "ticker": "FRO",
+          "weight": 0.02
+        },
+        {
+          "name": "FUCHS SE PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "SULZER AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "HUHTAMÃ¤KI OYJ",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "HUBER& SUHNER AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "INCHCAPE PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "PRIMARY HEALTH PROPERTIES PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "INPOST SA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "INFRASTRUTTURE WIRELESS ITALIANE SPA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "INTERNATIONAL WORKPLACE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "INVESTMENT AB LATOUR CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "QINETIQ GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "PUMA SE",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "PUIG BRANDS SA ORDINARY SHARES CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "QUILTER PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "BENEFIT SYSTEMS SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "REPLY SPA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "BAVARIAN NORDIC AS",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "BUCHER INDUSTRIES AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "BFF BANK SPA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "BIG YELLOW GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "EASYJET PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "DORMA&KABA HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "DRAX GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "EFG INTERNATIONAL AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ROCKWOOL AS CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "RUBIS SCA SHS FROM SPLIT",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "JUST GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "JTC PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "JD SPORTS FASHION PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "NEXI SPA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "NCC AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "NEINOR HOMES SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "CAMURUS AB",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "CANAL& SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "PENNON GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "CARNIVAL PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "OSB GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "CEMBRA MONEY BANK AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "PROTECTOR FORSIKRING ASA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "PLUS500 LTD",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "POLSKA GRUPA ENERGETYCZNA SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "PIRELLI & C SPA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MOLTEN VENTURES ORD",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MODERN TIMES GROUP MTG AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MORGAN SINDALL GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "COMPUTACENTER PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "COFINIMMO SA/NV",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MFE-MEDIAFOREUROPE CLASS A",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MIPS AB",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MITCHELLS & BUTLERS PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MYCRONIC AB",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "NATURGY ENERGY GROUP SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "NCAB GROUP AB",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "DERWENT LONDON PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "DKSH HOLDING LTD",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "DE'LONGHI SPA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "DEMANT AS",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MUNTERS GROUP AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "KINNEVIK AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "KRUK SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MANDATUM PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MERCIALYS SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MITIE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MOBIMO HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MELEXIS NV",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MELIA HOTELS INTERNATIONAL SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "MAN GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "LOTUS BAKERIES NV",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "KONINKLIJKE BAM GROEP NV",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "KONINKLIJKE VOPAK NV",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "KEMIRA OYJ",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "LOOMIS AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "K&S AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "KBC ANCORA SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VISCOFAN SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "CRANSWICK PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "COVIVIO SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "D'IETEREN GROUP",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "CVC CAPITAL PARTNERS PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "CTP NV ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ALLFUNDS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ALIOR BANK SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "VIDRALA SA",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "AIXTRON SE",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "AIRTEL AFRICA PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ZABKA GROUP",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "WIENERBERGER AG",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ZIGUP PLC",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "WIHLBORGS FASTIGHETER AB",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "WENDEL SE",
+          "ticker": "n/a",
+          "weight": 0.02
+        },
+        {
+          "name": "ZEHNDER GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "YPSOMED HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "XTB SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AFRY AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VUSIONGROUP",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VEIDEKKE ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "WATCHES OF SWITZERLAND GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "XIOR STUDENT HOUSING NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ACEA SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VOLUTION GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VOLVO CAR AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VOSSLOH AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TGS ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "WACKER CHEMIE AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "WALLENSTAM AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "4IMPRINT GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AMBU AS CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AMPLIFON SPA AZ NOM POST FRAZIONAMENTO",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TECHNOPROBE SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TECNICAS REUNIDAS SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TELECOM PLUS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TELEKOM AUSTRIA AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TELEVISION FRANCAISE 1 SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TERVEYSTALO PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MAIRE SPA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KAINOS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CURRYS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DAETWYLER HOLDING AG BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DANIELI & C. OFFICINE MECCANICHE SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KONTRON AG AKT. NACH KAPITALHERABSETZUNG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LINDAB INTERNATIONAL AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LINEA DIRECTA ASEGURADORA SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LOGISTA INTEGRAL SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LUZERNER KANTONALBANK AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TORM PLC CLASS A",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KALMAR CORP CLASS B SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KARDEX HOLDING AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KELLER GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KOJAMO OYJ",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "FORBO HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TIETOEVRY CORP",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TKH GROUP NV NLDR",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TKMS AG & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CORBION NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MONY GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MOONPIG GROUP PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MEDACTA GROUP SA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MEDICOVER AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MEDIOBANCA SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MONTANA AEROSPACE AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MONTEA NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LEROY SEAFOOD GROUP ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CREDITO EMILIANO",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AQ GROUP AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "THE NAVIGATOR CO SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "THE SWATCH GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ARYZTA AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AMS-OSRAM AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "APERAM SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GALAPAGOS NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GENUIT GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ARGAN",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GN STORE NORD AS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GRAFTON GROUP PLC UNITS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "FRASERS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "FUCHS SE REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "FUGRO NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "FUTURE PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CLARKSON PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CLAS OHLSON AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CLOSE BROTHERS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CMB.TECH NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "COLRUYT GROUP NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "COMET HOLDING AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "MORGAN ADVANCED MATERIALS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LANDIS&GYR GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LANXESS AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "J M AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DEME GROUP NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KRONES AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KSB SE & CO KGAA PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "KWS SAAT SE & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LABORATORIOS FARMACEUTICOS ROVI SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "LANCASHIRE HOLDINGS LTD",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GERRESHEIMER AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GIMV NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TEAMVIEWER SE BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TECHNOGYM SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GRAINGER PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GRAND CITY PROPERTIES SA AKT",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GRANGES AB SHS 144A/REG S",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GREAT PORTLAND ESTATES PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GREENCORE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "GREGGS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ST GALLER KANTONALBANK AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SWEDISH KRONA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SYSTEMAIR AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TAMBURI INVESTMENT PARTNERS SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TATE & LYLE PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ASKER HEALTHCARE GROUP AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SONAE SGPS SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SOPRA STERIA GROUP SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SPIRE HEALTHCARE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SSAB AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SSP GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "NORDIC SEMICONDUCTOR ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DIVERSIFIED ENERGY CO",
+          "ticker": "DEC",
+          "weight": 0.01
+        },
+        {
+          "name": "DNO ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "JCDECAUX SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "JENOPTIK AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "JUPITER FUND MANAGEMENT PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "NV BEKAERT SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "NETCOMPANY GROUP AS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "NOKIAN TYRES PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "NOLATO AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CLARIANE SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CLARIANT AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "NOS SGPS SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "NP3 FASTIGHETER AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "COATS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "COFACE SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CEMENTIR HOLDING NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CHEMOMETEC AS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CHEMRING GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CIBUS NORDIC REAL ESTATE AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CIE AUTOMOTIVE SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CARL ZEISS MEDITEC AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CARMILA SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BURCKHARDT COMPRESSION HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BURE EQUITY AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BURKHALTER HOLDING AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BW LPG LTD",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "OXFORD NANOPORE TECHNOLOGIES PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PAGEGROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CA IMMOBILIEN ANLAGEN AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CADELER AS ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CAIRN HOMES PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CANCOM SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CAREL INDUSTRIES SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CATENA AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "CCC SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "OUTOKUMPU OYJ CLASS A",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "OXFORD INSTRUMENTS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DEUTSCHE WOHNEN SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DEUTZ AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DIASORIN SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ATRIUM LJUNGBERG AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ATTENDO AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "STADLER RAIL AG REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "STORSKOGEN GROUP AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "STRABAG SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ASHMORE GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SUPERMARKET INCOME REIT PLC REIT",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SVENSKA HANDELSBANKEN AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ATEA ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ATOSS SOFTWARE SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HELIOS TOWERS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AUSTEVOLL SEAFOOD ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AUTOSTORE HOLDINGS LTD ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "STROEER SE & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HOCHSCHILD MINING PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HOEGH AUTOLINERS ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "H. LUNDBECK AS ORDINARY SHARES CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HAFNIA LTD ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HAMMERSON PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HARBOUR ENERGY PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HAVAS NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HAYS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PETS AT HOME GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PHARMA MAR SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ICADE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ID LOGISTICS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PLAYTECH PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PLUXEE NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "OPMOBILITY",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ORANGE POLSKA SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PREMIER FOODS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PROXIMUS SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "NYFOSA AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "OC OERLIKON CORP AG, PFAFFIKON",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "OCADO GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "OESTERREICHISCHE POST AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SIXT SE PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SKAN GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HELLOFRESH SE BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HEMNET GROUP AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HIAB CORP CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HMS NETWORKS AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SOL SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SOLARIA ENERGIA Y MEDIO AMBIENTE SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HORNBACH HOLDING AG AND CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SINCH AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SIRIUS REAL ESTATE LTD",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SIXT SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SCHAEFFLER AG PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SCHOTT PHARMA AG & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SKISTAR AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SOFTWAREONE HOLDING AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SOITEC SA SHARE FROM REVERSE SPLIT",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SAVILLS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SCANDIC HOTELS GROUP AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SCATEC ASA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BODYCOTE PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BONESUPPORT HOLDING AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "INTERROLL HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "INTERSHOP HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "INVISIO AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "IONOS GROUP SE REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BRAVIDA HOLDING AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BREEDON GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "IREN SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BLUENORD ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PER AARSLEFF HOLDING AS CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PETERSHILL PARTNERS ORD",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BORREGAARD ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BOSSARD HOLDING AG BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PANDOX AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PARAGON BANKING GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PEAB AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "PEPCO GROUP NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "RATHBONES GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "RATOS AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "REDCARE PHARMACY NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "REMY COINTREAU",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DO & CO AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DOF GROUP ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "RETAIL ESTATES SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BASIC-FIT NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BEFESA SA BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "INTEGRAFIN HOLDINGS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BETSSON AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BIC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BILIA AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BILLERUD AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BIOARCTIC AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "IP GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "IPSOS SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "IMERYS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "IMPLENIA AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "INFICON HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BANCA IFIS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BANCA POPOLARE DI SONDRIO SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SCHOUW & CO AS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SENIOR PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SFS GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AZELIS GROUP NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BACHEM HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BALTIC CLASSIFIEDS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DUERR AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BANK HANDLOWY W WARSZAWIE SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BARCO NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SHURGARD SELF STORAGE LTD",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ELECTROLUX AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ELECTROLUX PROFESSIONAL AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DOMETIC GROUP AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DOMINO'S PIZZA GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DOTTIKON ES HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DOWLAIS GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DUNELM GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "DWS GROUP GMBH & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "EBRO FOODS SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ECKERT & ZIEGLER SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ELECNOR SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ELEKTA AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ELEMENTIS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HUFVUDSTADEN AB CLASS A",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HUGO BOSS AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "HUSQVARNA AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ROYAL HEIJMANS NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "RTL GROUP SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "RYANAIR HOLDINGS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SAFESTORE HOLDINGS PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "SALZGITTER AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "REN-REDES ENERGETICAS NACIONAIS SGPS SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "RENISHAW PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BREMBO NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BRIDGEPOINT GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BRITISH POUND STERLING",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BUDIMEX SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "BUFAB AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ALLEIMA AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VESUVIUS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VGP SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VICAT SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VIRBAC SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AG BARR PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AIR FRANCE-KLM",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AJ BELL PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AKER ASA CLASS A",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "AKER SOLUTIONS ASA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "UNIQA INSURANCE GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VAN LANSCHOT KEMPEN NV NLDR",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ALM BRAND AS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ALMIRALL SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ALPHAWAVE IP GROUP PLC ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ALSO HOLDING AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ALTAREA SCA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "VIENNA INSURANCE GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ADDNODE GROUP AB CLASS B",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TRUSTPILOT GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "UBISOFT ENTERTAINMENT",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "UIE PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ENAV SPA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "FIRSTGROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "FLOW TRADERS LTD",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TRIGANO SA",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "ELKEM ASA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "EMBRACER GROUP AB",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "EMEIS",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "EMMI AG",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TRAINLINE PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TRATON SE",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "TRAVIS PERKINS PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "WEBUILD SPA AZ NOM POST RAGGRUPPAMENTO",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "WERELDHAVE NV",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "WH SMITH PLC",
+          "ticker": "n/a",
+          "weight": 0.01
+        },
+        {
+          "name": "WILH. WILHELMSEN HOLDING ASA CLASS A",
+          "ticker": "n/a",
+          "weight": 0.01
+        }
+      ],
+      "dataSources": [
+        {
+          "type": "API",
+          "provider": "Alpha Vantage",
+          "url": "https://www.alphavantage.co/query?function=ETF_PROFILE&symbol=VGK",
+          "date": "2026-01-11"
+        }
+      ]
+    },
+    {
+      "ticker": "EZU",
+      "name": "",
+      "isin": "",
+      "exchange": "",
+      "provider": "",
+      "assetClass": "",
+      "trackingIndex": "",
+      "geographicFocus": "",
+      "ter": 0.5,
+      "aum": 8900000000,
+      "currency": "",
+      "averageDailyVolume": 0,
+      "eligibility": {
+        "status": "eligible",
+        "isEligible": true,
+        "confidence": "medium",
+        "justification": "Standard account - no specific eligibility restrictions; "
+      },
+      "matchScore": 0,
+      "rankingScore": 52.99999999999999,
+      "rank": 2,
+      "assetBreakdown": {
+        "equities": 0,
+        "bonds": 0,
+        "cash": 0,
+        "commodities": 0,
+        "other": 0
+      },
+      "geographicBreakdown": {
+        "regions": null
+      },
+      "topHoldings": [
+        {
+          "name": "ASML HOLDING NV",
+          "ticker": "n/a",
+          "weight": 5.57
+        },
+        {
+          "name": "SAP SE",
+          "ticker": "n/a",
+          "weight": 3.62
+        },
+        {
+          "name": "SIEMENS AG",
+          "ticker": "n/a",
+          "weight": 2.83
+        },
+        {
+          "name": "LVMH MOET HENNESSY LOUIS VUITTON SE",
+          "ticker": "n/a",
+          "weight": 2.6
+        },
+        {
+          "name": "ALLIANZ SE",
+          "ticker": "n/a",
+          "weight": 2.34
+        },
+        {
+          "name": "BANCO SANTANDER SA",
+          "ticker": "n/a",
+          "weight": 2.1999999999999997
+        },
+        {
+          "name": "SCHNEIDER ELECTRIC SE",
+          "ticker": "n/a",
+          "weight": 2.04
+        },
+        {
+          "name": "AIRBUS SE",
+          "ticker": "n/a",
+          "weight": 1.9900000000000002
+        },
+        {
+          "name": "IBERDROLA SA",
+          "ticker": "n/a",
+          "weight": 1.91
+        },
+        {
+          "name": "TOTALENERGIES SE",
+          "ticker": "n/a",
+          "weight": 1.8599999999999999
+        },
+        {
+          "name": "BANCO BILBAO VIZCAYA ARGENTARIA SA",
+          "ticker": "n/a",
+          "weight": 1.73
+        },
+        {
+          "name": "SAFRAN SA",
+          "ticker": "n/a",
+          "weight": 1.7000000000000002
+        },
+        {
+          "name": "DEUTSCHE TELEKOM AG",
+          "ticker": "n/a",
+          "weight": 1.67
+        },
+        {
+          "name": "SANOFI SA",
+          "ticker": "n/a",
+          "weight": 1.59
+        },
+        {
+          "name": "AIR LIQUIDE SA",
+          "ticker": "n/a",
+          "weight": 1.59
+        },
+        {
+          "name": "ESSILORLUXOTTICA",
+          "ticker": "n/a",
+          "weight": 1.53
+        },
+        {
+          "name": "L'OREAL SA",
+          "ticker": "n/a",
+          "weight": 1.47
+        },
+        {
+          "name": "UNICREDIT SPA",
+          "ticker": "n/a",
+          "weight": 1.44
+        },
+        {
+          "name": "SIEMENS ENERGY AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 1.38
+        },
+        {
+          "name": "INTESA SANPAOLO",
+          "ticker": "n/a",
+          "weight": 1.3
+        },
+        {
+          "name": "PROSUS NV ORDINARY SHARES CLASS N",
+          "ticker": "n/a",
+          "weight": 1.21
+        },
+        {
+          "name": "ENEL SPA",
+          "ticker": "n/a",
+          "weight": 1.2
+        },
+        {
+          "name": "BNP PARIBAS ACT. CAT.A",
+          "ticker": "n/a",
+          "weight": 1.18
+        },
+        {
+          "name": "HERMES INTERNATIONAL SA",
+          "ticker": "n/a",
+          "weight": 1.1199999999999999
+        },
+        {
+          "name": "RHEINMETALL AG",
+          "ticker": "n/a",
+          "weight": 1.11
+        },
+        {
+          "name": "AXA SA",
+          "ticker": "n/a",
+          "weight": 1.11
+        },
+        {
+          "name": "ING GROEP NV",
+          "ticker": "n/a",
+          "weight": 1.09
+        },
+        {
+          "name": "VINCI SA",
+          "ticker": "n/a",
+          "weight": 0.9900000000000001
+        },
+        {
+          "name": "DEUTSCHE BANK AG",
+          "ticker": "n/a",
+          "weight": 0.91
+        },
+        {
+          "name": "ANHEUSER-BUSCH INBEV SA/NV",
+          "ticker": "n/a",
+          "weight": 0.89
+        },
+        {
+          "name": "DANONE SA",
+          "ticker": "n/a",
+          "weight": 0.83
+        },
+        {
+          "name": "ARGENX SE",
+          "ticker": "n/a",
+          "weight": 0.8099999999999999
+        },
+        {
+          "name": "NORDEA BANK ABP",
+          "ticker": "n/a",
+          "weight": 0.77
+        },
+        {
+          "name": "INFINEON TECHNOLOGIES AG",
+          "ticker": "n/a",
+          "weight": 0.72
+        },
+        {
+          "name": "FERRARI NV",
+          "ticker": "RACE",
+          "weight": 0.7100000000000001
+        },
+        {
+          "name": "DEUTSCHE POST AG",
+          "ticker": "n/a",
+          "weight": 0.7000000000000001
+        },
+        {
+          "name": "MERCEDES-BENZ GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.69
+        },
+        {
+          "name": "DEUTSCHE BOERSE AG",
+          "ticker": "n/a",
+          "weight": 0.6799999999999999
+        },
+        {
+          "name": "SOCIETE GENERALE SA",
+          "ticker": "n/a",
+          "weight": 0.67
+        },
+        {
+          "name": "ENGIE SA",
+          "ticker": "n/a",
+          "weight": 0.66
+        },
+        {
+          "name": "BASF SE",
+          "ticker": "n/a",
+          "weight": 0.66
+        },
+        {
+          "name": "CAIXABANK SA",
+          "ticker": "n/a",
+          "weight": 0.61
+        },
+        {
+          "name": "COMPAGNIE DE SAINT-GOBAIN SA",
+          "ticker": "n/a",
+          "weight": 0.61
+        },
+        {
+          "name": "E.ON SE",
+          "ticker": "n/a",
+          "weight": 0.5700000000000001
+        },
+        {
+          "name": "LEGRAND SA",
+          "ticker": "n/a",
+          "weight": 0.5599999999999999
+        },
+        {
+          "name": "ADYEN NV",
+          "ticker": "n/a",
+          "weight": 0.5599999999999999
+        },
+        {
+          "name": "ENI SPA",
+          "ticker": "n/a",
+          "weight": 0.54
+        },
+        {
+          "name": "KONINKLIJKE AHOLD DELHAIZE NV",
+          "ticker": "n/a",
+          "weight": 0.53
+        },
+        {
+          "name": "UCB SA",
+          "ticker": "n/a",
+          "weight": 0.5
+        },
+        {
+          "name": "BAYER AG",
+          "ticker": "n/a",
+          "weight": 0.5
+        },
+        {
+          "name": "EUR CASH",
+          "ticker": "n/a",
+          "weight": 0.49
+        },
+        {
+          "name": "FERROVIAL SE",
+          "ticker": "n/a",
+          "weight": 0.48
+        },
+        {
+          "name": "AMADEUS IT GROUP SA",
+          "ticker": "n/a",
+          "weight": 0.48
+        },
+        {
+          "name": "GENERALI",
+          "ticker": "n/a",
+          "weight": 0.47000000000000003
+        },
+        {
+          "name": "RWE AG CLASS A",
+          "ticker": "n/a",
+          "weight": 0.47000000000000003
+        },
+        {
+          "name": "ERSTE GROUP BANK AG.",
+          "ticker": "n/a",
+          "weight": 0.47000000000000003
+        },
+        {
+          "name": "NOKIA OYJ",
+          "ticker": "n/a",
+          "weight": 0.45999999999999996
+        },
+        {
+          "name": "HEIDELBERG MATERIALS AG",
+          "ticker": "n/a",
+          "weight": 0.45999999999999996
+        },
+        {
+          "name": "ADIDAS AG",
+          "ticker": "n/a",
+          "weight": 0.44
+        },
+        {
+          "name": "ORANGE SA",
+          "ticker": "n/a",
+          "weight": 0.43
+        },
+        {
+          "name": "SAMPO OYJ CLASS A",
+          "ticker": "n/a",
+          "weight": 0.41000000000000003
+        },
+        {
+          "name": "BAYERISCHE MOTOREN WERKE AG",
+          "ticker": "n/a",
+          "weight": 0.41000000000000003
+        },
+        {
+          "name": "KBC GROUPE NV",
+          "ticker": "n/a",
+          "weight": 0.4
+        },
+        {
+          "name": "UNIVERSAL MUSIC GROUP NV",
+          "ticker": "n/a",
+          "weight": 0.4
+        },
+        {
+          "name": "COMMERZBANK AG",
+          "ticker": "n/a",
+          "weight": 0.38999999999999996
+        },
+        {
+          "name": "PRYSMIAN SPA",
+          "ticker": "n/a",
+          "weight": 0.38999999999999996
+        },
+        {
+          "name": "RYANAIR HOLDINGS PLC",
+          "ticker": "n/a",
+          "weight": 0.38
+        },
+        {
+          "name": "ASM INTERNATIONAL NV",
+          "ticker": "n/a",
+          "weight": 0.37
+        },
+        {
+          "name": "KERING SA",
+          "ticker": "n/a",
+          "weight": 0.37
+        },
+        {
+          "name": "WOLTERS KLUWER NV",
+          "ticker": "n/a",
+          "weight": 0.36
+        },
+        {
+          "name": "THALES",
+          "ticker": "n/a",
+          "weight": 0.35000000000000003
+        },
+        {
+          "name": "AERCAP HOLDINGS NV",
+          "ticker": "AER",
+          "weight": 0.33999999999999997
+        },
+        {
+          "name": "CAPGEMINI SE",
+          "ticker": "n/a",
+          "weight": 0.33999999999999997
+        },
+        {
+          "name": "HEINEKEN NV",
+          "ticker": "n/a",
+          "weight": 0.33
+        },
+        {
+          "name": "FRESENIUS SE & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.33
+        },
+        {
+          "name": "KONE OYJ CLASS B",
+          "ticker": "n/a",
+          "weight": 0.33
+        },
+        {
+          "name": "VOLKSWAGEN AG PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.33
+        },
+        {
+          "name": "VONOVIA SE",
+          "ticker": "n/a",
+          "weight": 0.33
+        },
+        {
+          "name": "PUBLICIS GROUPE SA",
+          "ticker": "n/a",
+          "weight": 0.32
+        },
+        {
+          "name": "MICHELIN",
+          "ticker": "n/a",
+          "weight": 0.31
+        },
+        {
+          "name": "MTU AERO ENGINES AG",
+          "ticker": "n/a",
+          "weight": 0.31
+        },
+        {
+          "name": "KONINKLIJKE PHILIPS NV",
+          "ticker": "n/a",
+          "weight": 0.31
+        },
+        {
+          "name": "AIB GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.31
+        },
+        {
+          "name": "AENA SME SA",
+          "ticker": "n/a",
+          "weight": 0.3
+        },
+        {
+          "name": "LEONARDO SPA AZ NOM POST RAGGRUPPAMENTO",
+          "ticker": "n/a",
+          "weight": 0.3
+        },
+        {
+          "name": "VEOLIA ENVIRONNEMENT SA",
+          "ticker": "n/a",
+          "weight": 0.3
+        },
+        {
+          "name": "STELLANTIS NV",
+          "ticker": "n/a",
+          "weight": 0.29
+        },
+        {
+          "name": "REPSOL SA",
+          "ticker": "n/a",
+          "weight": 0.29
+        },
+        {
+          "name": "CREDIT AGRICOLE SA",
+          "ticker": "n/a",
+          "weight": 0.29
+        },
+        {
+          "name": "DAIMLER TRUCK HOLDING AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.29
+        },
+        {
+          "name": "BANCA MONTE DEI PASCHI DI SIENA",
+          "ticker": "n/a",
+          "weight": 0.27999999999999997
+        },
+        {
+          "name": "ARCELORMITTAL SA NEW REG.SHS EX-ARCELOR",
+          "ticker": "n/a",
+          "weight": 0.27999999999999997
+        },
+        {
+          "name": "NEBIUS GROUP NV SHS CLASS-A-",
+          "ticker": "NBIS",
+          "weight": 0.27999999999999997
+        },
+        {
+          "name": "BANCO DE SABADELL SA",
+          "ticker": "n/a",
+          "weight": 0.27
+        },
+        {
+          "name": "COCA-COLA EUROPACIFIC PARTNERS PLC",
+          "ticker": "CCEP",
+          "weight": 0.27
+        },
+        {
+          "name": "DASSAULT SYSTEMES SE",
+          "ticker": "n/a",
+          "weight": 0.27
+        },
+        {
+          "name": "NN GROUP NV",
+          "ticker": "n/a",
+          "weight": 0.27
+        },
+        {
+          "name": "HANNOVER RUECK SE REGISTERED SHARES",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "PERNOD RICARD SA",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "ABN AMRO BANK NV NLDR",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "EURO STOXX 50 DEC 25",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "KONINKLIJKE KPN NV",
+          "ticker": "n/a",
+          "weight": 0.26
+        },
+        {
+          "name": "BANK OF IRELAND GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.25
+        },
+        {
+          "name": "BPER BANCA SPA",
+          "ticker": "n/a",
+          "weight": 0.25
+        },
+        {
+          "name": "MERCK KGAA",
+          "ticker": "n/a",
+          "weight": 0.24
+        },
+        {
+          "name": "WARTSILA CORP",
+          "ticker": "n/a",
+          "weight": 0.22999999999999998
+        },
+        {
+          "name": "TELEFONICA SA",
+          "ticker": "TEF",
+          "weight": 0.22999999999999998
+        },
+        {
+          "name": "BANCO BPM SPA",
+          "ticker": "n/a",
+          "weight": 0.22999999999999998
+        },
+        {
+          "name": "STMICROELECTRONICS NV",
+          "ticker": "n/a",
+          "weight": 0.22
+        },
+        {
+          "name": "MONCLER SPA",
+          "ticker": "n/a",
+          "weight": 0.22
+        },
+        {
+          "name": "TERNA SPA",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "FINECOBANK SPA",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "CELLNEX TELECOM SA",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "KERRY GROUP PLC CLASS A",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "DSM-FIRMENICH AG",
+          "ticker": "n/a",
+          "weight": 0.21
+        },
+        {
+          "name": "UPM-KYMMENE OYJ",
+          "ticker": "n/a",
+          "weight": 0.2
+        },
+        {
+          "name": "EDP-ENERGIAS DE PORTUGAL SA",
+          "ticker": "n/a",
+          "weight": 0.2
+        },
+        {
+          "name": "COVESTRO V AG",
+          "ticker": "n/a",
+          "weight": 0.19
+        },
+        {
+          "name": "SNAM SPA",
+          "ticker": "n/a",
+          "weight": 0.19
+        },
+        {
+          "name": "KINGSPAN GROUP PLC",
+          "ticker": "n/a",
+          "weight": 0.18
+        },
+        {
+          "name": "EURONEXT NV",
+          "ticker": "n/a",
+          "weight": 0.16999999999999998
+        },
+        {
+          "name": "POSTE ITALIANE SPA",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "BUREAU VERITAS SA",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "ENDESA SA",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "SYMRISE AG",
+          "ticker": "n/a",
+          "weight": 0.16
+        },
+        {
+          "name": "METSO CORP",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "BEIERSDORF AG",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "FRESENIUS MEDICAL CARE AG",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "QIAGEN NV",
+          "ticker": "QGEN",
+          "weight": 0.15
+        },
+        {
+          "name": "AEGON LTD",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "BE SEMICONDUCTOR INDUSTRIES NV",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "AGEAS SA/ NV",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "ACCOR SA",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "AKZO NOBEL NV",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "ASR NEDERLAND NV",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "BANKINTER SA",
+          "ticker": "n/a",
+          "weight": 0.15
+        },
+        {
+          "name": "BOUYGUES",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "GEA GROUP AG",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "FORTUM OYJ",
+          "ticker": "n/a",
+          "weight": 0.13999999999999999
+        },
+        {
+          "name": "ALSTOM SA",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "CARREFOUR",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "HEINEKEN HOLDING NV",
+          "ticker": "n/a",
+          "weight": 0.13
+        },
+        {
+          "name": "CONTINENTAL AG",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "REXEL SA",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "UNIPOL ASSICURAZIONI SPA",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "GALP ENERGIA SGPS SA",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "KLEPIERRE",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "TALANX AG",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "OMV AG",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "EUROFINS SCIENTIFIC SE",
+          "ticker": "n/a",
+          "weight": 0.12
+        },
+        {
+          "name": "SCOUT24 SE",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "NESTE OYJ",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "ORION OYJ CLASS B",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "RENAULT SA",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "TENARIS SA",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "EXOR NV",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "HENKEL AG & CO KGAA",
+          "ticker": "n/a",
+          "weight": 0.11
+        },
+        {
+          "name": "BRENNTAG SE",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "STORA ENSO OYJ CLASS R",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "TELECOM ITALIA SPA",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "SARTORIUS AG PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "KNORR-BREMSE AG BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "RECORDATI SPA AZ NOM POST RAGGRUPPAMENTO",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "JERONIMO MARTINS SGPS SA",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "GROUPE BRUXELLES LAMBERT SA",
+          "ticker": "n/a",
+          "weight": 0.1
+        },
+        {
+          "name": "JDE PEET'S NV ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "NEMETSCHEK SE",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "SARTORIUS STEDIM BIOTECH SA",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "CTS EVENTIM AG & CO. KGAA",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "ELISA OYJ CLASS A",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "DASSAULT AVIATION SA",
+          "ticker": "n/a",
+          "weight": 0.09
+        },
+        {
+          "name": "ZALANDO SE",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "SYENSQO SA",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "REDEIA CORPORACION SA",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "DR. ING. H.C. F. PORSCHE AG BEARER SHARES",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "KESKO OYJ CLASS B",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "IMCD NV",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "IPSEN SA",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "LEG IMMOBILIEN SE",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "ELIA GROUP SA/NV",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "BIOMERIEUX SA",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "DEUTSCHE LUFTHANSA AG",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "GETLINK SE ACT. PROVENANT REGROUPEMENT",
+          "ticker": "n/a",
+          "weight": 0.08
+        },
+        {
+          "name": "AMUNDI SA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "BANCA MEDIOLANUM",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "ACCIONA SA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "BAYERISCHE MOTOREN WERKE AG PARTICIPATING PREFERRED",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "AEROPORTS DE PARIS SA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "EDENRED SE",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "FINANCIERE DE TUBIZE SA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "VERBUND AG CLASS A",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "SODEXO",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "RAIFFEISEN BANK INTERNATIONAL AG",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "SOFINA SA",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "HENSOLDT AG ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "HOCHTIEF AG",
+          "ticker": "n/a",
+          "weight": 0.06999999999999999
+        },
+        {
+          "name": "GECINA NOM",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "RANDSTAD NV",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "EDP RENOVAVEIS SA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "BUZZI SPA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "DAVIDE CAMPARI-MILANO NV AZ NOM POST FRAZIONAMENTO",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "EVONIK INDUSTRIES AG",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "MAPFRE SA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "NATURGY ENERGY GROUP SA",
+          "ticker": "n/a",
+          "weight": 0.06
+        },
+        {
+          "name": "BOLLORE SE",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "CVC CAPITAL PARTNERS PLC",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "GRIFOLS SA ORDINARY SHARES CLASS A",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "LOTUS BAKERIES NV",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "RATIONAL AG",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "COVIVIO SA",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "D'IETEREN GROUP",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "DELIVERY HERO SE",
+          "ticker": "n/a",
+          "weight": 0.05
+        },
+        {
+          "name": "FDJ UNITED ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "INPOST SA ORDINARY SHARES",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "INFRASTRUTTURE WIRELESS ITALIANE SPA",
+          "ticker": "n/a",
+          "weight": 0.04
+        },
+        {
+          "name": "GBP CASH",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "NEXI SPA",
+          "ticker": "n/a",
+          "weight": 0.03
+        },
+        {
+          "name": "BLACKROCK CASH FUNDS TREASURY SL AGENCY",
+          "ticker": "n/a",
+          "weight": 0.01
+        }
+      ],
+      "dataSources": [
+        {
+          "type": "API",
+          "provider": "Alpha Vantage",
+          "url": "https://www.alphavantage.co/query?function=ETF_PROFILE&symbol=EZU",
+          "date": "2026-01-11"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalSearched": 2,
+    "totalEligible": 2,
+    "totalIneligible": 0,
+    "totalUnknown": 0,
+    "searchDurationMs": 1914,
+    "dataSourcesQueried": [
+      "JSE",
+      "FactSheets",
+      "Provider APIs"
+    ]
+  },
+  "warnings": [
+    {
+      "code": "LOW_CONFIDENCE_RESULTS",
+      "message": "2 results have medium or low confidence. Verify eligibility with your platform before investing.",
+      "severity": "info"
+    }
+  ],
+  "generatedAt": "2026-01-11T09:42:01Z",
+  "cacheHit": false
+}
