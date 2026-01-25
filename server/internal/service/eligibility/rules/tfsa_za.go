@@ -298,6 +298,7 @@ func (r *TFSASouthAfricaRules) finalizeResult(result *domain.EligibilityResult, 
 			"⚠ Insufficient data to confirm eligibility - recommend verification with SARS or your platform")
 	} else if len(result.RulesSkipped) > 0 {
 		result.Status = domain.StatusConditional
+		result.IsEligible = true // Conditional means eligible but with warnings
 		result.Reasons = append(result.Reasons,
 			"✓ Likely eligible but verification recommended before investing")
 	} else {

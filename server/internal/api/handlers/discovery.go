@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 
 	"upstonk/internal/api/dto"
 	"upstonk/internal/service/discovery"
@@ -173,6 +175,7 @@ func (h *DiscoveryHandler) handleServiceError(w http.ResponseWriter, requestID s
 }
 
 func (h *DiscoveryHandler) formatValidationErrors(err error) string {
+
 	validationErrors, ok := err.(validator.ValidationErrors)
 	if !ok {
 		return err.Error()
@@ -180,6 +183,7 @@ func (h *DiscoveryHandler) formatValidationErrors(err error) string {
 
 	errorMessages := make(map[string]string)
 	for _, e := range validationErrors {
+
 		field := e.Field()
 		switch e.Tag() {
 		case "required":
@@ -228,5 +232,84 @@ func (h *DiscoveryHandler) HandleHealth(w http.ResponseWriter, r *http.Request) 
 		"service":   "upstonk-api",
 		"version":   "1.0.0",
 	}
+	h.respondJSON(w, http.StatusOK, response)
+}
+
+// HandleTopPerformers returns top performing stocks/ETFs based on asset class or investment vehicle
+// GET /api/v1/discover/{type} where type is assetClass (equity, bond) or investmentVehicle (etf, stock)
+func (h *DiscoveryHandler) HandleTopPerformers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	requestID := uuid.New().String()
+	ctx = context.WithValue(ctx, "requestID", requestID)
+
+	// Get type from URL path
+	vars := mux.Vars(r)
+	assetType := vars["type"]
+	if assetType == "" {
+		h.respondError(w, requestID, http.StatusBadRequest, "INVALID_PARAMETER",
+			"Type parameter is required", "Use: /api/v1/discover/{assetClass or investmentVehicle}")
+		return
+	}
+
+	// Determine if it's an asset class or investment vehicle
+	var assetClass string
+	var investmentVehicles []string
+
+	assetTypeLower := strings.ToLower(assetType)
+	switch assetTypeLower {
+	case "equity", "equities", "stock", "stocks":
+		assetClass = "equity"
+		investmentVehicles = []string{"etf", "stock"}
+	case "bond", "bonds", "fixed income":
+		assetClass = "bond"
+		investmentVehicles = []string{"etf", "bond"}
+	case "etf", "etfs":
+		investmentVehicles = []string{"etf"}
+		assetClass = "equity" // Default for ETFs
+	default:
+		h.respondError(w, requestID, http.StatusBadRequest, "INVALID_TYPE",
+			fmt.Sprintf("Unknown type: %s", assetType),
+			"Valid types: equity, bond, etf, stock")
+		return
+	}
+
+	// Build discovery request
+	req := dto.DiscoveryRequest{
+		InvestorProfile: dto.InvestorProfile{
+			Country:     "US", // Default to US for global data
+			AccountType: "standard",
+			Currency:    "USD",
+		},
+		Exposure: dto.ExposureRequest{
+			Assets: dto.AssetExposureRequest{
+				AssetClasses: []string{assetClass},
+			},
+		},
+		InvestmentVehicles: investmentVehicles,
+		Constraints:        dto.Constraints{},
+		OutputOptions: dto.OutputOptions{
+			MaxResults:         20,
+			IncludeSourceLinks: true,
+		},
+	}
+
+	// Execute discovery
+	result, err := h.service.DiscoverETFs(ctx, req)
+	if err != nil {
+		h.handleServiceError(w, requestID, err)
+		return
+	}
+
+	// Build response
+	response := dto.DiscoveryResponse{
+		RequestID:    requestID,
+		Results:      result.Results,
+		Alternatives: result.Alternatives,
+		Summary:      result.Summary,
+		Warnings:     result.Warnings,
+		GeneratedAt:  time.Now().UTC().Format(time.RFC3339),
+		CacheHit:     result.CacheHit,
+	}
+
 	h.respondJSON(w, http.StatusOK, response)
 }

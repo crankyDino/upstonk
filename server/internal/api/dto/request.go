@@ -38,14 +38,15 @@ type GeographyExposureRequest struct {
 }
 
 type Constraints struct {
-	TFSAEligibleOnly     bool    `json:"tfsaEligibleOnly"`
-	MaxTER               float64 `json:"maxTER" validate:"omitempty,min=0,max=5"`
-	MinAUM               float64 `json:"minAUM,omitempty"` // Minimum assets under management
-	ExcludeSyntheticETFs bool    `json:"excludeSyntheticETFs"`
-	ExcludeLeveragedETFs bool    `json:"excludeLeveragedETFs"`
-	ExcludeInverseETFs   bool    `json:"excludeInverseETFs"`
-	PhysicalOnly         bool    `json:"physicalOnly"`
-	MinLiquidity         float64 `json:"minLiquidity,omitempty"` // Minimum avg daily volume
+	TFSAEligibleOnly     bool     `json:"tfsaEligibleOnly"`
+	AllowedExchanges     []string `json:"allowedExchanges,omitempty"` // If empty, allows all exchanges
+	MaxTER               float64  `json:"maxTER" validate:"omitempty,min=0,max=5"`
+	MinAUM               float64  `json:"minAUM,omitempty"` // Minimum assets under management
+	ExcludeSyntheticETFs bool     `json:"excludeSyntheticETFs"`
+	ExcludeLeveragedETFs bool     `json:"excludeLeveragedETFs"`
+	ExcludeInverseETFs   bool     `json:"excludeInverseETFs"`
+	PhysicalOnly         bool     `json:"physicalOnly"`
+	MinLiquidity         float64  `json:"minLiquidity,omitempty"` // Minimum avg daily volume
 }
 
 type RankingPreferences struct {

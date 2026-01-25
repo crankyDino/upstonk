@@ -3,6 +3,7 @@ package eligibility
 import (
 	"context"
 	"fmt"
+	"strings"
 	"upstonk/internal/domain"
 )
 
@@ -29,7 +30,20 @@ func (e *DefaultEngine) Evaluate(ctx context.Context, etf domain.ETF, country, a
 		}
 	}
 
-	// No rule found - return unknown status
+	// No rule found - for standard accounts, default to eligible
+	// For tax-advantaged accounts, return unknown to be safe
+	if strings.ToLower(accountType) == "standard" {
+		return domain.EligibilityResult{
+			Status:      domain.StatusEligible,
+			IsEligible:  true,
+			Confidence:  domain.ConfidenceMedium,
+			Reasons:     []string{"Standard account - no specific eligibility restrictions"},
+			RulesPassed: []string{"standard_account"},
+			RulesFailed: []string{},
+		}
+	}
+
+	// For tax-advantaged accounts without rules, return unknown
 	return domain.EligibilityResult{
 		Status:      domain.StatusUnknown,
 		IsEligible:  false,

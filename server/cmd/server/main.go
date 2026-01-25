@@ -81,6 +81,9 @@ func setupRouter(discoveryHandler *handlers.DiscoveryHandler) *mux.Router {
 	// Discovery endpoint
 	v1.HandleFunc("/discover", discoveryHandler.HandleDiscovery).Methods("POST", "OPTIONS")
 
+	// Top performers endpoint
+	v1.HandleFunc("/discover/{type}", discoveryHandler.HandleTopPerformers).Methods("GET")
+
 	// Health check
 	v1.HandleFunc("/health", discoveryHandler.HandleHealth).Methods("GET")
 
@@ -91,14 +94,21 @@ func setupRouter(discoveryHandler *handlers.DiscoveryHandler) *mux.Router {
 }
 
 func initializeSearchProvider(cfg *config.Config) search.Provider {
-	// In production, this would initialize:
-	// - JSE API client
-	// - Fact sheet scrapers
-	// - Financial data API clients (Bloomberg, Reuters, etc.)
-	// - Caching layer
+	// Initialize multiple data providers
+	providers := []search.Provider{
+		search.NewLiveProvider(), // Yahoo Finance, ETF.com, JSE
+	}
 
-	// For now, use stub provider for development
-	return search.NewStubProvider()
+	// Add Alpha Vantage if API key is provided
+	if cfg.AlphaVantageKey != "" && cfg.AlphaVantageKey != "demo" {
+		providers = append(providers, search.NewAlphaVantageProvider(cfg.AlphaVantageKey))
+		log.Printf("Alpha Vantage provider enabled")
+	} else {
+		log.Printf("Alpha Vantage provider disabled (no API key). Get free key at https://www.alphavantage.co/support/#api-key")
+	}
+
+	// Combine all providers with intelligent aggregation and caching
+	return search.NewAggregatedProvider(providers...)
 }
 
 func initializeEligibilityEngine() eligibility.Engine {

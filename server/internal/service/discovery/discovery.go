@@ -146,12 +146,37 @@ func (s *Service) evaluateEligibility(
 func (s *Service) applyConstraints(etfs []domain.DiscoveredETF, constraints dto.Constraints) []domain.DiscoveredETF {
 	filtered := make([]domain.DiscoveredETF, 0)
 
+	// Build exchange allowlist map for fast lookup
+	allowedExchanges := make(map[string]bool)
+	for _, exchange := range constraints.AllowedExchanges {
+		allowedExchanges[strings.ToUpper(exchange)] = true
+	}
+	hasExchangeConstraint := len(constraints.AllowedExchanges) > 0
+
 	for _, discovered := range etfs {
 		etf := discovered.ETF
 
 		// Skip ineligible if TFSA-only requested
-		if constraints.TFSAEligibleOnly && !discovered.Eligibility.IsEligible {
-			continue
+		// If tfsaEligibleOnly is false, allow eligible, conditional, and unknown ETFs
+		// Only filter out ineligible ETFs when tfsaEligibleOnly is true
+		if constraints.TFSAEligibleOnly {
+			if !discovered.Eligibility.IsEligible {
+				continue
+			}
+		} else {
+			// When tfsaEligibleOnly is false, only exclude explicitly ineligible ETFs
+			// Allow eligible, conditional, and unknown
+			if discovered.Eligibility.Status == domain.StatusIneligible {
+				continue
+			}
+		}
+
+		// Exchange constraint: if specified, only allow listed exchanges
+		if hasExchangeConstraint {
+			etfExchange := strings.ToUpper(etf.Exchange)
+			if !allowedExchanges[etfExchange] {
+				continue
+			}
 		}
 
 		// TER constraint
