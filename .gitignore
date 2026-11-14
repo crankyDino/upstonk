@@ -2,7 +2,6 @@
 */.env
 
 bin
-*/.air.toml
 */tmp
 
-./gui/.node_modules
+*/node_modules
