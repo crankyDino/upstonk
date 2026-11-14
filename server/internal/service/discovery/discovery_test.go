@@ -11,6 +11,7 @@ import (
 	"upstonk/internal/app"
 	"upstonk/internal/domain"
 	"upstonk/internal/service/discovery"
+	"upstonk/internal/service/eligibility"
 	"upstonk/internal/service/search"
 	"upstonk/internal/testutil/fakeprovider"
 )
@@ -292,5 +293,34 @@ func TestUnknownTERPassesMaxTERButIsFlagged(t *testing.T) {
 	}
 	if !strings.Contains(flagged.Message, "NOTER") || strings.Contains(flagged.Message, "KNOWN") {
 		t.Fatalf("warning should name NOTER only, got %q", flagged.Message)
+	}
+}
+
+// namedRule is a minimal eligibility rule that applies to every request and
+// stamps its name into the result, so tests can see which rule ran.
+type namedRule struct{ name string }
+
+func (r namedRule) Name() string                           { return r.name }
+func (r namedRule) Version() string                        { return "v1" }
+func (r namedRule) AppliesTo(country, account string) bool { return true }
+func (r namedRule) Evaluate(_ context.Context, _ domain.ETF) domain.EligibilityResult {
+	return domain.EligibilityResult{Status: domain.StatusEligible, IsEligible: true, RuleVersion: r.name}
+}
+
+func TestOverlappingRulesAlwaysResolveToTheFirstRegistered(t *testing.T) {
+	engine := eligibility.NewEngine()
+	for _, n := range []string{"FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH"} {
+		engine.RegisterRule(namedRule{n})
+	}
+	svc := discovery.NewService(fakeprovider.New(domain.ETF{Ticker: "X"}), engine, app.NewRankingEngine())
+
+	for i := 0; i < 50; i++ {
+		res, err := svc.DiscoverETFs(context.Background(), standardRequest(dto.ExposureRequest{}))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := onlyResult(t, res).Eligibility.RuleVersion; got != "FIRST" {
+			t.Fatalf("run %d: rule %q applied, want FIRST", i, got)
+		}
 	}
 }
