@@ -1,8 +1,10 @@
 #!/bin/bash
 
+API_URL="${API_URL:-http://localhost:8080}"
+
 # Example 1: US ETFs - Emerging Markets (should return live data from Yahoo Finance)
 echo "=== Example 1: US ETFs - Emerging Markets ==="
-curl -X POST http://localhost:8080/api/v1/discover \
+curl -X POST "${API_URL}/api/v1/discover" \
   -H "Content-Type: application/json" \
   -d '{
     "investorProfile": {
@@ -30,7 +32,7 @@ curl -X POST http://localhost:8080/api/v1/discover \
   }' | jq
 
 echo -e "\n\n=== Example 2: US ETFs - Technology Sector ==="
-curl -X POST http://localhost:8080/api/v1/discover \
+curl -X POST "${API_URL}/api/v1/discover" \
   -H "Content-Type: application/json" \
   -d '{
     "investorProfile": {
@@ -58,7 +60,7 @@ curl -X POST http://localhost:8080/api/v1/discover \
   }' | jq
 
 echo -e "\n\n=== Example 3: ZA JSE ETFs - Emerging Markets (if Yahoo Finance has JSE data) ==="
-curl -X POST http://localhost:8080/api/v1/discover \
+curl -X POST "${API_URL}/api/v1/discover" \
   -H "Content-Type: application/json" \
   -d '{
     "investorProfile": {
@@ -86,7 +88,7 @@ curl -X POST http://localhost:8080/api/v1/discover \
   }' | jq
 
 echo -e "\n\n=== Example 4: All Exchanges - No Exchange Filter ==="
-curl -X POST http://localhost:8080/api/v1/discover \
+curl -X POST "${API_URL}/api/v1/discover" \
   -H "Content-Type: application/json" \
   -d '{
     "investorProfile": {
