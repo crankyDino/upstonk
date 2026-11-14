@@ -48,7 +48,8 @@ Verify: `cd server && go test ./...` is green and `go vet ./...` is clean (no ne
 | **CORS**: red test — a request with `Origin` gets `Access-Control-Allow-Origin: *`; preflight `OPTIONS /api/v1/discover` → 200 with the header. Fix the typo in `middleware/cors.go`. | Router test |
 | **Ports**: `gui/vite.config.ts` port → 5173. | Manual: `npm run dev` serves on 5173 |
 | **Optional `.env`**: `config.Load()` logs and continues when `.env` is missing instead of `log.Fatal`. | Manual: start the server with no `.env`, and `/health` returns 200 |
-| **Air config**: remove `*/.air.toml` from `.gitignore` and commit `server/.air.toml`, after reading it for machine-specific paths. | `git ls-files server/.air.toml` |
+| **Air config**: remove `*/.air.toml` from `.gitignore` and commit `server/.air.toml`, after reading it for machine-specific paths. | `git ls-files server/.air.toml` (done before Phase 0) |
+| **Yahoo drift (found by the Phase 0 live tracer)**: `v7/finance/quote` and `v10/finance/quoteSummary` now refuse unauthenticated calls (429/401), so every live search returns 0 ETFs. `v8/finance/chart` still works and gives name, currency (`ZAc` = cents → ZAR), exchange (`JNB` → JSE) and daily volume. Move basic quotes to the chart endpoint, check HTTP status codes, and treat AUM/TER/holdings as missing (eligibility then reports `conditional`/`unknown`, as "never guess" requires) until a source for them is chosen. | Live tracer goes red → green |
 
 End-to-end check: start the API on 8080 and the GUI on 5173, submit the default form, and see results in the browser with no CORS error.
 

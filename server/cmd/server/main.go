@@ -9,16 +9,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gorilla/mux"
-
 	"upstonk/internal/api/handlers"
-	"upstonk/internal/api/middleware"
+	"upstonk/internal/api/router"
+	"upstonk/internal/app"
 	"upstonk/internal/config"
 	"upstonk/internal/service/discovery"
-	"upstonk/internal/service/eligibility"
-	"upstonk/internal/service/eligibility/rules"
-	"upstonk/internal/service/ranking"
-	"upstonk/internal/service/search"
 )
 
 func main() {
@@ -29,9 +24,9 @@ func main() {
 	}
 
 	// Initialize services
-	searchProvider := initializeSearchProvider(cfg)
-	eligibilityEngine := initializeEligibilityEngine()
-	rankingEngine := initializeRankingEngine()
+	searchProvider := app.NewSearchProvider(cfg.AlphaVantageKey)
+	eligibilityEngine := app.NewEligibilityEngine()
+	rankingEngine := app.NewRankingEngine()
 
 	discoveryService := discovery.NewService(
 		searchProvider,
@@ -43,12 +38,12 @@ func main() {
 	discoveryHandler := handlers.NewDiscoveryHandler(discoveryService)
 
 	// Setup router
-	router := setupRouter(discoveryHandler)
+	apiHandler := router.New(discoveryHandler)
 
 	// Create server
 	server := &http.Server{
 		Addr:         cfg.ServerAddress,
-		Handler:      router,
+		Handler:      apiHandler,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 30 * time.Second,
 		IdleTimeout:  60 * time.Second,
@@ -64,150 +59,6 @@ func main() {
 
 	// Graceful shutdown
 	gracefulShutdown(server)
-}
-
-func setupRouter(discoveryHandler *handlers.DiscoveryHandler) *mux.Router {
-	router := mux.NewRouter()
-
-	// Global middleware
-	router.Use(middleware.RequestLogger)
-	router.Use(middleware.Recovery)
-	router.Use(middleware.CORS)
-	router.Use(middleware.Timeout(30 * time.Second))
-
-	// API v1 routes
-	v1 := router.PathPrefix("/api/v1").Subrouter()
-
-	// Discovery endpoint
-	v1.HandleFunc("/discover", discoveryHandler.HandleDiscovery).Methods("POST", "OPTIONS")
-
-	// Top performers endpoint
-	v1.HandleFunc("/discover/{type}", discoveryHandler.HandleTopPerformers).Methods("GET")
-
-	// Health check
-	v1.HandleFunc("/health", discoveryHandler.HandleHealth).Methods("GET")
-
-	// Documentation endpoint
-	router.HandleFunc("/", serveDocumentation).Methods("GET")
-
-	return router
-}
-
-func initializeSearchProvider(cfg *config.Config) search.Provider {
-	// Initialize multiple data providers
-	providers := []search.Provider{
-		search.NewLiveProvider(), // Yahoo Finance, ETF.com, JSE
-	}
-
-	// Add Alpha Vantage if API key is provided
-	if cfg.AlphaVantageKey != "" && cfg.AlphaVantageKey != "demo" {
-		providers = append(providers, search.NewAlphaVantageProvider(cfg.AlphaVantageKey))
-		log.Printf("Alpha Vantage provider enabled")
-	} else {
-		log.Printf("Alpha Vantage provider disabled (no API key). Get free key at https://www.alphavantage.co/support/#api-key")
-	}
-
-	// Combine all providers with intelligent aggregation and caching
-	return search.NewAggregatedProvider(providers...)
-}
-
-func initializeEligibilityEngine() eligibility.Engine {
-	engine := eligibility.NewEngine()
-
-	// Register eligibility rules
-	engine.RegisterRule(rules.NewTFSASouthAfricaRules())
-	// engine.RegisterRule(rules.NewISAUKRules())
-	// engine.RegisterRule(rules.NewIRAUSRules())
-
-	return engine
-}
-
-func initializeRankingEngine() ranking.Engine {
-	return ranking.NewWeightedScorer()
-}
-
-func serveDocumentation(w http.ResponseWriter, r *http.Request) {
-	documentation := `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>ETF Discovery API</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 50px auto; padding: 20px; }
-        h1 { color: #2c3e50; }
-        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
-        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
-        .endpoint { background: #e8f5e9; padding: 15px; margin: 20px 0; border-left: 4px solid #4caf50; }
-    </style>
-</head>
-<body>
-    <h1>ETF Discovery API v1.0</h1>
-    <p>Production-ready API for discovering eligible ETFs based on portfolio exposure requirements.</p>
-    
-    <h2>Endpoints</h2>
-    
-    <div class="endpoint">
-        <h3>POST /api/v1/discover</h3>
-        <p>Discover ETFs matching your criteria</p>
-        <p><strong>Request:</strong> See example payload in documentation</p>
-        <p><strong>Response:</strong> Ranked list of eligible ETFs with eligibility justifications</p>
-    </div>
-    
-    <div class="endpoint">
-        <h3>GET /api/v1/health</h3>
-        <p>Health check endpoint</p>
-    </div>
-
-    <h2>Supported Countries & Account Types</h2>
-    <ul>
-        <li><strong>South Africa (ZA)</strong>: TFSA, Standard</li>
-        <li><strong>United States (US)</strong>: Coming soon</li>
-        <li><strong>United Kingdom (GB)</strong>: Coming soon</li>
-    </ul>
-
-    <h2>Design Principles</h2>
-    <ul>
-        <li><strong>Never Hallucinate Eligibility</strong>: Unknown eligibility is marked as such</li>
-        <li><strong>Source Attribution</strong>: All data includes provenance</li>
-        <li><strong>Explainability</strong>: Clear reasoning for all eligibility decisions</li>
-        <li><strong>Fail-Safe Compliance</strong>: Conservative approach to regulatory compliance</li>
-    </ul>
-
-    <h2>Example Request</h2>
-    <pre>
-curl -X POST http://localhost:8080/api/v1/discover \
-  -H "Content-Type: application/json" \
-  -d '{
-    "investorProfile": {
-      "country": "ZA",
-      "accountType": "tfsa",
-      "currency": "ZAR"
-    },
-    "exposure": {
-      "assets": {
-        "sectors": ["technology"],
-        "assetClasses": ["equity"]
-      },
-      "geography": {
-        "markets": ["usa"]
-      }
-    },
-    "investmentVehicles": ["etf"],
-    "constraints": {
-      "tfsaEligibleOnly": true,
-      "maxTER": 0.75
-    },
-    "outputOptions": {
-      "maxResults": 10,
-      "explainEligibility": true
-    }
-  }'
-    </pre>
-</body>
-</html>
-`
-	w.Header().Set("Content-Type", "text/html")
-	w.Write([]byte(documentation))
 }
 
 func gracefulShutdown(server *http.Server) {
