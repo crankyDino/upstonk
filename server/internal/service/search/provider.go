@@ -182,8 +182,9 @@ func (p *LiveProvider) searchYahooFinance(ctx context.Context, criteria Criteria
 
 // fetchYahooFinanceETF fetches a single ETF from Yahoo Finance
 func (p *LiveProvider) fetchYahooFinanceETF(ctx context.Context, ticker string) (domain.ETF, error) {
-	// Yahoo Finance quote endpoint
-	apiURL := fmt.Sprintf("https://query1.finance.yahoo.com/v7/finance/quote?symbols=%s", ticker)
+	// Yahoo's v7 quote endpoint now rejects unauthenticated calls; the v8
+	// chart endpoint still serves name, currency, exchange and daily volumes.
+	apiURL := fmt.Sprintf("https://query1.finance.yahoo.com/v8/finance/chart/%s?range=3mo&interval=1d", url.PathEscape(ticker))
 
 	req, err := http.NewRequestWithContext(ctx, "GET", apiURL, nil)
 	if err != nil {
@@ -197,16 +198,20 @@ func (p *LiveProvider) fetchYahooFinanceETF(ctx context.Context, ticker string) 
 	}
 	defer resp.Body.Close()
 
-	var result YahooFinanceResponse
+	if resp.StatusCode != http.StatusOK {
+		return domain.ETF{}, fmt.Errorf("yahoo chart %s: HTTP %d", ticker, resp.StatusCode)
+	}
+
+	var result YahooChartResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return domain.ETF{}, err
 	}
 
-	if len(result.QuoteResponse.Result) == 0 {
+	if len(result.Chart.Result) == 0 {
 		return domain.ETF{}, fmt.Errorf("no data for ticker %s", ticker)
 	}
 
-	quote := result.QuoteResponse.Result[0]
+	quote := result.Chart.Result[0].toQuote()
 
 	// Fetch additional details from Yahoo Finance
 	details, _ := p.fetchYahooETFDetails(ctx, ticker)
@@ -276,6 +281,12 @@ func (p *LiveProvider) fetchYahooETFDetails(ctx context.Context, ticker string) 
 		return ETFDetails{}, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		// quoteSummary currently answers 401 without a session crumb; callers
+		// treat missing details as unknown data, never as defaults.
+		return ETFDetails{}, fmt.Errorf("yahoo quoteSummary %s: HTTP %d", ticker, resp.StatusCode)
+	}
 
 	var result YahooDetailResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
@@ -520,8 +531,11 @@ func (p *LiveProvider) deduplicate(etfs []domain.ETF) []domain.ETF {
 
 // Helper: Check if ETF matches criteria
 func (p *LiveProvider) matchesCriteria(etf domain.ETF, criteria Criteria) bool {
+	// Missing data is not a mismatch: when a source didn't supply asset class
+	// or sector data, let the ETF through and let match scoring rank it.
+
 	// Match asset classes
-	if len(criteria.AssetClasses) > 0 {
+	if len(criteria.AssetClasses) > 0 && etf.AssetClass != "" {
 		matched := false
 		for _, assetClass := range criteria.AssetClasses {
 			if strings.Contains(strings.ToLower(etf.AssetClass), strings.ToLower(assetClass)) {
@@ -535,7 +549,7 @@ func (p *LiveProvider) matchesCriteria(etf domain.ETF, criteria Criteria) bool {
 	}
 
 	// Match sectors
-	if len(criteria.Sectors) > 0 {
+	if len(criteria.Sectors) > 0 && len(etf.SectorExposure) > 0 {
 		matched := false
 		for _, sector := range criteria.Sectors {
 			for _, etfSector := range etf.SectorExposure {
@@ -658,6 +672,72 @@ type YahooFinanceResponse struct {
 	QuoteResponse struct {
 		Result []YahooQuote `json:"result"`
 	} `json:"quoteResponse"`
+}
+
+// YahooChartResponse is the v8/finance/chart payload (only the fields used).
+type YahooChartResponse struct {
+	Chart struct {
+		Result []YahooChartResult `json:"result"`
+	} `json:"chart"`
+}
+
+type YahooChartResult struct {
+	Meta struct {
+		Symbol       string `json:"symbol"`
+		LongName     string `json:"longName"`
+		ShortName    string `json:"shortName"`
+		ExchangeName string `json:"exchangeName"`
+		Currency     string `json:"currency"`
+	} `json:"meta"`
+	Indicators struct {
+		Quote []struct {
+			Volume []*float64 `json:"volume"`
+		} `json:"quote"`
+	} `json:"indicators"`
+}
+
+// toQuote maps a chart result onto the quote fields the provider uses.
+// Market cap is not available from the chart endpoint and stays zero.
+func (r YahooChartResult) toQuote() YahooQuote {
+	name := r.Meta.LongName
+	if name == "" {
+		name = r.Meta.ShortName
+	}
+	var sum float64
+	var n int
+	if len(r.Indicators.Quote) > 0 {
+		for _, v := range r.Indicators.Quote[0].Volume {
+			if v != nil {
+				sum += *v
+				n++
+			}
+		}
+	}
+	var avg int64
+	if n > 0 {
+		avg = int64(sum / float64(n))
+	}
+	return YahooQuote{
+		Symbol:                   r.Meta.Symbol,
+		LongName:                 name,
+		Exchange:                 r.Meta.ExchangeName,
+		Currency:                 majorCurrency(r.Meta.Currency),
+		AverageDailyVolume3Month: avg,
+	}
+}
+
+// majorCurrency maps Yahoo's minor-unit codes (JSE quotes in cents as "ZAc",
+// LSE in pence as "GBp") to their ISO-4217 currency.
+func majorCurrency(code string) string {
+	switch code {
+	case "ZAc", "ZAC":
+		return "ZAR"
+	case "GBp", "GBX":
+		return "GBP"
+	case "ILA":
+		return "ILS"
+	}
+	return code
 }
 
 type YahooQuote struct {

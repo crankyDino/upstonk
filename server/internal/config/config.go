@@ -36,9 +36,9 @@ type LoggingConfig struct {
 
 func Load() (*Config, error) {
 
+	// .env is optional: values can come from the real environment instead.
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Failed to load .env file")
-		// ErrorHandler(err, wr)
+		log.Printf("No .env file loaded (%v); using environment variables and defaults", err)
 	}
 
 	cfg := &Config{
