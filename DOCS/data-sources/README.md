@@ -51,4 +51,5 @@ The live test tier (`go test -tags live ./...`, see [development](../development
 | `results` empty for a ZA TFSA search, warning `NO_ELIGIBLE_RESULTS` | Eligibility is `unknown` because the provider is missing. Use `tfsaEligibleOnly: false` + `includeAlternatives: true` to see candidates. |
 | `UNVERIFIED_AUM` / `UNVERIFIED_TER` warnings | Expected while quoteSummary is blocked |
 | Server log shows `yahoo chart …: HTTP 429` | Yahoo rate limiting; retry later. The 1-hour cache cuts repeat calls. |
+| `503 DATA_SOURCE_ERROR` | Every data source failed (network down, or all lookups refused). `details` lists each source's error. |
 | Second identical request is instant, with `cacheHit: true` | Served from the cache |

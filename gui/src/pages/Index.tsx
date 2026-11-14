@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { InvestorProfileForm } from '@/components/InvestorProfileForm';
 import { ExposureSelector } from '@/components/ExposureSelector';
 import { ConstraintsPanel } from '@/components/ConstraintsPanel';
+import { RankingWeightsPanel } from '@/components/RankingWeightsPanel';
 import { ResultsTable } from '@/components/ResultsTable';
 import { ETFDetailDrawer } from '@/components/ETFDetailDrawer';
 import { WarningsPanel } from '@/components/WarningsPanel';
@@ -118,6 +119,7 @@ const Index = () => {
                 
                 <TabsContent value="constraints" className="mt-0">
                   <ConstraintsPanel />
+                  <RankingWeightsPanel />
                 </TabsContent>
               </Tabs>
 

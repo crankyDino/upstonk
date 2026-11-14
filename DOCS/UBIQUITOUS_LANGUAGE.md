@@ -47,7 +47,7 @@ The words UPSTONK uses for its domain, and what each one means. When code, docs,
 | **Sector** | An industry grouping, e.g. technology, healthcare. | Industry |
 | **Asset class** | A broad type of holding, e.g. equity, bond, commodity. | Asset type, category |
 | **Constraint** | A hard filter that removes ETFs, e.g. max TER, min AUM, minimum average daily volume, excluded structures. | Filter, criterion, restriction |
-| **Ranking weights** | The share each ranking component contributes to the ranking score; must sum to 1.0. | Preferences, priorities, weighting |
+| **Ranking weights** | The share each ranking component contributes to the ranking score; must sum to 1.0 (the GUI's sliders are normalised to that). | Preferences, priorities, weighting |
 
 ## Eligibility
 

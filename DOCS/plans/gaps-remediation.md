@@ -3,7 +3,7 @@
 ## Context
 The root README's "Known gaps & gotchas" lists 13 places where UPSTONK is broken, misleading or unfinished: a CORS typo that blocks the GUI, a port collision, a mandatory `.env`, config that nothing reads, fuzzy matching that is really exact equality, a GUI that never sends constraints or ranking weights, `cacheHit` always false, stale scaffold docs, dead code, and only one eligibility rule. The user asked for a multi-phase, test-first plan to fix them, saved under `DOCS/`.
 
-**Status:** approved 2026-11-14. Phases 0–6 done 2026-11-15; open follow-ups are in `DOCS/development/known-gaps.md`. Each phase is one branch and one PR.
+**Status:** approved 2026-11-14. Phases 0–7 done 2026-11-15; open follow-ups are in `DOCS/development/known-gaps.md`. Each phase is one branch and one PR.
 
 ## Decisions (from grilling, 2026-11-14)
 | Topic | Decision |
@@ -154,6 +154,8 @@ Added 2026-11-15; done on the single `dev` branch.
 | 20 | Ranking-weights panel in the GUI: four 0–100 sliders (fees, liquidity, tracking, fund size) showing each one's resulting share; the builder already normalises. | lint + type-check + contract fixture |
 
 Decisions (2026-11-15): neutral 0.5 for unknown values; sliders, auto-normalised.
+
+**Done 2026-11-15.** The outage path was checked end to end by running the server with `HTTPS_PROXY` pointing at a closed port, which gave `503 DATA_SOURCE_ERROR`; a normal run returned results. `LiveProvider` now also reports when all its own sub-sources fail.
 
 ---
 
