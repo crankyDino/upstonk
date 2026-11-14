@@ -3,7 +3,7 @@
 ## Context
 The root README's "Known gaps & gotchas" lists 13 places where UPSTONK is broken, misleading or unfinished: a CORS typo that blocks the GUI, a port collision, a mandatory `.env`, config that nothing reads, fuzzy matching that is really exact equality, a GUI that never sends constraints or ranking weights, `cacheHit` always false, stale scaffold docs, dead code, and only one eligibility rule. The user asked for a multi-phase, test-first plan to fix them, saved under `DOCS/`.
 
-**Status:** approved 2026-11-14. No phase started yet. Each phase is one branch and one PR.
+**Status:** approved 2026-11-14. Phases 0–6 done 2026-11-15; open follow-ups are in `DOCS/development/known-gaps.md`. Each phase is one branch and one PR.
 
 ## Decisions (from grilling, 2026-11-14)
 | Topic | Decision |
@@ -134,6 +134,13 @@ None of the old TFSA examples returns results with today's live data. The script
 3. **Make rule selection deterministic**: `eligibility.DefaultEngine` currently iterates a Go map. Once there is more than one rule, the matching rule has to be selected in a fixed order.
 4. **TDD each rule** at the `discovery.Service` seam (real engine, fake provider): for example, a GB/isa request with a UCITS ETF on the LSE → expected status and confidence; a leveraged ETF → ineligible. Register the rules in `main.go`.
 5. Update the docs and remove gotcha 10.
+
+**Done 2026-11-15.** Research: `DOCS/research/etf-eligibility-isa-ira-401k.md`. ADR: `DOCS/architecture/adr/0001-provider-dependent-eligibility.md`. Decisions made along the way:
+- **401(k) is always `unknown`** with a plan-menu reason, an exception to the ADR, because `conditional` would set `isEligible`.
+- **Structure flags became tri-state (`*bool`)**, because the research showed missing data was being read as `false`. Consequences: TFSA leverage/inverse checks are skipped without data; structure constraints keep and flag (`UNVERIFIED_STRUCTURE`); merges take the first known flag; providers stop inventing flags (every live ETF had been "physical").
+- **Rules built now with fixture data**, so they tighten automatically once a source supplies domicile and legal structure.
+
+Remaining open items are known gaps 23–26.
 
 ---
 

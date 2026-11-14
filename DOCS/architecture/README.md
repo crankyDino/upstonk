@@ -22,8 +22,10 @@
          ┌─────────────▼───┐ ┌────────▼───────┐ ┌───▼────────────┐
          │ search.Provider │ │ eligibility.   │ │ ranking.Engine │
          │ Aggregated      │ │ Engine         │ │ WeightedScorer │
-         │  ├─ Live        │ │  └─ TFSA_ZA    │ │                │
-         │  └─ AlphaVantage│ │                │ │                │
+         │  ├─ Live        │ │  ├─ TFSA_ZA    │ │                │
+         │  └─ AlphaVantage│ │  ├─ ISA_UK     │ │                │
+         │                 │ │  ├─ IRA_US     │ │                │
+         │                 │ │  └─ 401K_US    │ │                │
          │  + 1h cache     │ │                │ │                │
          └────────┬────────┘ └────────────────┘ └────────────────┘
                   │
@@ -67,17 +69,28 @@ The current status of each upstream source is in [data-sources](../data-sources/
 
 ## Eligibility model
 
-`eligibility.DefaultEngine` is a registry of `Rule`s. A rule declares which country/account pair it applies to, and returns a `domain.EligibilityResult` with per-criterion evidence (passed / failed / skipped).
+`eligibility.DefaultEngine` is a registry of `Rule`s, checked in registration order (the first one that applies wins). A rule declares which country/account pair it applies to, and returns a `domain.EligibilityResult` with per-criterion evidence (passed / failed / skipped).
 
-**Registered rule:** `TFSA_ZA`, version `tfsa_za_v1.0_2025` (`server/internal/service/eligibility/rules/tfsa_za.go`), based on Income Tax Act 1962 §12T. It checks:
+Structure flags (`isPhysical`, `isSynthetic`, `isLeveraged`, `isInverse`) are tri-state. A flag no source reported is unknown, never `false`: the TFSA leverage/inverse criteria are skipped, and structure constraints keep the fund and raise `UNVERIFIED_STRUCTURE`.
+
+| Rule | Applies to | Version | Outcome in short |
+|---|---|---|---|
+| `TFSA_ZA` | ZA `tfsa` | `tfsa_za_v1.0_2025` | Details below |
+| `ISA_UK` | GB `isa` | `isa_uk_v1.0_2026` | Qualifying route (UK/recognised UCITS, NURS, or recognised-exchange listing) can't be fully confirmed from our data → `conditional`; no listing or structure data → `unknown`; `ineligible` only for a known non-UCITS fund quoted only off-exchange (e.g. OTC). US-listed funds warn that UK platforms can't sell them to retail investors without a product summary/KID. |
+| `IRA_US` | US `ira`, `roth_ira` | `ira_us_v1.0_2026` | No ETF fails IRA law → always `conditional` (custodian decides), with notes for metal-backed (collectibles), non-US-domiciled, partnership and leveraged/inverse funds. |
+| `401K_US` | US `401k` | `k401_us_v1.0_2026` | Always `unknown`, confidence `none`: only the plan menu decides. |
+
+The ISA, IRA and 401(k) rules follow [ADR 0001](adr/0001-provider-dependent-eligibility.md) and cite [the research](../research/etf-eligibility-isa-ira-401k.md).
+
+**`TFSA_ZA`**, version `tfsa_za_v1.0_2025` (`server/internal/service/eligibility/rules/tfsa_za.go`), based on Income Tax Act 1962 §12T. It checks:
 1. JSE listing
 2. ZAR or USD denomination
-3. Not leveraged or inverse
+3. Not leveraged or inverse (skipped when no source reports it)
 4. An approved SA provider: Satrix, CoreShares, 1nvest, Cloud Atlas, Absa, Standard Bank, Sygnia, Ashburton (matched against `etf.Provider`)
 5. Implicit SARS approval (JSE + approved provider)
 6. Replication method
 
-**When no rule matches:** a `standard` account → `eligible`, `medium` confidence. Any tax-advantaged account (`isa`, `ira`, `roth_ira`, `401k`) → `unknown`, `none` confidence.
+**When no rule matches:** a `standard` account → `eligible`, `medium` confidence; any other account → `unknown`, `none` confidence. Every supported tax-advantaged account now has a rule.
 
 | Status | Meaning |
 |---|---|

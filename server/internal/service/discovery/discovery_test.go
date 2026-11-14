@@ -422,3 +422,161 @@ func TestStructureFlagKnownToAnySourceSurvivesTheMerge(t *testing.T) {
 		t.Fatalf("results = %v, want [PLAIN] (LEV is leveraged per one source)", got)
 	}
 }
+
+func requestFor(country, account string) dto.DiscoveryRequest {
+	req := standardRequest(dto.ExposureRequest{})
+	req.InvestorProfile.Country = country
+	req.InvestorProfile.AccountType = account
+	req.OutputOptions.ExplainEligibility = true
+	req.OutputOptions.IncludeAlternatives = true
+	return req
+}
+
+// onlyFund returns the single ETF from results or alternatives (unknown and
+// ineligible funds land in alternatives).
+func onlyFund(t *testing.T, res *discovery.DiscoveryResult) dto.ETFResult {
+	t.Helper()
+	all := append(append([]dto.ETFResult{}, res.Results...), res.Alternatives...)
+	if len(all) != 1 {
+		t.Fatalf("got %d funds, want 1", len(all))
+	}
+	return all[0]
+}
+
+func hasWarningContaining(e dto.EligibilityDetail, substr string) bool {
+	for _, w := range e.Warnings {
+		if strings.Contains(strings.ToLower(w), strings.ToLower(substr)) {
+			return true
+		}
+	}
+	return false
+}
+
+// spy is a US-listed ETF as live data describes it today: exchange known,
+// domicile and legal structure not reported.
+func spy() domain.ETF {
+	return domain.ETF{Ticker: "SPY", Exchange: "PCX", ExchangeCountry: "US", Currency: "USD",
+		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false)}
+}
+
+func TestISAWithUSListedETFIsConditionalWithRetailDisclosureWarning(t *testing.T) {
+	el := onlyFund(t, discover(t, requestFor("GB", "isa"), spy())).Eligibility
+
+	if el.Status != "conditional" {
+		t.Fatalf("status = %q, want conditional", el.Status)
+	}
+	if el.RuleVersion != "isa_uk_v1.0_2026" {
+		t.Fatalf("ruleVersion = %q, want isa_uk_v1.0_2026", el.RuleVersion)
+	}
+	if !hasWarningContaining(el, "product summary") {
+		t.Fatalf("no UK retail product-summary/KID warning in %v", el.Warnings)
+	}
+}
+
+func TestISAWithNoListingOrStructureDataIsUnknown(t *testing.T) {
+	el := onlyFund(t, discover(t, requestFor("GB", "isa"), domain.ETF{Ticker: "BLANK"})).Eligibility
+
+	if el.Status != "unknown" || el.IsEligible {
+		t.Fatalf("status = %q (isEligible %v), want unknown/false", el.Status, el.IsEligible)
+	}
+}
+
+func TestISAWithNonUCITSFundQuotedOnlyOTCIsIneligible(t *testing.T) {
+	otc := domain.ETF{Ticker: "OTCX", Exchange: "PNK", LegalStructure: "Grantor Trust"}
+
+	res := discover(t, requestFor("GB", "isa"), otc)
+
+	// Ineligible funds are always filtered out; the summary counts them.
+	if res.Summary.TotalIneligible != 1 || len(res.Results)+len(res.Alternatives) != 0 {
+		t.Fatalf("summary = %+v, results = %d, alternatives = %d; want 1 ineligible and nothing shown",
+			res.Summary, len(res.Results), len(res.Alternatives))
+	}
+}
+
+func TestISALeveragedETFIsConditionalNotIneligible(t *testing.T) {
+	lev := spy()
+	lev.Ticker, lev.IsLeveraged = "SSO", domain.Flag(true)
+
+	el := onlyFund(t, discover(t, requestFor("GB", "isa"), lev)).Eligibility
+
+	if el.Status != "conditional" {
+		t.Fatalf("status = %q, want conditional (leverage is legal in an ISA)", el.Status)
+	}
+	if !hasWarningContaining(el, "leveraged") {
+		t.Fatalf("no provider-restriction warning for leverage in %v", el.Warnings)
+	}
+}
+
+func TestISAUKUCITSIsConditionalPendingFCARegisterCheck(t *testing.T) {
+	ucits := domain.ETF{Ticker: "VUSA", Exchange: "LSE", Domicile: "GB", LegalStructure: "UCITS",
+		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false)}
+
+	el := onlyFund(t, discover(t, requestFor("GB", "isa"), ucits)).Eligibility
+
+	if el.Status != "conditional" || !hasWarningContaining(el, "FCA register") {
+		t.Fatalf("status = %q, warnings = %v; want conditional with an FCA-register note", el.Status, el.Warnings)
+	}
+}
+
+func TestIRAPlainUSETFIsConditionalOnCustodian(t *testing.T) {
+	for _, account := range []string{"ira", "roth_ira"} {
+		el := onlyFund(t, discover(t, requestFor("US", account), spy())).Eligibility
+
+		if el.Status != "conditional" {
+			t.Fatalf("%s: status = %q, want conditional", account, el.Status)
+		}
+		if el.RuleVersion != "ira_us_v1.0_2026" {
+			t.Fatalf("%s: ruleVersion = %q, want ira_us_v1.0_2026", account, el.RuleVersion)
+		}
+		if !hasWarningContaining(el, "custodian") {
+			t.Fatalf("%s: no custodian warning in %v", account, el.Warnings)
+		}
+	}
+}
+
+func TestIRASpecialCasesStayConditionalWithTheirWarning(t *testing.T) {
+	gold := spy()
+	gold.Ticker, gold.AssetClass, gold.IsPhysical = "GLD", "Commodity", domain.Flag(true)
+	foreign := spy()
+	foreign.Ticker, foreign.Domicile, foreign.Exchange = "VUAA", "IE", "LSE"
+	inverse := spy()
+	inverse.Ticker, inverse.IsInverse = "SH", domain.Flag(true)
+
+	cases := []struct {
+		etf  domain.ETF
+		want string // substring of the expected warning
+	}{
+		{gold, "collectible"},
+		{foreign, "non-US"},
+		{inverse, "inverse"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.etf.Ticker, func(t *testing.T) {
+			el := onlyFund(t, discover(t, requestFor("US", "ira"), tc.etf)).Eligibility
+
+			if el.Status != "conditional" {
+				t.Fatalf("status = %q, want conditional (IRA law doesn't exclude it)", el.Status)
+			}
+			if !hasWarningContaining(el, tc.want) {
+				t.Fatalf("no %q warning in %v", tc.want, el.Warnings)
+			}
+		})
+	}
+}
+
+func TestFourOhOneKIsAlwaysUnknownBecauseThePlanMenuDecides(t *testing.T) {
+	full := spy()
+	full.Domicile, full.LegalStructure, full.IsPhysical = "US", "Open-end fund", domain.Flag(true)
+
+	el := onlyFund(t, discover(t, requestFor("US", "401k"), full)).Eligibility
+
+	if el.Status != "unknown" || el.IsEligible {
+		t.Fatalf("status = %q (isEligible %v), want unknown/false", el.Status, el.IsEligible)
+	}
+	if el.RuleVersion != "k401_us_v1.0_2026" {
+		t.Fatalf("ruleVersion = %q, want k401_us_v1.0_2026", el.RuleVersion)
+	}
+	if !hasWarningContaining(el, "plan's investment menu") {
+		t.Fatalf("no plan-menu warning in %v", el.Warnings)
+	}
+}
