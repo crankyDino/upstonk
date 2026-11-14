@@ -20,12 +20,15 @@ call is missing, the result is marked `unknown` or `conditional` rather than `el
 ```
 upstonk/
 ├── server/              Go REST API (module `upstonk`, Go 1.25.5)
-│   ├── cmd/server/      main.go — config load, DI wiring, router, graceful shutdown
+│   ├── cmd/server/      main.go — config load, server start, graceful shutdown
 │   ├── internal/
 │   │   ├── api/
 │   │   │   ├── dto/         request/response contracts + validation tags
 │   │   │   ├── handlers/    DiscoveryHandler (discover, top performers, health)
-│   │   │   └── middleware/  logging, recovery, CORS, timeout
+│   │   │   ├── middleware/  logging, recovery, CORS, timeout
+│   │   │   └── router/      route table + HTML docs page (test seam)
+│   │   ├── app/         engine + search provider wiring shared by server and tests
+│   │   ├── testutil/    fakeprovider — test double for search.Provider
 │   │   ├── config/      env loading (.env via godotenv)
 │   │   ├── domain/      ETF, EligibilityResult, RankingScore, DataSource
 │   │   └── service/
@@ -79,7 +82,7 @@ upstonk/
 ```
 
 All three engines are interfaces (`search.Provider`, `eligibility.Engine`,
-`ranking.Engine`) wired in `server/cmd/server/main.go`, so providers, rules, and scoring
+`ranking.Engine`) wired in `server/internal/app`, so providers, rules, and scoring
 are swappable without touching the pipeline.
 
 ### The discovery pipeline
@@ -169,10 +172,11 @@ sum to 1.0 (±0.01).
 cd server
 go mod download
 
-# A .env file is REQUIRED — config.Load() calls log.Fatal if it is missing.
+# Optional: a .env file (or plain environment variables). Without one the
+# server runs on :8080 with defaults.
 cat > .env <<'EOF'
 ENVIRONMENT=development
-SERVER_ADDRESS=:8081
+SERVER_ADDRESS=:8080
 ALPHA_VANTAGE_API_KEY=demo
 JSE_API_KEY=
 JSE_API_BASE_URL=https://api.jse.co.za/v1
@@ -187,13 +191,12 @@ go run ./cmd/server
 air
 ```
 
-`SERVER_ADDRESS=:8081` is deliberate — the Vite dev server also defaults to port 8080
-(`gui/vite.config.ts`), so one of the two has to move.
+The API listens on 8080 and the Vite dev server on 5173 (`gui/vite.config.ts`).
 
 Verify:
 
 ```bash
-curl http://localhost:8081/api/v1/health
+curl http://localhost:8080/api/v1/health
 ```
 
 There is also a self-documenting HTML page at `GET /`.
@@ -204,17 +207,13 @@ There is also a self-documenting HTML page at `GET /`.
 cd gui
 npm install
 
-# Point the SPA at the API (defaults to http://localhost:8080/api/v1)
-echo 'VITE_UPSTONK_API_URL=http://localhost:8081/api/v1' > .env
+# The SPA calls http://localhost:8080/api/v1 by default; override with
+# VITE_UPSTONK_API_URL in gui/.env if the API runs elsewhere.
 
-npm run dev     # http://localhost:8080
+npm run dev     # http://localhost:5173
 ```
 
 Other scripts: `npm run build`, `npm run build:dev`, `npm run preview`, `npm run lint`.
-
-> **Heads up:** the CORS middleware currently sets a misspelled header name, so a browser
-> calling the API cross-origin will be blocked. See [Known gaps](#known-gaps--gotchas) —
-> it is a one-word fix in `server/internal/api/middleware/cors.go`.
 
 ### 3. Exercise the API directly
 
@@ -224,8 +223,7 @@ cd server
 ./examples/test_payloads.sh      # assorted discovery payloads
 ```
 
-Both scripts assume the API is on `http://localhost:8080`; edit the URL if you moved the
-server to `:8081`.
+Both scripts assume the API is on `http://localhost:8080`.
 
 ---
 
@@ -243,7 +241,7 @@ Base URL: `http://localhost:{port}/api/v1`
 ### `POST /api/v1/discover`
 
 ```bash
-curl -X POST http://localhost:8081/api/v1/discover \
+curl -X POST http://localhost:8080/api/v1/discover \
   -H "Content-Type: application/json" \
   -d '{
     "investorProfile": {
@@ -371,7 +369,7 @@ Per-request context 30s · server read 15s / write 30s / idle 60s · timeout mid
 
 ## Configuration
 
-### Server (`server/.env`, loaded by godotenv — the file must exist)
+### Server (environment variables, optionally from `server/.env`)
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -416,13 +414,13 @@ typography, lucide-react icons, sonner toasts, recharts, zod.
 
 ## Testing & tooling
 
-- **Go:** `go build ./...` and `go vet ./...` are clean. There are **no `_test.go` files
-  yet** — `go test ./...` passes trivially. Highest-value first tests: the TFSA rule's
-  status/confidence transitions, `applyConstraints`, and `WeightedScorer`.
+- **Go:** `go test ./...` runs offline tests at two seams: the HTTP router
+  (`internal/api/router`) and `discovery.Service`, with external data replaced by
+  `testutil/fakeprovider`. `go test -tags live ./...` adds tests against the real data
+  sources; they check shape and provenance only, and skip when offline.
 - **Live-data smoke tests:** `server/scripts/test_live_data.sh`, `server/examples/test_payloads.sh`.
 - **Frontend:** `npm run lint` (ESLint 9 flat config + typescript-eslint). No test runner configured.
-- **Live reload:** `air` (config in `server/.air.toml`, builds to `server/tmp/main`; the
-  config is gitignored — see Known gaps).
+- **Live reload:** `air` (config in `server/.air.toml`, builds to `server/tmp/main`).
 
 ---
 
@@ -430,14 +428,6 @@ typography, lucide-react icons, sonner toasts, recharts, zod.
 
 Things the code does *not* do, or does differently from the older docs in `server/`:
 
-1. **CORS header is misspelled.** `server/internal/api/middleware/cors.go` sets
-   `Access-Control-Allow-Origingit ` instead of `Access-Control-Allow-Origin`, so no
-   valid allow-origin header reaches the browser. Since the GUI and API are always on
-   different ports, browser requests fail until this is fixed.
-2. **Port collision by default.** Vite dev server and `SERVER_ADDRESS` both default to
-   `8080`. Move one (this README uses `:8081` for the API).
-3. **`.env` is mandatory.** `config.Load()` calls `log.Fatal` when godotenv cannot find a
-   `.env`, so the server refuses to boot on environment variables alone.
 4. **Cache config is inert.** `CACHE_ENABLED` / `CACHE_TTL_SECONDS` are read into
    `config.CacheConfig` but never consumed — the only cache is the hardcoded 1-hour
    in-memory cache inside `search.AggregatedProvider`, and `discovery.Service` hardcodes
@@ -456,15 +446,18 @@ Things the code does *not* do, or does differently from the older docs in `serve
    never reach the server.
 9. **Fuzzy matching is a stub.** `discovery.contains()` only does exact equality, so
    sector / asset-class / company match scoring is effectively exact-match today.
-10. **Only one eligibility rule.** UK ISA and US IRA registrations are commented out in
-    `main.go`; those account types validate at the handler but fall through to the
+10. **Only one eligibility rule.** Only `TFSA_ZA` is registered (in
+    `server/internal/app/engines.go`); those account types validate at the handler but fall through to the
     generic standard/unknown fallback.
 11. **Dead code:** `server/internal/service/search/provider_old.go` is entirely
     commented-out stub-provider code.
 12. **Lovable placeholders remain.** `gui/index.html` still has the "Lovable App" title
     and lovable.dev Open Graph / Twitter image meta tags.
-13. **`server/.air.toml` is gitignored** (`*/.air.toml`), so a fresh clone has no air
-    config. `air init` in `server/` generates one.
+13. **Yahoo returns only basic quote data.** Yahoo's `v7/finance/quote` and
+    `v10/finance/quoteSummary` endpoints now reject unauthenticated calls, so quotes come
+    from `v8/finance/chart` (name, currency, exchange, volume). AUM, TER, provider and
+    holdings are missing, which is why live TFSA results come back `unknown`. A source for
+    those fields still has to be chosen.
 
 ### Adding a country rule
 
@@ -485,7 +478,8 @@ func (r *ISAUKRules) Evaluate(ctx context.Context, etf domain.ETF) domain.Eligib
 }
 ```
 
-Then register it in `initializeEligibilityEngine()` in `server/cmd/server/main.go`:
+Then register it in `NewEligibilityEngine()` in `server/internal/app/engines.go` (the
+server and the tests both use it):
 
 ```go
 engine.RegisterRule(rules.NewISAUKRules())
@@ -495,7 +489,7 @@ engine.RegisterRule(rules.NewISAUKRules())
 
 Implement `search.Provider` (a single `Search(ctx, Criteria) ([]domain.ETF, error)`),
 populate `DataSources` on every ETF you return so provenance survives, and append it to
-the slice in `initializeSearchProvider()`. `AggregatedProvider` handles the parallelism,
+the slice in `NewSearchProvider()` in `server/internal/app/search.go`. `AggregatedProvider` handles the parallelism,
 deduplication, merging, and caching for you.
 
 ---
