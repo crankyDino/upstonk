@@ -66,6 +66,11 @@ Slices, in order:
 
 Delete `discovery.contains()` and the hardcoded `cacheEnabled` field once nothing uses them.
 
+**Findings while doing Phase 2:**
+- The cache key ignored asset classes, companies and vehicles, so an "equity" search could be answered with a cached "bond" search. Fixed: the key now covers every criterion (test: `TestRequestsForDifferentAssetClassesAreNotServedFromEachOthersCache`).
+- No provider fills `GeographicExposure.Regions`, so live geography scores are always 0. Left as a follow-up (README gotcha 9): it needs a data source for regional exposure and a GUI-code → region mapping. Nothing was invented.
+- The planned live check for sector matching was skipped: since the Yahoo drift, no live source returns sector data.
+
 ## Phase 3 — Remove inert config (gotchas 4 [config], 5)
 - Delete `CacheConfig`, `LoggingConfig` and `JSEAPIConfig` from `server/internal/config/config.go`, along with their env reads.
 - Delete `server/internal/service/search/provider_old.go` (gotcha 11).

@@ -105,7 +105,9 @@ seven steps:
 `search.AggregatedProvider` wraps the individual providers: parallel fan-out, a provider
 error is logged and skipped rather than failing the request, results are deduped and
 field-wise merged (first non-empty value wins; longest holdings/sector list wins), and
-the merged set is cached in memory for **1 hour** keyed on country + sectors + markets.
+the merged set is cached in memory for **1 hour**, keyed on every search criterion
+(country, markets, sectors, asset classes, companies, vehicles). `cacheHit` in the
+response says whether the search was served from that cache.
 
 | Provider | Source | Notes |
 |----------|--------|-------|
@@ -430,9 +432,9 @@ Things the code does *not* do, or does differently from the older docs in `serve
 
 4. **Cache config is inert.** `CACHE_ENABLED` / `CACHE_TTL_SECONDS` are read into
    `config.CacheConfig` but never consumed — the only cache is the hardcoded 1-hour
-   in-memory cache inside `search.AggregatedProvider`, and `discovery.Service` hardcodes
-   `cacheEnabled: true` while always reporting `cacheHit: false` in the response.
-   `LOG_LEVEL` / `LOG_FORMAT` are likewise unused; logging is the stdlib `log` package.
+   in-memory cache inside `search.AggregatedProvider` (its hits are reported truthfully
+   in `cacheHit`). `LOG_LEVEL` / `LOG_FORMAT` are likewise unused; logging is the stdlib
+   `log` package.
 5. **No JSE API client.** `JSE_API_KEY` / `JSE_API_BASE_URL` exist in config only. JSE
    coverage comes from the curated ticker list resolved via Yahoo Finance.
 6. **No Dockerfile or Makefile**, despite `server/README.md` and `server/QUICKSTART.md`
@@ -444,8 +446,11 @@ Things the code does *not* do, or does differently from the older docs in `serve
 8. **GUI under-uses the API.** `submitDiscovery()` sends `constraints: {}` and omits
    `rankingPreferences`, so the constraints panel and ranking weights collected in the UI
    never reach the server.
-9. **Fuzzy matching is a stub.** `discovery.contains()` only does exact equality, so
-   sector / asset-class / company match scoring is effectively exact-match today.
+9. **No provider supplies regional exposure.** Matching is case-insensitive (substring
+   for sectors, asset classes and companies; whole name for regions), but no search
+   provider fills `GeographicExposure.Regions`, so the geography part of `matchScore` is
+   0 for live data. The GUI's market codes (`US`, `CA`, …) also need a mapping onto
+   whatever region names a future source uses.
 10. **Only one eligibility rule.** Only `TFSA_ZA` is registered (in
     `server/internal/app/engines.go`); those account types validate at the handler but fall through to the
     generic standard/unknown fallback.
