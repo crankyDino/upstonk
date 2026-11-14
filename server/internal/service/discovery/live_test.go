@@ -84,3 +84,48 @@ func TestLiveZATFSAReturnsJSEListedResultsWithProvenance(t *testing.T) {
 		}
 	}
 }
+
+// Each Phase 6 rule, against live data: it must run (ruleVersion set) and,
+// under ADR 0001, must never claim plain "eligible".
+func TestLiveTaxAdvantagedRulesNeverClaimPlainEligible(t *testing.T) {
+	requireNetwork(t)
+
+	cases := []struct {
+		country, account, version string
+		allowed                   map[string]bool
+	}{
+		{"GB", "isa", "isa_uk_v1.0_2026", map[string]bool{"conditional": true, "unknown": true}},
+		{"US", "ira", "ira_us_v1.0_2026", map[string]bool{"conditional": true}},
+		{"US", "roth_ira", "ira_us_v1.0_2026", map[string]bool{"conditional": true}},
+		{"US", "401k", "k401_us_v1.0_2026", map[string]bool{"unknown": true}},
+	}
+	svc := newLiveService()
+	for _, tc := range cases {
+		t.Run(tc.country+"/"+tc.account, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+			defer cancel()
+			req := dto.DiscoveryRequest{
+				InvestorProfile:    dto.InvestorProfile{Country: tc.country, AccountType: tc.account, Currency: "USD"},
+				Exposure:           dto.ExposureRequest{Geography: dto.GeographyExposureRequest{Markets: []string{"usa"}}},
+				InvestmentVehicles: []string{"etf"},
+				OutputOptions:      dto.OutputOptions{MaxResults: 10, IncludeAlternatives: true},
+			}
+			res, err := svc.DiscoverETFs(ctx, req)
+			if err != nil {
+				t.Fatalf("DiscoverETFs: %v", err)
+			}
+			all := append(res.Results, res.Alternatives...)
+			if len(all) == 0 {
+				t.Fatalf("no funds returned (summary %+v)", res.Summary)
+			}
+			for _, r := range all {
+				if r.Eligibility.RuleVersion != tc.version {
+					t.Errorf("%s: ruleVersion %q, want %q", r.Ticker, r.Eligibility.RuleVersion, tc.version)
+				}
+				if !tc.allowed[r.Eligibility.Status] {
+					t.Errorf("%s: status %q not allowed with today's data", r.Ticker, r.Eligibility.Status)
+				}
+			}
+		})
+	}
+}

@@ -69,22 +69,18 @@ The router tests POST these and fail if the server rejects the default request o
 
 ## Adding a country rule
 
+Research the law first (primary sources, into `DOCS/research/`), then follow `rules/isa_uk.go` as the model:
+
 ```go
-// server/internal/service/eligibility/rules/isa_uk.go
-type ISAUKRules struct{ version string }
-
-func (r *ISAUKRules) Name() string    { return "ISA_UK" }
-func (r *ISAUKRules) Version() string { return "isa_uk_v1.0_2025" }
-
-func (r *ISAUKRules) AppliesTo(country, accountType string) bool {
-    return strings.ToUpper(country) == "GB" && strings.ToLower(accountType) == "isa"
-}
-
-func (r *ISAUKRules) Evaluate(ctx context.Context, etf domain.ETF) domain.EligibilityResult {
-    // Fill RulesPassed / RulesFailed / RulesSkipped, Evidence and Reasons,
-    // then set Status + Confidence. Prefer `unknown` over an optimistic guess.
+func (r *MyRules) Evaluate(_ context.Context, etf domain.ETF) domain.EligibilityResult {
+    b := newResult(r.version)          // rules/result.go
+    // Legal criteria: b.pass / b.fail (only on data we have) / b.skip (missing data).
+    // Platform or plan constraints: b.providerWarning — caps the result at conditional.
+    return b.finish()
 }
 ```
+
+Structure flags are `*bool`: use `domain.IsTrue` / `domain.IsFalse`, and treat `nil` as unknown. Write the tests first at the `discovery.Service` seam (see `discovery_test.go`, e.g. the ISA tests), and add a live check in `live_test.go`.
 
 Register it in `NewEligibilityEngine()` in `server/internal/app/engines.go`; the server and the tests both pick it up. The country/account pair must also be in `isAccountTypeSupported` (`internal/api/handlers/discovery.go`) and in `SUPPORTED_ACCOUNTS` (`gui/src/lib/discoveryOptions.ts`). The contract test catches the GUI and server disagreeing.
 

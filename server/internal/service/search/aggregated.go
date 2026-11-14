@@ -143,6 +143,20 @@ func (a *AggregatedProvider) mergeETFData(etfs []domain.ETF) domain.ETF {
 			merged.TrackingIndex = etf.TrackingIndex
 		}
 
+		// Structure flags: the first source that actually reports one wins.
+		if merged.IsPhysical == nil {
+			merged.IsPhysical = etf.IsPhysical
+		}
+		if merged.IsSynthetic == nil {
+			merged.IsSynthetic = etf.IsSynthetic
+		}
+		if merged.IsLeveraged == nil {
+			merged.IsLeveraged = etf.IsLeveraged
+		}
+		if merged.IsInverse == nil {
+			merged.IsInverse = etf.IsInverse
+		}
+
 		// Merge holdings (prefer longer list)
 		if len(etf.TopHoldings) > len(merged.TopHoldings) {
 			merged.TopHoldings = etf.TopHoldings

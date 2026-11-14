@@ -7,23 +7,31 @@ import (
 	"upstonk/internal/domain"
 )
 
+// DefaultEngine evaluates an ETF against the first registered rule that
+// applies. Rules are checked in registration order so the outcome is
+// deterministic when rules overlap.
 type DefaultEngine struct {
-	rules map[string]Rule
+	rules []Rule
+	index map[string]int // Name_Version -> position in rules
 }
 
 func NewEngine() Engine {
-	return &DefaultEngine{
-		rules: make(map[string]Rule),
-	}
+	return &DefaultEngine{index: make(map[string]int)}
 }
 
+// RegisterRule adds a rule. Registering the same name and version again
+// replaces the earlier rule in place.
 func (e *DefaultEngine) RegisterRule(rule Rule) {
 	key := fmt.Sprintf("%s_%s", rule.Name(), rule.Version())
-	e.rules[key] = rule
+	if i, ok := e.index[key]; ok {
+		e.rules[i] = rule
+		return
+	}
+	e.index[key] = len(e.rules)
+	e.rules = append(e.rules, rule)
 }
 
 func (e *DefaultEngine) Evaluate(ctx context.Context, etf domain.ETF, country, accountType string) domain.EligibilityResult {
-	// Find applicable rule
 	for _, rule := range e.rules {
 		if rule.AppliesTo(country, accountType) {
 			return rule.Evaluate(ctx, etf)

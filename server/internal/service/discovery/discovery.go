@@ -61,7 +61,7 @@ func (s *Service) DiscoverETFs(ctx context.Context, req dto.DiscoveryRequest) (*
 	evaluatedETFs, summary := s.evaluateEligibility(ctx, candidates, req.InvestorProfile)
 
 	// Step 3: Filter based on constraints
-	filtered := s.applyConstraints(evaluatedETFs, req.Constraints)
+	filtered, unverifiedStructure := s.applyConstraints(evaluatedETFs, req.Constraints)
 
 	// Step 4: Calculate match scores (how well each ETF matches requested exposure)
 	scored := s.calculateMatchScores(filtered, req.Exposure)
@@ -73,7 +73,7 @@ func (s *Service) DiscoverETFs(ctx context.Context, req dto.DiscoveryRequest) (*
 	results, alternatives := s.buildOutput(ranked, req.OutputOptions)
 
 	// Step 7: Generate warnings
-	warnings := s.generateWarnings(results, req)
+	warnings := s.generateWarnings(results, req, unverifiedStructure)
 
 	searchDuration := time.Since(startTime).Milliseconds()
 
@@ -147,8 +147,12 @@ func (s *Service) evaluateEligibility(
 	return discovered, summary
 }
 
-func (s *Service) applyConstraints(etfs []domain.DiscoveredETF, constraints dto.Constraints) []domain.DiscoveredETF {
+// applyConstraints drops ETFs that fail a constraint on known data. It also
+// returns the tickers kept despite a structure constraint because the flag it
+// checks is unknown, so they can be flagged rather than silently passed.
+func (s *Service) applyConstraints(etfs []domain.DiscoveredETF, constraints dto.Constraints) ([]domain.DiscoveredETF, map[string]bool) {
 	filtered := make([]domain.DiscoveredETF, 0)
+	unverifiedStructure := make(map[string]bool)
 
 	// Build exchange allowlist map for fast lookup
 	allowedExchanges := make(map[string]bool)
@@ -195,23 +199,31 @@ func (s *Service) applyConstraints(etfs []domain.DiscoveredETF, constraints dto.
 		}
 
 		// Synthetic exclusion
-		if constraints.ExcludeSyntheticETFs && etf.IsSynthetic {
+		if constraints.ExcludeSyntheticETFs && domain.IsTrue(etf.IsSynthetic) {
 			continue
 		}
 
 		// Leveraged exclusion
-		if constraints.ExcludeLeveragedETFs && etf.IsLeveraged {
+		if constraints.ExcludeLeveragedETFs && domain.IsTrue(etf.IsLeveraged) {
 			continue
 		}
 
 		// Inverse exclusion
-		if constraints.ExcludeInverseETFs && etf.IsInverse {
+		if constraints.ExcludeInverseETFs && domain.IsTrue(etf.IsInverse) {
 			continue
 		}
 
 		// Physical only
-		if constraints.PhysicalOnly && !etf.IsPhysical {
+		if constraints.PhysicalOnly && domain.IsFalse(etf.IsPhysical) {
 			continue
+		}
+
+		// Structure constraints only drop on known flags; unknown ones are flagged.
+		if (constraints.ExcludeSyntheticETFs && etf.IsSynthetic == nil) ||
+			(constraints.ExcludeLeveragedETFs && etf.IsLeveraged == nil) ||
+			(constraints.ExcludeInverseETFs && etf.IsInverse == nil) ||
+			(constraints.PhysicalOnly && etf.IsPhysical == nil) {
+			unverifiedStructure[etf.Ticker] = true
 		}
 
 		// Liquidity constraint
@@ -222,7 +234,7 @@ func (s *Service) applyConstraints(etfs []domain.DiscoveredETF, constraints dto.
 		filtered = append(filtered, discovered)
 	}
 
-	return filtered
+	return filtered, unverifiedStructure
 }
 
 func (s *Service) calculateMatchScores(etfs []domain.DiscoveredETF, exposure dto.ExposureRequest) []domain.DiscoveredETF {
@@ -431,7 +443,7 @@ func (s *Service) toETFResult(discovered domain.DiscoveredETF, options dto.Outpu
 	return result
 }
 
-func (s *Service) generateWarnings(results []dto.ETFResult, req dto.DiscoveryRequest) []dto.Warning {
+func (s *Service) generateWarnings(results []dto.ETFResult, req dto.DiscoveryRequest, unverifiedStructure map[string]bool) []dto.Warning {
 	warnings := []dto.Warning{}
 
 	if len(results) == 0 {
@@ -452,6 +464,8 @@ func (s *Service) generateWarnings(results []dto.ETFResult, req dto.DiscoveryReq
 		warnings = appendUnverified(warnings, results, "UNVERIFIED_TER", "Total expense ratio (TER)", "maximum TER",
 			func(r dto.ETFResult) bool { return r.TER == 0 })
 	}
+	warnings = appendUnverified(warnings, results, "UNVERIFIED_STRUCTURE", "Fund structure (synthetic, leveraged, inverse or physical)", "structure",
+		func(r dto.ETFResult) bool { return unverifiedStructure[r.Ticker] })
 
 	// Check for low confidence results
 	lowConfidenceCount := 0

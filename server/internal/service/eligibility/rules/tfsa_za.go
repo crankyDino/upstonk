@@ -147,38 +147,37 @@ func (r *TFSASouthAfricaRules) checkCurrency(result *domain.EligibilityResult, e
 }
 
 func (r *TFSASouthAfricaRules) checkETFStructure(result *domain.EligibilityResult, etf domain.ETF) {
-	// Check leveraged
-	leveragedCriterion := "no_leverage"
-	if etf.IsLeveraged {
-		result.RulesFailed = append(result.RulesFailed, leveragedCriterion)
-		result.Reasons = append(result.Reasons, "✗ Leveraged ETFs are not permitted in TFSAs")
-		result.IsEligible = false
-		result.Evidence = append(result.Evidence, domain.EligibilityEvidence{
-			Criterion: leveragedCriterion,
-			Expected:  "Non-leveraged ETF",
-			Actual:    "Leveraged ETF detected",
-			Result:    "fail",
-		})
-	} else {
-		result.RulesPassed = append(result.RulesPassed, leveragedCriterion)
-		result.Reasons = append(result.Reasons, "✓ Not leveraged")
-	}
+	r.checkStructureFlag(result, etf.IsLeveraged, "no_leverage",
+		"Non-leveraged ETF", "Leveraged ETF detected",
+		"✗ Leveraged ETFs are not permitted in TFSAs", "✓ Not leveraged",
+		"⚠ Leverage not reported by any data source - verify the ETF is not leveraged")
+	r.checkStructureFlag(result, etf.IsInverse, "no_inverse",
+		"Standard tracking ETF", "Inverse ETF detected",
+		"✗ Inverse ETFs are not permitted in TFSAs", "✓ Not inverse",
+		"⚠ Inverse exposure not reported by any data source - verify the ETF is not inverse")
+}
 
-	// Check inverse
-	inverseCriterion := "no_inverse"
-	if etf.IsInverse {
-		result.RulesFailed = append(result.RulesFailed, inverseCriterion)
-		result.Reasons = append(result.Reasons, "✗ Inverse ETFs are not permitted in TFSAs")
+// checkStructureFlag fails the criterion when the flag is known true, passes
+// it when known false, and skips it when no source reported the flag.
+func (r *TFSASouthAfricaRules) checkStructureFlag(result *domain.EligibilityResult, flag *bool,
+	criterion, expected, actualIfTrue, failReason, passReason, unknownReason string) {
+	switch {
+	case domain.IsTrue(flag):
+		result.RulesFailed = append(result.RulesFailed, criterion)
+		result.Reasons = append(result.Reasons, failReason)
 		result.IsEligible = false
 		result.Evidence = append(result.Evidence, domain.EligibilityEvidence{
-			Criterion: inverseCriterion,
-			Expected:  "Standard tracking ETF",
-			Actual:    "Inverse ETF detected",
-			Result:    "fail",
+			Criterion: criterion, Expected: expected, Actual: actualIfTrue, Result: "fail",
 		})
-	} else {
-		result.RulesPassed = append(result.RulesPassed, inverseCriterion)
-		result.Reasons = append(result.Reasons, "✓ Not inverse")
+	case domain.IsFalse(flag):
+		result.RulesPassed = append(result.RulesPassed, criterion)
+		result.Reasons = append(result.Reasons, passReason)
+	default:
+		result.RulesSkipped = append(result.RulesSkipped, criterion)
+		result.Reasons = append(result.Reasons, unknownReason)
+		result.Evidence = append(result.Evidence, domain.EligibilityEvidence{
+			Criterion: criterion, Expected: expected, Actual: "not reported", Result: "unknown",
+		})
 	}
 }
 
@@ -269,7 +268,7 @@ func (r *TFSASouthAfricaRules) checkImplicitApproval(result *domain.EligibilityR
 func (r *TFSASouthAfricaRules) checkReplication(result *domain.EligibilityResult, etf domain.ETF) {
 	criterion := "replication_method"
 
-	if etf.IsSynthetic {
+	if domain.IsTrue(etf.IsSynthetic) {
 		result.RulesSkipped = append(result.RulesSkipped, criterion)
 		result.Reasons = append(result.Reasons, "⚠ Synthetic replication - verify TFSA approval with provider")
 		result.Confidence = domain.ConfidenceMedium
@@ -280,7 +279,7 @@ func (r *TFSASouthAfricaRules) checkReplication(result *domain.EligibilityResult
 			Actual:    "Synthetic replication",
 			Result:    "unknown",
 		})
-	} else if etf.IsPhysical {
+	} else if domain.IsTrue(etf.IsPhysical) {
 		result.RulesPassed = append(result.RulesPassed, criterion)
 		result.Reasons = append(result.Reasons, "✓ Physical replication")
 	}

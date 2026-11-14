@@ -127,9 +127,8 @@ func (p *AlphaVantageProvider) GetETFProfile(ctx context.Context, ticker string)
 		TER:             ter * 100, // Convert to percentage
 		AUM:             aum,
 		InceptionDate:   p.parseDate(overview.InceptionDate),
-		IsLeveraged:     strings.ToUpper(overview.Leveraged) == "YES",
-		IsInverse:       false, // Not provided by Alpha Vantage
-		IsPhysical:      true,  // Assume physical unless stated otherwise
+		IsLeveraged:     yesNoFlag(overview.Leveraged),
+		// Inverse and replication are not provided by Alpha Vantage: unknown.
 		DataSources: []domain.DataSource{
 			{
 				Type:        "API",
@@ -267,4 +266,16 @@ type AlphaVantageQuote struct {
 	Symbol string `json:"01. symbol"`
 	Price  string `json:"05. price"`
 	Volume int64  `json:"06. volume"`
+}
+
+// yesNoFlag maps Alpha Vantage's "YES"/"NO" to a known flag and anything
+// else to nil (unknown).
+func yesNoFlag(v string) *bool {
+	switch strings.ToUpper(strings.TrimSpace(v)) {
+	case "YES":
+		return domain.Flag(true)
+	case "NO":
+		return domain.Flag(false)
+	}
+	return nil
 }

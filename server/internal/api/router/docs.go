@@ -37,11 +37,11 @@ func serveDocumentation(w http.ResponseWriter, r *http.Request) {
     <h2>Supported Countries & Account Types</h2>
     <ul>
         <li><strong>South Africa (ZA)</strong>: TFSA (rule TFSA_ZA), Standard</li>
-        <li><strong>United States (US)</strong>: IRA, Roth IRA, 401(k), Standard</li>
-        <li><strong>United Kingdom (GB)</strong>: ISA, Standard</li>
+        <li><strong>United States (US)</strong>: IRA and Roth IRA (rule IRA_US), 401(k) (rule 401K_US), Standard</li>
+        <li><strong>United Kingdom (GB)</strong>: ISA (rule ISA_UK), Standard</li>
     </ul>
-    <p>Standard accounts are eligible by default. Tax-advantaged accounts other than ZA TFSA
-    have no eligibility rule yet, so their results are reported as <code>unknown</code>.</p>
+    <p>Standard accounts are eligible by default. Where eligibility depends on your account
+    provider or plan, results are <code>conditional</code> (or <code>unknown</code> for 401(k) plans).</p>
 
     <h2>Design Principles</h2>
     <ul>

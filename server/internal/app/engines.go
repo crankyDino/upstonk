@@ -12,6 +12,9 @@ import (
 func NewEligibilityEngine() eligibility.Engine {
 	engine := eligibility.NewEngine()
 	engine.RegisterRule(rules.NewTFSASouthAfricaRules())
+	engine.RegisterRule(rules.NewISAUKRules())
+	engine.RegisterRule(rules.NewIRAUSRules())
+	engine.RegisterRule(rules.NewK401USRules())
 	return engine
 }
 

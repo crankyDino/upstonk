@@ -11,6 +11,7 @@ import (
 	"upstonk/internal/app"
 	"upstonk/internal/domain"
 	"upstonk/internal/service/discovery"
+	"upstonk/internal/service/eligibility"
 	"upstonk/internal/service/search"
 	"upstonk/internal/testutil/fakeprovider"
 )
@@ -182,7 +183,7 @@ func tickers(results []dto.ETFResult) []string {
 
 func TestEachConstraintDropsTheETFThatViolatesIt(t *testing.T) {
 	// ok passes every constraint used below.
-	ok := domain.ETF{Ticker: "OK", TER: 0.2, AUM: 1e9, AverageDailyVolume: 200000, IsPhysical: true}
+	ok := domain.ETF{Ticker: "OK", TER: 0.2, AUM: 1e9, AverageDailyVolume: 200000, IsPhysical: domain.Flag(true)}
 
 	cases := []struct {
 		name        string
@@ -192,10 +193,10 @@ func TestEachConstraintDropsTheETFThatViolatesIt(t *testing.T) {
 		{"maxTER", dto.Constraints{MaxTER: 0.5}, func(e domain.ETF) domain.ETF { e.TER = 0.75; return e }},
 		{"minAUM", dto.Constraints{MinAUM: 1e8}, func(e domain.ETF) domain.ETF { e.AUM = 5e7; return e }},
 		{"minLiquidity", dto.Constraints{MinLiquidity: 100000}, func(e domain.ETF) domain.ETF { e.AverageDailyVolume = 50000; return e }},
-		{"excludeSynthetic", dto.Constraints{ExcludeSyntheticETFs: true}, func(e domain.ETF) domain.ETF { e.IsSynthetic = true; return e }},
-		{"excludeLeveraged", dto.Constraints{ExcludeLeveragedETFs: true}, func(e domain.ETF) domain.ETF { e.IsLeveraged = true; return e }},
-		{"excludeInverse", dto.Constraints{ExcludeInverseETFs: true}, func(e domain.ETF) domain.ETF { e.IsInverse = true; return e }},
-		{"physicalOnly", dto.Constraints{PhysicalOnly: true}, func(e domain.ETF) domain.ETF { e.IsPhysical = false; return e }},
+		{"excludeSynthetic", dto.Constraints{ExcludeSyntheticETFs: true}, func(e domain.ETF) domain.ETF { e.IsSynthetic = domain.Flag(true); return e }},
+		{"excludeLeveraged", dto.Constraints{ExcludeLeveragedETFs: true}, func(e domain.ETF) domain.ETF { e.IsLeveraged = domain.Flag(true); return e }},
+		{"excludeInverse", dto.Constraints{ExcludeInverseETFs: true}, func(e domain.ETF) domain.ETF { e.IsInverse = domain.Flag(true); return e }},
+		{"physicalOnly", dto.Constraints{PhysicalOnly: true}, func(e domain.ETF) domain.ETF { e.IsPhysical = domain.Flag(false); return e }},
 		{"allowedExchanges", dto.Constraints{AllowedExchanges: []string{"jse"}}, func(e domain.ETF) domain.ETF { e.Exchange = "NYSE"; return e }},
 	}
 
@@ -292,5 +293,290 @@ func TestUnknownTERPassesMaxTERButIsFlagged(t *testing.T) {
 	}
 	if !strings.Contains(flagged.Message, "NOTER") || strings.Contains(flagged.Message, "KNOWN") {
 		t.Fatalf("warning should name NOTER only, got %q", flagged.Message)
+	}
+}
+
+// namedRule is a minimal eligibility rule that applies to every request and
+// stamps its name into the result, so tests can see which rule ran.
+type namedRule struct{ name string }
+
+func (r namedRule) Name() string                           { return r.name }
+func (r namedRule) Version() string                        { return "v1" }
+func (r namedRule) AppliesTo(country, account string) bool { return true }
+func (r namedRule) Evaluate(_ context.Context, _ domain.ETF) domain.EligibilityResult {
+	return domain.EligibilityResult{Status: domain.StatusEligible, IsEligible: true, RuleVersion: r.name}
+}
+
+func TestOverlappingRulesAlwaysResolveToTheFirstRegistered(t *testing.T) {
+	engine := eligibility.NewEngine()
+	for _, n := range []string{"FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH"} {
+		engine.RegisterRule(namedRule{n})
+	}
+	svc := discovery.NewService(fakeprovider.New(domain.ETF{Ticker: "X"}), engine, app.NewRankingEngine())
+
+	for i := 0; i < 50; i++ {
+		res, err := svc.DiscoverETFs(context.Background(), standardRequest(dto.ExposureRequest{}))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := onlyResult(t, res).Eligibility.RuleVersion; got != "FIRST" {
+			t.Fatalf("run %d: rule %q applied, want FIRST", i, got)
+		}
+	}
+}
+
+// satrix40 is a JSE ETF with every TFSA-relevant attribute known.
+func satrix40() domain.ETF {
+	return domain.ETF{
+		Ticker: "STX40", Exchange: "JSE", ExchangeCountry: "ZA", Currency: "ZAR", Provider: "Satrix",
+		IsPhysical: domain.Flag(true), IsSynthetic: domain.Flag(false),
+		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false),
+	}
+}
+
+func tfsaRequest() dto.DiscoveryRequest {
+	req := standardRequest(dto.ExposureRequest{})
+	req.InvestorProfile.AccountType = "tfsa"
+	req.OutputOptions.ExplainEligibility = true
+	return req
+}
+
+func TestTFSAWithAllDataKnownIsEligible(t *testing.T) {
+	res := discover(t, tfsaRequest(), satrix40())
+
+	if got := onlyResult(t, res).Eligibility.Status; got != "eligible" {
+		t.Fatalf("status = %q, want eligible", got)
+	}
+}
+
+func TestTFSAWithUnknownLeverageAndInverseIsConditionalNotEligible(t *testing.T) {
+	etf := satrix40()
+	etf.IsLeveraged, etf.IsInverse = nil, nil
+
+	res := discover(t, tfsaRequest(), etf)
+
+	el := onlyResult(t, res).Eligibility
+	if el.Status != "conditional" {
+		t.Fatalf("status = %q, want conditional (two criteria unchecked)", el.Status)
+	}
+	for _, passed := range el.RulesPassed {
+		if passed == "no_leverage" || passed == "no_inverse" {
+			t.Fatalf("criterion %q passed without data; rulesPassed = %v", passed, el.RulesPassed)
+		}
+	}
+}
+
+func TestUnknownStructureFlagsPassTheirConstraintButAreFlagged(t *testing.T) {
+	cases := []struct {
+		name        string
+		constraints dto.Constraints
+	}{
+		{"excludeSynthetic", dto.Constraints{ExcludeSyntheticETFs: true}},
+		{"excludeLeveraged", dto.Constraints{ExcludeLeveragedETFs: true}},
+		{"excludeInverse", dto.Constraints{ExcludeInverseETFs: true}},
+		{"physicalOnly", dto.Constraints{PhysicalOnly: true}},
+	}
+	known := domain.ETF{Ticker: "KNOWN", IsPhysical: domain.Flag(true), IsSynthetic: domain.Flag(false),
+		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false)}
+	unknown := domain.ETF{Ticker: "NOFLAGS"} // no source reported structure
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			req := standardRequest(dto.ExposureRequest{})
+			req.Constraints = tc.constraints
+			res := discover(t, req, known, unknown)
+
+			if len(res.Results) != 2 {
+				t.Fatalf("results = %v, want KNOWN and NOFLAGS", tickers(res.Results))
+			}
+			var flagged *dto.Warning
+			for i := range res.Warnings {
+				if res.Warnings[i].Code == "UNVERIFIED_STRUCTURE" {
+					flagged = &res.Warnings[i]
+				}
+			}
+			if flagged == nil {
+				t.Fatalf("no UNVERIFIED_STRUCTURE warning in %+v", res.Warnings)
+			}
+			if !strings.Contains(flagged.Message, "NOFLAGS") || strings.Contains(flagged.Message, "KNOWN") {
+				t.Fatalf("warning should name NOFLAGS only, got %q", flagged.Message)
+			}
+		})
+	}
+}
+
+func TestStructureFlagKnownToAnySourceSurvivesTheMerge(t *testing.T) {
+	silent := fakeprovider.New(domain.ETF{Ticker: "LEV"}) // doesn't report leverage
+	informed := fakeprovider.New(domain.ETF{Ticker: "LEV", IsLeveraged: domain.Flag(true)})
+	other := fakeprovider.New(domain.ETF{Ticker: "PLAIN", IsLeveraged: domain.Flag(false)})
+	svc := newService(search.NewAggregatedProvider(silent, informed, other))
+
+	req := standardRequest(dto.ExposureRequest{})
+	req.Constraints = dto.Constraints{ExcludeLeveragedETFs: true}
+	res, err := svc.DiscoverETFs(context.Background(), req)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got := tickers(res.Results); len(got) != 1 || got[0] != "PLAIN" {
+		t.Fatalf("results = %v, want [PLAIN] (LEV is leveraged per one source)", got)
+	}
+}
+
+func requestFor(country, account string) dto.DiscoveryRequest {
+	req := standardRequest(dto.ExposureRequest{})
+	req.InvestorProfile.Country = country
+	req.InvestorProfile.AccountType = account
+	req.OutputOptions.ExplainEligibility = true
+	req.OutputOptions.IncludeAlternatives = true
+	return req
+}
+
+// onlyFund returns the single ETF from results or alternatives (unknown and
+// ineligible funds land in alternatives).
+func onlyFund(t *testing.T, res *discovery.DiscoveryResult) dto.ETFResult {
+	t.Helper()
+	all := append(append([]dto.ETFResult{}, res.Results...), res.Alternatives...)
+	if len(all) != 1 {
+		t.Fatalf("got %d funds, want 1", len(all))
+	}
+	return all[0]
+}
+
+func hasWarningContaining(e dto.EligibilityDetail, substr string) bool {
+	for _, w := range e.Warnings {
+		if strings.Contains(strings.ToLower(w), strings.ToLower(substr)) {
+			return true
+		}
+	}
+	return false
+}
+
+// spy is a US-listed ETF as live data describes it today: exchange known,
+// domicile and legal structure not reported.
+func spy() domain.ETF {
+	return domain.ETF{Ticker: "SPY", Exchange: "PCX", ExchangeCountry: "US", Currency: "USD",
+		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false)}
+}
+
+func TestISAWithUSListedETFIsConditionalWithRetailDisclosureWarning(t *testing.T) {
+	el := onlyFund(t, discover(t, requestFor("GB", "isa"), spy())).Eligibility
+
+	if el.Status != "conditional" {
+		t.Fatalf("status = %q, want conditional", el.Status)
+	}
+	if el.RuleVersion != "isa_uk_v1.0_2026" {
+		t.Fatalf("ruleVersion = %q, want isa_uk_v1.0_2026", el.RuleVersion)
+	}
+	if !hasWarningContaining(el, "product summary") {
+		t.Fatalf("no UK retail product-summary/KID warning in %v", el.Warnings)
+	}
+}
+
+func TestISAWithNoListingOrStructureDataIsUnknown(t *testing.T) {
+	el := onlyFund(t, discover(t, requestFor("GB", "isa"), domain.ETF{Ticker: "BLANK"})).Eligibility
+
+	if el.Status != "unknown" || el.IsEligible {
+		t.Fatalf("status = %q (isEligible %v), want unknown/false", el.Status, el.IsEligible)
+	}
+}
+
+func TestISAWithNonUCITSFundQuotedOnlyOTCIsIneligible(t *testing.T) {
+	otc := domain.ETF{Ticker: "OTCX", Exchange: "PNK", LegalStructure: "Grantor Trust"}
+
+	res := discover(t, requestFor("GB", "isa"), otc)
+
+	// Ineligible funds are always filtered out; the summary counts them.
+	if res.Summary.TotalIneligible != 1 || len(res.Results)+len(res.Alternatives) != 0 {
+		t.Fatalf("summary = %+v, results = %d, alternatives = %d; want 1 ineligible and nothing shown",
+			res.Summary, len(res.Results), len(res.Alternatives))
+	}
+}
+
+func TestISALeveragedETFIsConditionalNotIneligible(t *testing.T) {
+	lev := spy()
+	lev.Ticker, lev.IsLeveraged = "SSO", domain.Flag(true)
+
+	el := onlyFund(t, discover(t, requestFor("GB", "isa"), lev)).Eligibility
+
+	if el.Status != "conditional" {
+		t.Fatalf("status = %q, want conditional (leverage is legal in an ISA)", el.Status)
+	}
+	if !hasWarningContaining(el, "leveraged") {
+		t.Fatalf("no provider-restriction warning for leverage in %v", el.Warnings)
+	}
+}
+
+func TestISAUKUCITSIsConditionalPendingFCARegisterCheck(t *testing.T) {
+	ucits := domain.ETF{Ticker: "VUSA", Exchange: "LSE", Domicile: "GB", LegalStructure: "UCITS",
+		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false)}
+
+	el := onlyFund(t, discover(t, requestFor("GB", "isa"), ucits)).Eligibility
+
+	if el.Status != "conditional" || !hasWarningContaining(el, "FCA register") {
+		t.Fatalf("status = %q, warnings = %v; want conditional with an FCA-register note", el.Status, el.Warnings)
+	}
+}
+
+func TestIRAPlainUSETFIsConditionalOnCustodian(t *testing.T) {
+	for _, account := range []string{"ira", "roth_ira"} {
+		el := onlyFund(t, discover(t, requestFor("US", account), spy())).Eligibility
+
+		if el.Status != "conditional" {
+			t.Fatalf("%s: status = %q, want conditional", account, el.Status)
+		}
+		if el.RuleVersion != "ira_us_v1.0_2026" {
+			t.Fatalf("%s: ruleVersion = %q, want ira_us_v1.0_2026", account, el.RuleVersion)
+		}
+		if !hasWarningContaining(el, "custodian") {
+			t.Fatalf("%s: no custodian warning in %v", account, el.Warnings)
+		}
+	}
+}
+
+func TestIRASpecialCasesStayConditionalWithTheirWarning(t *testing.T) {
+	gold := spy()
+	gold.Ticker, gold.AssetClass, gold.IsPhysical = "GLD", "Commodity", domain.Flag(true)
+	foreign := spy()
+	foreign.Ticker, foreign.Domicile, foreign.Exchange = "VUAA", "IE", "LSE"
+	inverse := spy()
+	inverse.Ticker, inverse.IsInverse = "SH", domain.Flag(true)
+
+	cases := []struct {
+		etf  domain.ETF
+		want string // substring of the expected warning
+	}{
+		{gold, "collectible"},
+		{foreign, "non-US"},
+		{inverse, "inverse"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.etf.Ticker, func(t *testing.T) {
+			el := onlyFund(t, discover(t, requestFor("US", "ira"), tc.etf)).Eligibility
+
+			if el.Status != "conditional" {
+				t.Fatalf("status = %q, want conditional (IRA law doesn't exclude it)", el.Status)
+			}
+			if !hasWarningContaining(el, tc.want) {
+				t.Fatalf("no %q warning in %v", tc.want, el.Warnings)
+			}
+		})
+	}
+}
+
+func TestFourOhOneKIsAlwaysUnknownBecauseThePlanMenuDecides(t *testing.T) {
+	full := spy()
+	full.Domicile, full.LegalStructure, full.IsPhysical = "US", "Open-end fund", domain.Flag(true)
+
+	el := onlyFund(t, discover(t, requestFor("US", "401k"), full)).Eligibility
+
+	if el.Status != "unknown" || el.IsEligible {
+		t.Fatalf("status = %q (isEligible %v), want unknown/false", el.Status, el.IsEligible)
+	}
+	if el.RuleVersion != "k401_us_v1.0_2026" {
+		t.Fatalf("ruleVersion = %q, want k401_us_v1.0_2026", el.RuleVersion)
+	}
+	if !hasWarningContaining(el, "plan's investment menu") {
+		t.Fatalf("no plan-menu warning in %v", el.Warnings)
 	}
 }
