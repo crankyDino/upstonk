@@ -1,0 +1,54 @@
+{
+  "investorProfile": {
+    "country": "ZA",
+    "accountType": "standard",
+    "currency": "ZAR",
+    "riskTolerance": "moderate",
+    "timeHorizonYears": 10
+  },
+  "exposure": {
+    "assets": {
+      "companies": [],
+      "sectors": [],
+      "assetClasses": [
+        "equity"
+      ]
+    },
+    "geography": {
+      "markets": [
+        "US",
+        "CA"
+      ],
+      "emergingMarkets": false,
+      "developedMarkets": true
+    }
+  },
+  "investmentVehicles": [
+    "etf"
+  ],
+  "constraints": {
+    "tfsaEligibleOnly": true,
+    "maxTER": 0.5,
+    "minAUM": 100000000,
+    "minLiquidity": 0,
+    "excludeSyntheticETFs": true,
+    "excludeLeveragedETFs": true,
+    "excludeInverseETFs": true,
+    "physicalOnly": false
+  },
+  "rankingPreferences": {
+    "weighting": {
+      "fees": 0.4,
+      "liquidity": 0.3,
+      "tracking": 0.2,
+      "stability": 0.1
+    }
+  },
+  "outputOptions": {
+    "maxResults": 10,
+    "includeAlternatives": true,
+    "includeSourceLinks": true,
+    "explainEligibility": true,
+    "includeWarnings": true
+  }
+}

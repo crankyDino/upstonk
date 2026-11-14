@@ -1,15 +1,24 @@
 import { create } from 'zustand';
-import type { 
-  DiscoveryRequest, 
-  DiscoveryResponse, 
-  InvestorProfile, 
-  ExposureConfig, 
-  Constraints, 
+import type {
+  DiscoveryResponse,
+  InvestorProfile,
+  ExposureConfig,
+  Constraints,
   RankingPreference,
   OutputOptions,
-  APIError 
+  APIError
 } from '@/types/api';
 import { discoverETFs } from '@/lib/api/upstonk';
+import { buildDiscoveryRequest } from '@/lib/api/buildRequest';
+import {
+  SUPPORTED_ACCOUNTS,
+  COUNTRIES,
+  defaultInvestorProfile,
+  defaultExposure,
+  defaultConstraints,
+  defaultRankingPreferences,
+  defaultOutputOptions,
+} from '@/lib/discoveryOptions';
 
 interface DiscoveryState {
   // Form state
@@ -39,54 +48,6 @@ interface DiscoveryState {
   resetForm: () => void;
 }
 
-const defaultInvestorProfile: InvestorProfile = {
-  country: 'ZA',
-  accountType: 'standard',
-  currency: 'ZAR',
-  riskTolerance: 'moderate',
-  timeHorizon: 10,
-};
-
-const defaultExposure: ExposureConfig = {
-  assetClasses: ['equity'],
-  sectors: [],
-  companies: [],
-  indices: [],
-  geography: {
-    markets: ['US', 'CA'],
-    includeEmerging: false,
-    includeDeveloped: true,
-    excludedCountries: [],
-  },
-};
-
-const defaultConstraints: Constraints = {
-  tfsaEligibleOnly: true,
-  maxTER: 0.50,
-  minAUM: 100000000,
-  liquidityThreshold: 80,
-  excludeSynthetic: true,
-  excludeLeveraged: true,
-  excludeInverse: true,
-  physicalReplicationOnly: false,
-};
-
-const defaultRankingPreferences: RankingPreference[] = [
-  { id: 'ter', name: 'Expense Ratio (TER)', weight: 0.25, priority: 1 },
-  { id: 'liquidity', name: 'Liquidity', weight: 0.20, priority: 2 },
-  { id: 'aum', name: 'Assets Under Management', weight: 0.20, priority: 3 },
-  { id: 'tracking', name: 'Tracking Accuracy', weight: 0.20, priority: 4 },
-  { id: 'eligibility', name: 'Eligibility Confidence', weight: 0.15, priority: 5 },
-];
-
-const defaultOutputOptions: OutputOptions = {
-  maxResults: 10,
-  includeAlternatives: true,
-  includeSourceLinks: true,
-  explainEligibility: true,
-  includeWarnings: true,
-};
-
 export const useDiscoveryStore = create<DiscoveryState>((set, get) => ({
   investorProfile: defaultInvestorProfile,
   exposure: defaultExposure,
@@ -99,11 +60,21 @@ export const useDiscoveryStore = create<DiscoveryState>((set, get) => ({
   selectedETFTicker: null,
   activeStep: 0,
   
-  setInvestorProfile: (profile) => 
-    set((state) => ({ 
-      investorProfile: { ...state.investorProfile, ...profile } 
-    })),
-    
+  // Changing country resets the account type if the new country doesn't
+  // offer it, and switches to that country's currency.
+  setInvestorProfile: (profile) =>
+    set((state) => {
+      const next = { ...state.investorProfile, ...profile };
+      if (profile.country && profile.country !== state.investorProfile.country) {
+        const offered = SUPPORTED_ACCOUNTS[next.country].map((a) => a.value);
+        if (!offered.includes(next.accountType)) next.accountType = 'standard';
+        if (!profile.currency) {
+          next.currency = COUNTRIES.find((c) => c.code === next.country)?.currency ?? next.currency;
+        }
+      }
+      return { investorProfile: next };
+    }),
+
   setExposure: (exposure) => 
     set((state) => ({ 
       exposure: { ...state.exposure, ...exposure } 
@@ -129,29 +100,8 @@ export const useDiscoveryStore = create<DiscoveryState>((set, get) => ({
   submitDiscovery: async () => {
     const state = get();
     
-    // Transform UI state to API request format
-    const request: DiscoveryRequest = {
-      investorProfile: {
-        country: state.investorProfile.country,
-        accountType: state.investorProfile.accountType,
-        currency: state.investorProfile.currency,
-      },
-      exposure: {
-        assets: {
-          assetClasses: state.exposure.assetClasses,
-        },
-        geography: {
-          markets: state.exposure.geography.markets,
-        },
-      },
-      investmentVehicles: ['etf'],
-      constraints: {},
-      outputOptions: {
-        maxResults: state.outputOptions.maxResults,
-        includeSourceLinks: state.outputOptions.includeSourceLinks,
-      },
-    };
-    
+    const request = buildDiscoveryRequest(state);
+
     set({ isLoading: true, error: null });
     
     try {

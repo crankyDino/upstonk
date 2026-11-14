@@ -389,14 +389,20 @@ Single-page app; `src/pages/Index.tsx` holds the whole flow as three tabs —
 
 | Piece | Responsibility |
 |-------|----------------|
-| `stores/discoveryStore.ts` | zustand store: form state, defaults, `submitDiscovery()` which maps UI state → `DiscoveryRequest`, loading/error/response state. |
+| `stores/discoveryStore.ts` | zustand store: form state, loading/error/response state, `submitDiscovery()`. Changing country resets the account type and currency to that country's. |
+| `lib/discoveryOptions.ts` | Supported country/account pairs (same as the server's), liquidity steps, and all form defaults. |
+| `lib/api/buildRequest.ts` | `buildDiscoveryRequest()` — maps UI state onto the server's `DiscoveryRequest`, including constraints and ranking weights (normalised to sum to 1.0). |
 | `lib/api/upstonk.ts` | `discoverETFs()` fetch wrapper (throws a typed `APIError`), plus `formatCurrency` / `formatPercentage`. |
 | `types/api.ts` | TypeScript mirror of the server DTOs, kept separate from the richer UI form types. |
+| `scripts/write-contract-fixture.ts` | `npm run contract:fixture` — writes the GUI's default request and its account pairs to `server/internal/api/router/testdata/`, where Go tests check that the server accepts them. Rerun after changing the builder or the options. |
 | `components/ResultsTable.tsx` | Ranked results table; row click opens the detail drawer. |
 | `components/ETFDetailDrawer.tsx` | Full ETF detail: breakdowns, holdings, eligibility evidence, data sources. |
 | `components/EligibilityBadge.tsx` | Status + confidence badge. |
 | `components/WarningsPanel.tsx` | Renders `warnings[]` from the response. |
 | `components/ui/*` | shadcn/ui primitives (Radix + Tailwind + CVA). |
+
+Ranking weights are sent with the request, but there is no UI to change them yet; they
+use the defaults in `lib/discoveryOptions.ts`.
 
 Stack: React 18, React Router 6, TanStack Query (provider mounted, data fetching
 currently goes through the zustand store), Tailwind 3 with `tailwindcss-animate` and
@@ -426,9 +432,6 @@ Things the code does *not* do, or does differently from the older docs in `serve
    `server/QUICKSTART.md`. Both describe an artifact-assembly process from the original
    scaffold and no longer reflect the repo; treat `server/DOCUMENTATION.md` (endpoint
    examples) and `server/LIVEDATA_SETUP.md` (data sources) as the useful ones.
-8. **GUI under-uses the API.** `submitDiscovery()` sends `constraints: {}` and omits
-   `rankingPreferences`, so the constraints panel and ranking weights collected in the UI
-   never reach the server.
 9. **No provider supplies regional exposure.** Matching is case-insensitive (substring
    for sectors, asset classes and companies; whole name for regions), but no search
    provider fills `GeographicExposure.Regions`, so the geography part of `matchScore` is
@@ -437,13 +440,16 @@ Things the code does *not* do, or does differently from the older docs in `serve
 10. **Only one eligibility rule.** Only `TFSA_ZA` is registered (in
     `server/internal/app/engines.go`); those account types validate at the handler but fall through to the
     generic standard/unknown fallback.
-12. **Lovable placeholders remain.** `gui/index.html` still has the "Lovable App" title
-    and lovable.dev Open Graph / Twitter image meta tags.
 13. **Yahoo returns only basic quote data.** Yahoo's `v7/finance/quote` and
     `v10/finance/quoteSummary` endpoints now reject unauthenticated calls, so quotes come
     from `v8/finance/chart` (name, currency, exchange, volume). AUM, TER, provider and
     holdings are missing, which is why live TFSA results come back `unknown`. A source for
-    those fields still has to be chosen.
+    those fields still has to be chosen. Until then, `minAUM` and `maxTER` keep funds whose
+    value is unknown and flag them with `UNVERIFIED_AUM` / `UNVERIFIED_TER` warnings.
+14. **Ranking treats unknown values as real ones.** An unknown TER (0) gets the best
+    possible fee score, and an unknown AUM gets the lowest stability score. Tracking
+    difference already gets a neutral score when unknown; fees and stability should
+    probably do the same.
 
 ### Adding a country rule
 
