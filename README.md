@@ -177,15 +177,8 @@ go mod download
 # Optional: a .env file (or plain environment variables). Without one the
 # server runs on :8080 with defaults.
 cat > .env <<'EOF'
-ENVIRONMENT=development
 SERVER_ADDRESS=:8080
 ALPHA_VANTAGE_API_KEY=demo
-JSE_API_KEY=
-JSE_API_BASE_URL=https://api.jse.co.za/v1
-CACHE_ENABLED=true
-CACHE_TTL_SECONDS=3600
-LOG_LEVEL=info
-LOG_FORMAT=json
 EOF
 
 go run ./cmd/server
@@ -376,13 +369,10 @@ Per-request context 30s · server read 15s / write 30s / idle 60s · timeout mid
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `SERVER_ADDRESS` | Bind address | `:8080` |
-| `ENVIRONMENT` | `development` / `staging` / `production` | `development` |
 | `ALPHA_VANTAGE_API_KEY` | Enables the Alpha Vantage provider; the literal `demo` keeps it disabled | `demo` |
-| `JSE_API_KEY` | JSE API key (config only — no JSE API client is wired up yet) | — |
-| `JSE_API_BASE_URL` | JSE API base URL | `https://api.jse.co.za/v1` |
-| `CACHE_ENABLED` | Parsed into config (see Known gaps) | `true` |
-| `LOG_LEVEL` | Parsed into config | `info` |
-| `LOG_FORMAT` | Parsed into config | `json` |
+
+These are the only two settings. The search cache is fixed at one hour in memory, and
+logging uses Go's standard `log` package.
 
 ### GUI (`gui/.env`)
 
@@ -430,13 +420,6 @@ typography, lucide-react icons, sonner toasts, recharts, zod.
 
 Things the code does *not* do, or does differently from the older docs in `server/`:
 
-4. **Cache config is inert.** `CACHE_ENABLED` / `CACHE_TTL_SECONDS` are read into
-   `config.CacheConfig` but never consumed — the only cache is the hardcoded 1-hour
-   in-memory cache inside `search.AggregatedProvider` (its hits are reported truthfully
-   in `cacheHit`). `LOG_LEVEL` / `LOG_FORMAT` are likewise unused; logging is the stdlib
-   `log` package.
-5. **No JSE API client.** `JSE_API_KEY` / `JSE_API_BASE_URL` exist in config only. JSE
-   coverage comes from the curated ticker list resolved via Yahoo Finance.
 6. **No Dockerfile or Makefile**, despite `server/README.md` and `server/QUICKSTART.md`
    referencing `make build`, `make docker-build`, and a Docker deployment.
 7. **`server/setup.sh` is not a script** — it is a byte-identical copy of
@@ -454,8 +437,6 @@ Things the code does *not* do, or does differently from the older docs in `serve
 10. **Only one eligibility rule.** Only `TFSA_ZA` is registered (in
     `server/internal/app/engines.go`); those account types validate at the handler but fall through to the
     generic standard/unknown fallback.
-11. **Dead code:** `server/internal/service/search/provider_old.go` is entirely
-    commented-out stub-provider code.
 12. **Lovable placeholders remain.** `gui/index.html` still has the "Lovable App" title
     and lovable.dev Open Graph / Twitter image meta tags.
 13. **Yahoo returns only basic quote data.** Yahoo's `v7/finance/quote` and

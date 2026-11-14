@@ -8,34 +8,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Config holds every setting the server actually reads.
 type Config struct {
 	ServerAddress   string
-	Environment     string
-	JSEAPI          JSEAPIConfig
 	AlphaVantageKey string
-	Cache           CacheConfig
-	Logging         LoggingConfig
-}
-
-type JSEAPIConfig struct {
-	BaseURL string
-	APIKey  string
-	Timeout int
-}
-
-type CacheConfig struct {
-	Enabled    bool
-	TTLSeconds int
-	MaxSize    int
-}
-
-type LoggingConfig struct {
-	Level  string
-	Format string
 }
 
 func Load() (*Config, error) {
-
 	// .env is optional: values can come from the real environment instead.
 	if err := godotenv.Load(); err != nil {
 		log.Printf("No .env file loaded (%v); using environment variables and defaults", err)
@@ -43,22 +22,7 @@ func Load() (*Config, error) {
 
 	cfg := &Config{
 		ServerAddress:   getEnv("SERVER_ADDRESS", ":8080"),
-		Environment:     getEnv("ENVIRONMENT", "development"),
 		AlphaVantageKey: getEnv("ALPHA_VANTAGE_API_KEY", "demo"),
-		JSEAPI: JSEAPIConfig{
-			BaseURL: getEnv("JSE_API_BASE_URL", "https://api.jse.co.za/v1"),
-			APIKey:  getEnv("JSE_API_KEY", ""),
-			Timeout: 10,
-		},
-		Cache: CacheConfig{
-			Enabled:    getEnv("CACHE_ENABLED", "true") == "true",
-			TTLSeconds: 3600,
-			MaxSize:    1000,
-		},
-		Logging: LoggingConfig{
-			Level:  getEnv("LOG_LEVEL", "info"),
-			Format: getEnv("LOG_FORMAT", "json"),
-		},
 	}
 
 	if err := cfg.Validate(); err != nil {
