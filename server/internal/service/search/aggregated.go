@@ -2,6 +2,7 @@ package search
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"sync"
@@ -68,6 +69,23 @@ func (a *AggregatedProvider) SearchCached(ctx context.Context, criteria Criteria
 	allETFs := make([]domain.ETF, 0)
 	for results := range resultsChan {
 		allETFs = append(allETFs, results...)
+	}
+	var errs []error
+	failedProviders := 0
+	for err := range errorsChan {
+		failedProviders++
+		// Flatten a provider's own "all sources failed" into its causes.
+		var nested *SourcesFailedError
+		if errors.As(err, &nested) {
+			errs = append(errs, nested.Errs...)
+		} else {
+			errs = append(errs, err)
+		}
+	}
+
+	// Every source failed: that's an outage, not "no results". Don't cache it.
+	if len(a.providers) > 0 && failedProviders == len(a.providers) {
+		return nil, false, &SourcesFailedError{Errs: errs}
 	}
 
 	// Deduplicate and merge data from multiple sources

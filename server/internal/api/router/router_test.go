@@ -3,6 +3,7 @@ package router_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -13,6 +14,7 @@ import (
 	"upstonk/internal/app"
 	"upstonk/internal/domain"
 	"upstonk/internal/service/discovery"
+	"upstonk/internal/service/search"
 	"upstonk/internal/testutil/fakeprovider"
 )
 
@@ -128,5 +130,64 @@ func TestServerAcceptsEveryAccountPairTheGUIOffers(t *testing.T) {
 				t.Fatalf("server rejected a pair the GUI offers: %s", rec.Body.String())
 			}
 		})
+	}
+}
+
+func TestMaxResultsCanBeOmittedAndDefaultsToTen(t *testing.T) {
+	etfs := make([]domain.ETF, 12)
+	for i := range etfs {
+		etfs[i] = domain.ETF{Ticker: "ETF" + string(rune('A'+i))}
+	}
+	body := []byte(`{
+		"investorProfile": {"country": "ZA", "accountType": "standard", "currency": "ZAR"},
+		"exposure": {"assets": {"assetClasses": ["equity"]}},
+		"investmentVehicles": ["etf"]
+	}`)
+
+	rec := postDiscover(t, newAPI(etfs...), body)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body: %s", rec.Code, rec.Body.String())
+	}
+	var resp struct{ Results []json.RawMessage }
+	if err := json.Unmarshal(rec.Body.Bytes(), &resp); err != nil {
+		t.Fatal(err)
+	}
+	if len(resp.Results) != 10 {
+		t.Fatalf("got %d results, want the default 10", len(resp.Results))
+	}
+}
+
+func TestAllDataSourcesFailingIsA503DataSourceError(t *testing.T) {
+	down1 := fakeprovider.New()
+	down1.Err = errors.New("yahoo: HTTP 429")
+	down2 := fakeprovider.New()
+	down2.Err = errors.New("etf.com: HTTP 403")
+	svc := discovery.NewService(search.NewAggregatedProvider(down1, down2), app.NewEligibilityEngine(), app.NewRankingEngine())
+	api := router.New(handlers.NewDiscoveryHandler(svc))
+
+	rec := postDiscover(t, api, readFixture(t, "gui_default_request.json"))
+
+	if rec.Code != http.StatusServiceUnavailable {
+		t.Fatalf("status = %d, want 503; body: %s", rec.Code, rec.Body.String())
+	}
+	var body map[string]any
+	_ = json.Unmarshal(rec.Body.Bytes(), &body)
+	if body["code"] != "DATA_SOURCE_ERROR" {
+		t.Fatalf("code = %v, want DATA_SOURCE_ERROR", body["code"])
+	}
+}
+
+func TestSomeDataSourcesFailingStillReturnsTheOthersResults(t *testing.T) {
+	down := fakeprovider.New()
+	down.Err = errors.New("etf.com: HTTP 403")
+	up := fakeprovider.New(guiFixtureETF)
+	svc := discovery.NewService(search.NewAggregatedProvider(down, up), app.NewEligibilityEngine(), app.NewRankingEngine())
+	api := router.New(handlers.NewDiscoveryHandler(svc))
+
+	rec := postDiscover(t, api, readFixture(t, "gui_default_request.json"))
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want 200; body: %s", rec.Code, rec.Body.String())
 	}
 }

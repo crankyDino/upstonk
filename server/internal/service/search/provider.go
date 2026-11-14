@@ -29,15 +29,19 @@ func NewLiveProvider() Provider {
 
 func (p *LiveProvider) Search(ctx context.Context, criteria Criteria) ([]domain.ETF, error) {
 	etfs := make([]domain.ETF, 0)
+	var attempted int
+	var failures []error
 
 	// Strategy: Search multiple sources and aggregate results
 	// For ZA country, prioritize JSE-listed ETFs
 
 	// 1. Search JSE website for South African ETFs (always search if ZA)
 	if criteria.Country == "ZA" || contains(criteria.Markets, "south africa") {
+		attempted++
 		jseETFs, err := p.searchJSE(ctx, criteria)
 		if err != nil {
 			log.Printf("JSE search error: %v", err)
+			failures = append(failures, err)
 		} else {
 			log.Printf("JSE search found %d ETFs", len(jseETFs))
 			etfs = append(etfs, jseETFs...)
@@ -48,16 +52,28 @@ func (p *LiveProvider) Search(ctx context.Context, criteria Criteria) ([]domain.
 	// Only search global sources if not ZA
 	if criteria.Country != "ZA" {
 		// Search ETF.com API for global ETFs
+		attempted++
 		globalETFs, err := p.searchETFDotCom(ctx, criteria)
 		if err == nil {
 			etfs = append(etfs, globalETFs...)
+		} else {
+			failures = append(failures, err)
 		}
 
 		// Search Yahoo Finance for ETF data
+		attempted++
 		yahooETFs, err := p.searchYahooFinance(ctx, criteria)
 		if err == nil {
 			etfs = append(etfs, yahooETFs...)
+		} else {
+			failures = append(failures, err)
 		}
+	}
+
+	// Every sub-source failed: an outage, which the caller must not read as
+	// "no matching ETFs".
+	if attempted > 0 && len(failures) == attempted {
+		return nil, &SourcesFailedError{Errs: failures}
 	}
 
 	// Deduplicate by ISIN/Ticker
@@ -93,6 +109,7 @@ func (p *LiveProvider) searchJSE(ctx context.Context, criteria Criteria) ([]doma
 	}
 
 	// Fetch each JSE ETF from Yahoo Finance
+	var lastErr error
 	for _, ticker := range jseTickers {
 		// Add .JO suffix for JSE listings on Yahoo Finance
 		yahooTicker := ticker + ".JO"
@@ -101,6 +118,7 @@ func (p *LiveProvider) searchJSE(ctx context.Context, criteria Criteria) ([]doma
 		etf, err := p.fetchYahooFinanceETF(ctx, yahooTicker)
 		if err != nil {
 			log.Printf("Failed to fetch %s: %v", yahooTicker, err)
+			lastErr = err
 			// Skip failed fetches, continue with others
 			continue
 		}
@@ -126,6 +144,9 @@ func (p *LiveProvider) searchJSE(ctx context.Context, criteria Criteria) ([]doma
 	}
 
 	log.Printf("JSE search completed: found %d ETFs", len(etfs))
+	if len(etfs) == 0 {
+		return nil, fmt.Errorf("jse: all %d lookups failed, last error: %w", len(jseTickers), lastErr)
+	}
 	return etfs, nil
 }
 
@@ -169,14 +190,20 @@ func (p *LiveProvider) searchYahooFinance(ctx context.Context, criteria Criteria
 	// Get common ETF tickers based on criteria
 	tickers := p.getETFTickersForCriteria(criteria)
 
+	var lastErr error
 	for _, ticker := range tickers {
 		etf, err := p.fetchYahooFinanceETF(ctx, ticker)
 		if err != nil {
+			lastErr = err
 			continue // Skip failed fetches
 		}
 		etfs = append(etfs, etf)
 	}
 
+	// Every lookup failed: report it so a full outage isn't mistaken for "no matches".
+	if len(tickers) > 0 && len(etfs) == 0 {
+		return nil, fmt.Errorf("yahoo: all %d lookups failed, last error: %w", len(tickers), lastErr)
+	}
 	return etfs, nil
 }
 

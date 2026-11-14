@@ -52,7 +52,15 @@ func (s *WeightedScorer) Score(etf domain.ETF, preferences dto.RankingPreference
 	}
 }
 
+// neutralScore is used for a component whose input no source reported: it
+// neither rewards nor punishes the fund ("never guess").
+const neutralScore = 0.5
+
 func (s *WeightedScorer) scoreFees(ter float64) float64 {
+	// TER 0 means unknown (see domain conventions), not free.
+	if ter == 0 {
+		return neutralScore
+	}
 	// Lower TER = higher score
 	if ter >= 1.0 {
 		return 0.0
@@ -73,6 +81,10 @@ func (s *WeightedScorer) scoreLiquidity(avgVolume float64) float64 {
 }
 
 func (s *WeightedScorer) scoreAUM(aum float64) float64 {
+	// AUM 0 means unknown, not tiny.
+	if aum == 0 {
+		return neutralScore
+	}
 	// Larger AUM = more stable
 	if aum < 50000000 {
 		return 0.3

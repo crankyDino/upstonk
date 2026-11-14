@@ -580,3 +580,35 @@ func TestFourOhOneKIsAlwaysUnknownBecauseThePlanMenuDecides(t *testing.T) {
 		t.Fatalf("no plan-menu warning in %v", el.Warnings)
 	}
 }
+
+func TestUnknownTERAndAUMScoreNeutrallyInRanking(t *testing.T) {
+	cases := []struct {
+		component string
+	}{
+		{"fees"},      // TER 0 = unknown
+		{"stability"}, // AUM 0 = unknown
+	}
+	for _, tc := range cases {
+		t.Run(tc.component, func(t *testing.T) {
+			req := standardRequest(dto.ExposureRequest{})
+			req.RankingPreferences = dto.RankingPreferences{Weighting: map[string]float64{tc.component: 1}}
+
+			res := discover(t, req, domain.ETF{Ticker: "UNKNOWN"})
+
+			// Neutral 0.5 on the only weighted component → ranking score 50.
+			assertScore(t, "rankingScore", onlyResult(t, res).RankingScore, 50)
+		})
+	}
+}
+
+func TestSummaryListsTheDataSourcesThatActuallySuppliedData(t *testing.T) {
+	a := domain.ETF{Ticker: "A", DataSources: []domain.DataSource{{Provider: "Yahoo Finance"}, {Provider: "JSE"}}}
+	b := domain.ETF{Ticker: "B", DataSources: []domain.DataSource{{Provider: "Yahoo Finance"}}}
+
+	res := discover(t, standardRequest(dto.ExposureRequest{}), a, b)
+
+	got := res.Summary.DataSourcesQueried
+	if len(got) != 2 || got[0] != "JSE" || got[1] != "Yahoo Finance" {
+		t.Fatalf("dataSourcesQueried = %v, want [JSE Yahoo Finance]", got)
+	}
+}
