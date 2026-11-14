@@ -10,6 +10,7 @@ Everything here was checked against the code, or by running it, on 2026-11-15. W
 | [data-sources/](data-sources/README.md) | Each external data source and its current status |
 | [development/](development/README.md) | Repo layout, tests, the GUI contract fixtures, adding rules and providers |
 | [development/known-gaps.md](development/known-gaps.md) | What the code doesn't do yet |
+| [UBIQUITOUS_LANGUAGE.md](UBIQUITOUS_LANGUAGE.md) | Glossary: the domain terms to use, the aliases to avoid, and known ambiguities |
 | [plans/](plans/) | Work plans (e.g. [gaps-remediation.md](plans/gaps-remediation.md)) |
 
 **Reading order for someone new:** getting-started, then architecture, then known-gaps. Read api/ when you need to call the server directly.
