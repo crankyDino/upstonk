@@ -118,6 +118,16 @@ Sources to merge, compare and then delete: `server/README.md`, `server/QUICKSTAR
 
 Also: update the HTML page at `GET /` (`serveDocumentation` in main.go) so its country list matches reality.
 
+**Findings while doing Phase 5 (2026-11-15):** each documented request and error case was run against a live server. Things the old docs got wrong, now recorded in `DOCS/development/known-gaps.md` (15–22):
+- `maxResults` can't be left out (validation runs before the default);
+- nine request fields are validated but never read;
+- `dataSourcesQueried` is a fixed list;
+- `UNSUPPORTED_COUNTRY` and `DATA_SOURCE_ERROR` are never produced;
+- etf.com returns 403;
+- no auth or rate limiting.
+
+None of the old TFSA examples returns results with today's live data. The scripts now take `API_URL` and both run cleanly.
+
 ## Phase 6 — UK ISA and US IRA / Roth IRA / 401k rules (gotcha 10)
 1. **Research** (`/research` skill): collect the primary-source rules for each account type (HMRC ISA regulations; IRS Publication 590-A/B and 401(k) plan rules) into `DOCS/research/`. Which facts can be checked against ETF data we actually have (exchange, domicile, structure, currency)?
 2. **ADR** in `DOCS/architecture/adr/`: how to handle rules whose real constraint is the account provider rather than the ETF. Default: `conditional` plus an explanation, following "never guess".

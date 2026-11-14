@@ -2,7 +2,7 @@
 
 # Test script for live ETF data fetching
 
-API_URL="http://localhost:8080"
+API_URL="${API_URL:-http://localhost:8080}"
 
 echo "🧪 Testing ETF Discovery API with Live Data"
 echo "==========================================="
