@@ -12,12 +12,13 @@ type ETF struct {
 	ExchangeCountry string `json:"exchangeCountry"`
 
 	// Structure
-	Domicile          string `json:"domicile"`
-	LegalStructure    string `json:"legalStructure"` // e.g., "UCITS", "Section 12J", "Unit Trust"
-	IsPhysical        bool   `json:"isPhysical"`
-	IsSynthetic       bool   `json:"isSynthetic"`
-	IsLeveraged       bool   `json:"isLeveraged"`
-	IsInverse         bool   `json:"isInverse"`
+	Domicile       string `json:"domicile"`
+	LegalStructure string `json:"legalStructure"` // e.g., "UCITS", "Section 12J", "Unit Trust"
+	// Structure flags are tri-state: nil means no source reported it.
+	IsPhysical        *bool  `json:"isPhysical,omitempty"`
+	IsSynthetic       *bool  `json:"isSynthetic,omitempty"`
+	IsLeveraged       *bool  `json:"isLeveraged,omitempty"`
+	IsInverse         *bool  `json:"isInverse,omitempty"`
 	ReplicationMethod string `json:"replicationMethod"` // "Physical Full", "Physical Sampling", "Synthetic Swap"
 
 	// Exposure
@@ -143,3 +144,12 @@ type DiscoveredETF struct {
 	Ranking     RankingScore      `json:"ranking"`
 	MatchScore  float64           `json:"matchScore"` // How well it matches requested exposure (0-100)
 }
+
+// Flag returns a pointer to b, for setting a known structure flag.
+func Flag(b bool) *bool { return &b }
+
+// IsTrue reports whether a structure flag is known and true.
+func IsTrue(f *bool) bool { return f != nil && *f }
+
+// IsFalse reports whether a structure flag is known and false.
+func IsFalse(f *bool) bool { return f != nil && !*f }

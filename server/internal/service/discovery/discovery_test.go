@@ -183,7 +183,7 @@ func tickers(results []dto.ETFResult) []string {
 
 func TestEachConstraintDropsTheETFThatViolatesIt(t *testing.T) {
 	// ok passes every constraint used below.
-	ok := domain.ETF{Ticker: "OK", TER: 0.2, AUM: 1e9, AverageDailyVolume: 200000, IsPhysical: true}
+	ok := domain.ETF{Ticker: "OK", TER: 0.2, AUM: 1e9, AverageDailyVolume: 200000, IsPhysical: domain.Flag(true)}
 
 	cases := []struct {
 		name        string
@@ -193,10 +193,10 @@ func TestEachConstraintDropsTheETFThatViolatesIt(t *testing.T) {
 		{"maxTER", dto.Constraints{MaxTER: 0.5}, func(e domain.ETF) domain.ETF { e.TER = 0.75; return e }},
 		{"minAUM", dto.Constraints{MinAUM: 1e8}, func(e domain.ETF) domain.ETF { e.AUM = 5e7; return e }},
 		{"minLiquidity", dto.Constraints{MinLiquidity: 100000}, func(e domain.ETF) domain.ETF { e.AverageDailyVolume = 50000; return e }},
-		{"excludeSynthetic", dto.Constraints{ExcludeSyntheticETFs: true}, func(e domain.ETF) domain.ETF { e.IsSynthetic = true; return e }},
-		{"excludeLeveraged", dto.Constraints{ExcludeLeveragedETFs: true}, func(e domain.ETF) domain.ETF { e.IsLeveraged = true; return e }},
-		{"excludeInverse", dto.Constraints{ExcludeInverseETFs: true}, func(e domain.ETF) domain.ETF { e.IsInverse = true; return e }},
-		{"physicalOnly", dto.Constraints{PhysicalOnly: true}, func(e domain.ETF) domain.ETF { e.IsPhysical = false; return e }},
+		{"excludeSynthetic", dto.Constraints{ExcludeSyntheticETFs: true}, func(e domain.ETF) domain.ETF { e.IsSynthetic = domain.Flag(true); return e }},
+		{"excludeLeveraged", dto.Constraints{ExcludeLeveragedETFs: true}, func(e domain.ETF) domain.ETF { e.IsLeveraged = domain.Flag(true); return e }},
+		{"excludeInverse", dto.Constraints{ExcludeInverseETFs: true}, func(e domain.ETF) domain.ETF { e.IsInverse = domain.Flag(true); return e }},
+		{"physicalOnly", dto.Constraints{PhysicalOnly: true}, func(e domain.ETF) domain.ETF { e.IsPhysical = domain.Flag(false); return e }},
 		{"allowedExchanges", dto.Constraints{AllowedExchanges: []string{"jse"}}, func(e domain.ETF) domain.ETF { e.Exchange = "NYSE"; return e }},
 	}
 
@@ -322,5 +322,103 @@ func TestOverlappingRulesAlwaysResolveToTheFirstRegistered(t *testing.T) {
 		if got := onlyResult(t, res).Eligibility.RuleVersion; got != "FIRST" {
 			t.Fatalf("run %d: rule %q applied, want FIRST", i, got)
 		}
+	}
+}
+
+// satrix40 is a JSE ETF with every TFSA-relevant attribute known.
+func satrix40() domain.ETF {
+	return domain.ETF{
+		Ticker: "STX40", Exchange: "JSE", ExchangeCountry: "ZA", Currency: "ZAR", Provider: "Satrix",
+		IsPhysical: domain.Flag(true), IsSynthetic: domain.Flag(false),
+		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false),
+	}
+}
+
+func tfsaRequest() dto.DiscoveryRequest {
+	req := standardRequest(dto.ExposureRequest{})
+	req.InvestorProfile.AccountType = "tfsa"
+	req.OutputOptions.ExplainEligibility = true
+	return req
+}
+
+func TestTFSAWithAllDataKnownIsEligible(t *testing.T) {
+	res := discover(t, tfsaRequest(), satrix40())
+
+	if got := onlyResult(t, res).Eligibility.Status; got != "eligible" {
+		t.Fatalf("status = %q, want eligible", got)
+	}
+}
+
+func TestTFSAWithUnknownLeverageAndInverseIsConditionalNotEligible(t *testing.T) {
+	etf := satrix40()
+	etf.IsLeveraged, etf.IsInverse = nil, nil
+
+	res := discover(t, tfsaRequest(), etf)
+
+	el := onlyResult(t, res).Eligibility
+	if el.Status != "conditional" {
+		t.Fatalf("status = %q, want conditional (two criteria unchecked)", el.Status)
+	}
+	for _, passed := range el.RulesPassed {
+		if passed == "no_leverage" || passed == "no_inverse" {
+			t.Fatalf("criterion %q passed without data; rulesPassed = %v", passed, el.RulesPassed)
+		}
+	}
+}
+
+func TestUnknownStructureFlagsPassTheirConstraintButAreFlagged(t *testing.T) {
+	cases := []struct {
+		name        string
+		constraints dto.Constraints
+	}{
+		{"excludeSynthetic", dto.Constraints{ExcludeSyntheticETFs: true}},
+		{"excludeLeveraged", dto.Constraints{ExcludeLeveragedETFs: true}},
+		{"excludeInverse", dto.Constraints{ExcludeInverseETFs: true}},
+		{"physicalOnly", dto.Constraints{PhysicalOnly: true}},
+	}
+	known := domain.ETF{Ticker: "KNOWN", IsPhysical: domain.Flag(true), IsSynthetic: domain.Flag(false),
+		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false)}
+	unknown := domain.ETF{Ticker: "NOFLAGS"} // no source reported structure
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			req := standardRequest(dto.ExposureRequest{})
+			req.Constraints = tc.constraints
+			res := discover(t, req, known, unknown)
+
+			if len(res.Results) != 2 {
+				t.Fatalf("results = %v, want KNOWN and NOFLAGS", tickers(res.Results))
+			}
+			var flagged *dto.Warning
+			for i := range res.Warnings {
+				if res.Warnings[i].Code == "UNVERIFIED_STRUCTURE" {
+					flagged = &res.Warnings[i]
+				}
+			}
+			if flagged == nil {
+				t.Fatalf("no UNVERIFIED_STRUCTURE warning in %+v", res.Warnings)
+			}
+			if !strings.Contains(flagged.Message, "NOFLAGS") || strings.Contains(flagged.Message, "KNOWN") {
+				t.Fatalf("warning should name NOFLAGS only, got %q", flagged.Message)
+			}
+		})
+	}
+}
+
+func TestStructureFlagKnownToAnySourceSurvivesTheMerge(t *testing.T) {
+	silent := fakeprovider.New(domain.ETF{Ticker: "LEV"}) // doesn't report leverage
+	informed := fakeprovider.New(domain.ETF{Ticker: "LEV", IsLeveraged: domain.Flag(true)})
+	other := fakeprovider.New(domain.ETF{Ticker: "PLAIN", IsLeveraged: domain.Flag(false)})
+	svc := newService(search.NewAggregatedProvider(silent, informed, other))
+
+	req := standardRequest(dto.ExposureRequest{})
+	req.Constraints = dto.Constraints{ExcludeLeveragedETFs: true}
+	res, err := svc.DiscoverETFs(context.Background(), req)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if got := tickers(res.Results); len(got) != 1 || got[0] != "PLAIN" {
+		t.Fatalf("results = %v, want [PLAIN] (LEV is leveraged per one source)", got)
 	}
 }

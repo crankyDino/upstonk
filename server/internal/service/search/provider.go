@@ -245,10 +245,10 @@ func (p *LiveProvider) fetchYahooFinanceETF(ctx context.Context, ticker string) 
 		Provider:           details.FundFamily,
 		AssetClass:         details.AssetClass,
 		TrackingIndex:      details.Index,
-		IsPhysical:         !details.IsSynthetic,
-		IsSynthetic:        details.IsSynthetic,
-		IsLeveraged:        strings.Contains(strings.ToLower(quote.LongName), "leveraged") || strings.Contains(strings.ToLower(quote.LongName), "2x") || strings.Contains(strings.ToLower(quote.LongName), "3x"),
-		IsInverse:          strings.Contains(strings.ToLower(quote.LongName), "inverse") || strings.Contains(strings.ToLower(quote.LongName), "short"),
+		// Replication isn't reported by any source we can reach, so it stays
+		// unknown. Leverage/inverse: a name match is evidence; no match isn't.
+		IsLeveraged:        flagIfNameSays(quote.LongName, "leveraged", "2x", "3x"),
+		IsInverse:          flagIfNameSays(quote.LongName, "inverse"),
 		GeographicExposure: details.Geography,
 		SectorExposure:     details.Sectors,
 		TopHoldings:        details.Holdings,
@@ -724,6 +724,18 @@ func (r YahooChartResult) toQuote() YahooQuote {
 		Currency:                 majorCurrency(r.Meta.Currency),
 		AverageDailyVolume3Month: avg,
 	}
+}
+
+// flagIfNameSays returns true when the fund name contains any keyword, and
+// nil (unknown) otherwise: a name without "2x" doesn't prove there's no leverage.
+func flagIfNameSays(name string, keywords ...string) *bool {
+	lower := strings.ToLower(name)
+	for _, k := range keywords {
+		if strings.Contains(lower, k) {
+			return domain.Flag(true)
+		}
+	}
+	return nil
 }
 
 // majorCurrency maps Yahoo's minor-unit codes (JSE quotes in cents as "ZAc",
