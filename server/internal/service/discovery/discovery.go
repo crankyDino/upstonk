@@ -19,7 +19,6 @@ type Service struct {
 	searchService     search.Provider
 	eligibilityEngine eligibility.Engine
 	rankingEngine     ranking.Engine
-	cacheEnabled      bool
 }
 
 func NewService(
@@ -31,7 +30,6 @@ func NewService(
 		searchService:     searchProvider,
 		eligibilityEngine: eligibilityEngine,
 		rankingEngine:     rankingEngine,
-		cacheEnabled:      true,
 	}
 }
 
@@ -48,7 +46,7 @@ func (s *Service) DiscoverETFs(ctx context.Context, req dto.DiscoveryRequest) (*
 	startTime := time.Now()
 
 	// Step 1: Search for candidate ETFs
-	candidates, err := s.searchCandidates(ctx, req)
+	candidates, cacheHit, err := s.searchCandidates(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("search failed: %w", err)
 	}
@@ -91,11 +89,13 @@ func (s *Service) DiscoverETFs(ctx context.Context, req dto.DiscoveryRequest) (*
 			DataSourcesQueried: summary.DataSourcesQueried,
 		},
 		Warnings: warnings,
-		CacheHit: false,
+		CacheHit: cacheHit,
 	}, nil
 }
 
-func (s *Service) searchCandidates(ctx context.Context, req dto.DiscoveryRequest) ([]domain.ETF, error) {
+// searchCandidates runs the search and reports whether it was served from
+// cache (only providers implementing search.CacheReporter can say so).
+func (s *Service) searchCandidates(ctx context.Context, req dto.DiscoveryRequest) ([]domain.ETF, bool, error) {
 	searchCriteria := search.Criteria{
 		Markets:      req.Exposure.Geography.Markets,
 		Sectors:      req.Exposure.Assets.Sectors,
@@ -105,7 +105,11 @@ func (s *Service) searchCandidates(ctx context.Context, req dto.DiscoveryRequest
 		Vehicles:     req.InvestmentVehicles,
 	}
 
-	return s.searchService.Search(ctx, searchCriteria)
+	if cr, ok := s.searchService.(search.CacheReporter); ok {
+		return cr.SearchCached(ctx, searchCriteria)
+	}
+	etfs, err := s.searchService.Search(ctx, searchCriteria)
+	return etfs, false, err
 }
 
 func (s *Service) evaluateEligibility(
@@ -265,11 +269,12 @@ func (s *Service) calculateMatchScores(etfs []domain.DiscoveredETF, exposure dto
 }
 
 func (s *Service) calculateGeographicMatch(etf domain.ETF, geo dto.GeographyExposureRequest) float64 {
-	// Simplified matching logic
 	score := 0.0
 	for _, market := range geo.Markets {
-		if exposure, exists := etf.GeographicExposure.Regions[market]; exists {
-			score += exposure / 100.0
+		for region, exposure := range etf.GeographicExposure.Regions {
+			if strings.EqualFold(region, market) {
+				score += exposure / 100.0
+			}
 		}
 	}
 	return min(score/float64(len(geo.Markets)), 1.0)
@@ -481,22 +486,21 @@ func extractWarnings(eligibility domain.EligibilityResult) []string {
 }
 
 func matchesSector(requested, actual string) bool {
-	// Simplified matching - in production, use taxonomy mapping
-	return contains(actual, requested)
+	return containsFold(actual, requested)
+}
+
+// containsFold reports whether substr appears in s, ignoring case. Empty
+// strings never match.
+func containsFold(s, substr string) bool {
+	return s != "" && substr != "" && strings.Contains(strings.ToLower(s), strings.ToLower(substr))
 }
 
 func matchesAssetClass(requested, actual string) bool {
-	return contains(actual, requested)
+	return containsFold(actual, requested)
 }
 
 func matchesCompany(requested, actual string) bool {
-	return contains(actual, requested)
-}
-
-func contains(s, substr string) bool {
-	return len(s) > 0 && len(substr) > 0 &&
-		(s == substr ||
-			fmt.Sprintf("%s", s) == fmt.Sprintf("%s", substr))
+	return containsFold(actual, requested)
 }
 
 func min(a, b float64) float64 {

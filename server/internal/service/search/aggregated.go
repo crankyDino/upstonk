@@ -2,6 +2,7 @@ package search
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -22,11 +23,17 @@ func NewAggregatedProvider(providers ...Provider) Provider {
 }
 
 func (a *AggregatedProvider) Search(ctx context.Context, criteria Criteria) ([]domain.ETF, error) {
+	etfs, _, err := a.SearchCached(ctx, criteria)
+	return etfs, err
+}
+
+// SearchCached implements CacheReporter.
+func (a *AggregatedProvider) SearchCached(ctx context.Context, criteria Criteria) ([]domain.ETF, bool, error) {
 	// Check cache first
 	cacheKey := a.cache.GenerateKey(criteria)
 	if cached, found := a.cache.Get(cacheKey); found {
 		log.Printf("Cache hit for criteria: %+v", criteria)
-		return cached, nil
+		return cached, true, nil
 	}
 
 	// Search all providers in parallel
@@ -69,7 +76,7 @@ func (a *AggregatedProvider) Search(ctx context.Context, criteria Criteria) ([]d
 	// Cache results
 	a.cache.Set(cacheKey, merged)
 
-	return merged, nil
+	return merged, false, nil
 }
 
 // deduplicateAndMerge combines ETF data from multiple sources
@@ -179,16 +186,12 @@ func NewETFCache() *ETFCache {
 	}
 }
 
+// GenerateKey builds a cache key from every search criterion. Fields are
+// quoted so values containing separators can't collide.
 func (c *ETFCache) GenerateKey(criteria Criteria) string {
-	// Simple key generation - in production use proper hashing
-	key := criteria.Country
-	for _, sector := range criteria.Sectors {
-		key += "_" + sector
-	}
-	for _, market := range criteria.Markets {
-		key += "_" + market
-	}
-	return key
+	return fmt.Sprintf("country=%q markets=%q sectors=%q assetClasses=%q companies=%q vehicles=%q",
+		criteria.Country, criteria.Markets, criteria.Sectors,
+		criteria.AssetClasses, criteria.Companies, criteria.Vehicles)
 }
 
 func (c *ETFCache) Get(key string) ([]domain.ETF, bool) {

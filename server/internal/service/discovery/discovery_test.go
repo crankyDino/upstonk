@@ -3,10 +3,12 @@ package discovery_test
 import (
 	"context"
 	"errors"
+	"math"
 	"testing"
 
 	"upstonk/internal/api/dto"
 	"upstonk/internal/app"
+	"upstonk/internal/domain"
 	"upstonk/internal/service/discovery"
 	"upstonk/internal/service/search"
 	"upstonk/internal/testutil/fakeprovider"
@@ -35,5 +37,209 @@ func TestNoCandidatesIsANoResultsError(t *testing.T) {
 	var noResults *discovery.NoResultsError
 	if !errors.As(err, &noResults) {
 		t.Fatalf("err = %v, want *NoResultsError", err)
+	}
+}
+
+// discover runs one request against a service backed by the given ETFs and
+// fails the test on error.
+func discover(t *testing.T, req dto.DiscoveryRequest, etfs ...domain.ETF) *discovery.DiscoveryResult {
+	t.Helper()
+	res, err := newService(fakeprovider.New(etfs...)).DiscoverETFs(context.Background(), req)
+	if err != nil {
+		t.Fatalf("DiscoverETFs: %v", err)
+	}
+	return res
+}
+
+// assertScore compares scores to a hand-worked literal, allowing for
+// floating-point rounding.
+func assertScore(t *testing.T, name string, got, want float64) {
+	t.Helper()
+	if math.Abs(got-want) > 1e-9 {
+		t.Fatalf("%s = %v, want %v", name, got, want)
+	}
+}
+
+func onlyResult(t *testing.T, res *discovery.DiscoveryResult) dto.ETFResult {
+	t.Helper()
+	if len(res.Results) != 1 {
+		t.Fatalf("got %d results, want 1", len(res.Results))
+	}
+	return res.Results[0]
+}
+
+func TestSectorMatchIgnoresCaseAndAcceptsPartialNames(t *testing.T) {
+	etf := domain.ETF{
+		Ticker:         "TECH",
+		SectorExposure: []domain.SectorAllocation{{Sector: "Technology", Percentage: 100}},
+	}
+
+	res := discover(t, standardRequest(dto.ExposureRequest{
+		Assets: dto.AssetExposureRequest{Sectors: []string{"tech"}},
+	}), etf)
+
+	assertScore(t, "matchScore", onlyResult(t, res).MatchScore, 100)
+}
+
+func TestCompanyMatchIgnoresCaseAndUsesHoldingWeight(t *testing.T) {
+	etf := domain.ETF{
+		Ticker: "BIG",
+		TopHoldings: []domain.Holding{
+			{Name: "APPLE INC", Weight: 7.0},
+			{Name: "MICROSOFT CORP", Weight: 6.0},
+		},
+	}
+
+	res := discover(t, standardRequest(dto.ExposureRequest{
+		Assets: dto.AssetExposureRequest{Companies: []string{"apple"}},
+	}), etf)
+
+	// Apple is 7% of the fund, so the company component scores 7 out of 100.
+	assertScore(t, "matchScore", onlyResult(t, res).MatchScore, 7)
+}
+
+func TestAssetClassMatchIgnoresCase(t *testing.T) {
+	etf := domain.ETF{Ticker: "EQ", AssetClass: "equity"}
+
+	res := discover(t, standardRequest(dto.ExposureRequest{
+		Assets: dto.AssetExposureRequest{AssetClasses: []string{"Equity"}},
+	}), etf)
+
+	assertScore(t, "matchScore", onlyResult(t, res).MatchScore, 100)
+}
+
+func TestGeographyMatchIgnoresCaseOfRegionNames(t *testing.T) {
+	etf := domain.ETF{
+		Ticker:             "US",
+		GeographicExposure: domain.GeographicExposure{Regions: map[string]float64{"USA": 80, "Canada": 20}},
+	}
+
+	res := discover(t, standardRequest(dto.ExposureRequest{
+		Geography: dto.GeographyExposureRequest{Markets: []string{"usa"}},
+	}), etf)
+
+	// 80% of the fund is in the requested market.
+	assertScore(t, "matchScore", onlyResult(t, res).MatchScore, 80)
+}
+
+func TestRepeatedRequestIsServedFromCacheAndSaysSo(t *testing.T) {
+	leaf := fakeprovider.New(domain.ETF{Ticker: "ONE"})
+	svc := newService(search.NewAggregatedProvider(leaf))
+	req := standardRequest(dto.ExposureRequest{
+		Geography: dto.GeographyExposureRequest{Markets: []string{"usa"}},
+	})
+
+	first, err := svc.DiscoverETFs(context.Background(), req)
+	if err != nil {
+		t.Fatalf("first DiscoverETFs: %v", err)
+	}
+	second, err := svc.DiscoverETFs(context.Background(), req)
+	if err != nil {
+		t.Fatalf("second DiscoverETFs: %v", err)
+	}
+
+	if first.CacheHit {
+		t.Errorf("first request: CacheHit = true, want false")
+	}
+	if !second.CacheHit {
+		t.Errorf("second request: CacheHit = false, want true")
+	}
+	if leaf.Calls() != 1 {
+		t.Errorf("data source called %d times, want 1", leaf.Calls())
+	}
+}
+
+func TestRequestsForDifferentAssetClassesAreNotServedFromEachOthersCache(t *testing.T) {
+	leaf := fakeprovider.New(domain.ETF{Ticker: "ONE"})
+	svc := newService(search.NewAggregatedProvider(leaf))
+	equity := standardRequest(dto.ExposureRequest{Assets: dto.AssetExposureRequest{AssetClasses: []string{"equity"}}})
+	bonds := standardRequest(dto.ExposureRequest{Assets: dto.AssetExposureRequest{AssetClasses: []string{"bond"}}})
+
+	if _, err := svc.DiscoverETFs(context.Background(), equity); err != nil {
+		t.Fatalf("equity: %v", err)
+	}
+	res, err := svc.DiscoverETFs(context.Background(), bonds)
+	if err != nil {
+		t.Fatalf("bonds: %v", err)
+	}
+
+	if res.CacheHit {
+		t.Errorf("bond request was answered from the equity request's cache entry")
+	}
+	if leaf.Calls() != 2 {
+		t.Errorf("data source called %d times, want 2", leaf.Calls())
+	}
+}
+
+func tickers(results []dto.ETFResult) []string {
+	out := make([]string, len(results))
+	for i, r := range results {
+		out[i] = r.Ticker
+	}
+	return out
+}
+
+func TestEachConstraintDropsTheETFThatViolatesIt(t *testing.T) {
+	// ok passes every constraint used below.
+	ok := domain.ETF{Ticker: "OK", TER: 0.2, AUM: 1e9, AverageDailyVolume: 200000, IsPhysical: true}
+
+	cases := []struct {
+		name        string
+		constraints dto.Constraints
+		violator    func(e domain.ETF) domain.ETF
+	}{
+		{"maxTER", dto.Constraints{MaxTER: 0.5}, func(e domain.ETF) domain.ETF { e.TER = 0.75; return e }},
+		{"minAUM", dto.Constraints{MinAUM: 1e8}, func(e domain.ETF) domain.ETF { e.AUM = 5e7; return e }},
+		{"minLiquidity", dto.Constraints{MinLiquidity: 100000}, func(e domain.ETF) domain.ETF { e.AverageDailyVolume = 50000; return e }},
+		{"excludeSynthetic", dto.Constraints{ExcludeSyntheticETFs: true}, func(e domain.ETF) domain.ETF { e.IsSynthetic = true; return e }},
+		{"excludeLeveraged", dto.Constraints{ExcludeLeveragedETFs: true}, func(e domain.ETF) domain.ETF { e.IsLeveraged = true; return e }},
+		{"excludeInverse", dto.Constraints{ExcludeInverseETFs: true}, func(e domain.ETF) domain.ETF { e.IsInverse = true; return e }},
+		{"physicalOnly", dto.Constraints{PhysicalOnly: true}, func(e domain.ETF) domain.ETF { e.IsPhysical = false; return e }},
+		{"allowedExchanges", dto.Constraints{AllowedExchanges: []string{"jse"}}, func(e domain.ETF) domain.ETF { e.Exchange = "NYSE"; return e }},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			okHere := ok
+			okHere.Exchange = "JSE"
+			bad := tc.violator(okHere)
+			bad.Ticker = "BAD"
+
+			req := standardRequest(dto.ExposureRequest{})
+			req.Constraints = tc.constraints
+			res := discover(t, req, okHere, bad)
+
+			got := tickers(res.Results)
+			if len(got) != 1 || got[0] != "OK" {
+				t.Fatalf("results = %v, want [OK]", got)
+			}
+		})
+	}
+}
+
+func TestCustomWeightingDecidesTheOrder(t *testing.T) {
+	cheap := domain.ETF{Ticker: "CHEAP", TER: 0.05, AverageDailyVolume: 5000}
+	liquid := domain.ETF{Ticker: "LIQUID", TER: 0.9, AverageDailyVolume: 1000000}
+
+	cases := []struct {
+		weighting map[string]float64
+		wantOrder []string
+		wantTop   float64 // ranking score of the top result, worked by hand
+	}{
+		{map[string]float64{"fees": 1}, []string{"CHEAP", "LIQUID"}, 95},
+		{map[string]float64{"liquidity": 1}, []string{"LIQUID", "CHEAP"}, 100},
+	}
+
+	for _, tc := range cases {
+		req := standardRequest(dto.ExposureRequest{})
+		req.RankingPreferences = dto.RankingPreferences{Weighting: tc.weighting}
+
+		res := discover(t, req, cheap, liquid)
+
+		got := tickers(res.Results)
+		if len(got) != 2 || got[0] != tc.wantOrder[0] || got[1] != tc.wantOrder[1] {
+			t.Fatalf("weighting %v: order = %v, want %v", tc.weighting, got, tc.wantOrder)
+		}
+		assertScore(t, "top rankingScore", res.Results[0].RankingScore, tc.wantTop)
 	}
 }
