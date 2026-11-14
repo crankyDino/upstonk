@@ -5,6 +5,7 @@ import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings2, Ban, Percent, DollarSign, Droplets } from 'lucide-react';
 import { formatCurrency } from '@/lib/api/upstonk';
+import { LIQUIDITY_STEPS } from '@/lib/discoveryOptions';
 
 export function ConstraintsPanel() {
   const { constraints, setConstraints } = useDiscoveryStore();
@@ -79,24 +80,28 @@ export function ConstraintsPanel() {
             </div>
           </div>
 
-          {/* Liquidity Threshold */}
+          {/* Minimum average daily volume */}
           <div className="space-y-4 p-4 border rounded-lg md:col-span-2">
             <Label className="flex items-center gap-2">
               <Droplets className="h-4 w-4 text-muted-foreground" />
-              Minimum Liquidity Score: {constraints.liquidityThreshold}%
+              Minimum Daily Volume:{' '}
+              {constraints.minDailyVolume === 0
+                ? 'Any'
+                : `${constraints.minDailyVolume.toLocaleString()} shares`}
             </Label>
             <Slider
-              value={[constraints.liquidityThreshold]}
-              onValueChange={([value]) => setConstraints({ liquidityThreshold: value })}
+              value={[Math.max(0, LIQUIDITY_STEPS.indexOf(constraints.minDailyVolume as (typeof LIQUIDITY_STEPS)[number]))]}
+              onValueChange={([index]) => setConstraints({ minDailyVolume: LIQUIDITY_STEPS[index] })}
               min={0}
-              max={100}
-              step={5}
+              max={LIQUIDITY_STEPS.length - 1}
+              step={1}
               className="w-full"
             />
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Low</span>
-              <span>Medium</span>
-              <span>High</span>
+              <span>Any</span>
+              <span>10k</span>
+              <span>100k</span>
+              <span>500k</span>
             </div>
           </div>
         </div>

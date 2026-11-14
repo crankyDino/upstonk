@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"math"
+	"strings"
 	"testing"
 
 	"upstonk/internal/api/dto"
@@ -241,5 +242,55 @@ func TestCustomWeightingDecidesTheOrder(t *testing.T) {
 			t.Fatalf("weighting %v: order = %v, want %v", tc.weighting, got, tc.wantOrder)
 		}
 		assertScore(t, "top rankingScore", res.Results[0].RankingScore, tc.wantTop)
+	}
+}
+
+func TestUnknownAUMPassesMinAUMButIsFlagged(t *testing.T) {
+	known := domain.ETF{Ticker: "KNOWN", AUM: 2e9}
+	unknown := domain.ETF{Ticker: "NOAUM"} // AUM 0 = source didn't report it
+
+	req := standardRequest(dto.ExposureRequest{})
+	req.Constraints = dto.Constraints{MinAUM: 1e8}
+	res := discover(t, req, known, unknown)
+
+	if len(res.Results) != 2 {
+		t.Fatalf("results = %v, want both KNOWN and NOAUM", tickers(res.Results))
+	}
+	var flagged *dto.Warning
+	for i := range res.Warnings {
+		if res.Warnings[i].Code == "UNVERIFIED_AUM" {
+			flagged = &res.Warnings[i]
+		}
+	}
+	if flagged == nil {
+		t.Fatalf("no UNVERIFIED_AUM warning in %+v", res.Warnings)
+	}
+	if !strings.Contains(flagged.Message, "NOAUM") || strings.Contains(flagged.Message, "KNOWN") {
+		t.Fatalf("warning should name NOAUM only, got %q", flagged.Message)
+	}
+}
+
+func TestUnknownTERPassesMaxTERButIsFlagged(t *testing.T) {
+	known := domain.ETF{Ticker: "KNOWN", TER: 0.2}
+	unknown := domain.ETF{Ticker: "NOTER"} // TER 0 = source didn't report it
+
+	req := standardRequest(dto.ExposureRequest{})
+	req.Constraints = dto.Constraints{MaxTER: 0.5}
+	res := discover(t, req, known, unknown)
+
+	if len(res.Results) != 2 {
+		t.Fatalf("results = %v, want both KNOWN and NOTER", tickers(res.Results))
+	}
+	var flagged *dto.Warning
+	for i := range res.Warnings {
+		if res.Warnings[i].Code == "UNVERIFIED_TER" {
+			flagged = &res.Warnings[i]
+		}
+	}
+	if flagged == nil {
+		t.Fatalf("no UNVERIFIED_TER warning in %+v", res.Warnings)
+	}
+	if !strings.Contains(flagged.Message, "NOTER") || strings.Contains(flagged.Message, "KNOWN") {
+		t.Fatalf("warning should name NOTER only, got %q", flagged.Message)
 	}
 }

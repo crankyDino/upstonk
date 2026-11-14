@@ -188,8 +188,9 @@ func (s *Service) applyConstraints(etfs []domain.DiscoveredETF, constraints dto.
 			continue
 		}
 
-		// AUM constraint
-		if constraints.MinAUM > 0 && etf.AUM < constraints.MinAUM {
+		// AUM constraint. AUM 0 means the source didn't report it: keep the
+		// ETF (never guess) and let generateWarnings flag it as unverified.
+		if constraints.MinAUM > 0 && etf.AUM > 0 && etf.AUM < constraints.MinAUM {
 			continue
 		}
 
@@ -441,6 +442,17 @@ func (s *Service) generateWarnings(results []dto.ETFResult, req dto.DiscoveryReq
 		})
 	}
 
+	// Results kept despite a constraint because the value it checks is
+	// unknown (0 = the source didn't report it).
+	if req.Constraints.MinAUM > 0 {
+		warnings = appendUnverified(warnings, results, "UNVERIFIED_AUM", "Fund size (AUM)", "minimum AUM",
+			func(r dto.ETFResult) bool { return r.AUM == 0 })
+	}
+	if req.Constraints.MaxTER > 0 {
+		warnings = appendUnverified(warnings, results, "UNVERIFIED_TER", "Total expense ratio (TER)", "maximum TER",
+			func(r dto.ETFResult) bool { return r.TER == 0 })
+	}
+
 	// Check for low confidence results
 	lowConfidenceCount := 0
 	for _, result := range results {
@@ -459,6 +471,26 @@ func (s *Service) generateWarnings(results []dto.ETFResult, req dto.DiscoveryReq
 	}
 
 	return warnings
+}
+
+// appendUnverified adds a warning naming every result whose value for a
+// constraint is unknown, so the constraint could not be checked for it.
+func appendUnverified(warnings []dto.Warning, results []dto.ETFResult, code, field, constraint string, unknown func(dto.ETFResult) bool) []dto.Warning {
+	tickers := []string{}
+	for _, r := range results {
+		if unknown(r) {
+			tickers = append(tickers, r.Ticker)
+		}
+	}
+	if len(tickers) == 0 {
+		return warnings
+	}
+	return append(warnings, dto.Warning{
+		Code: code,
+		Message: fmt.Sprintf("%s is unavailable for %s, so the %s constraint could not be checked for them.",
+			field, strings.Join(tickers, ", "), constraint),
+		Severity: "warning",
+	})
 }
 
 // Helper functions

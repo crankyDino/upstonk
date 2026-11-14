@@ -1,33 +1,57 @@
 // UPSTONK API Types
 
-export type AccountType = 'TFSA' | 'ISA' | 'IRA' | 'standard' | 'retirement_annuity';
+export type Country = 'ZA' | 'US' | 'GB';
+export type AccountType = 'tfsa' | 'isa' | 'ira' | 'roth_ira' | '401k' | 'standard';
 export type RiskTolerance = 'conservative' | 'moderate' | 'aggressive';
 export type EligibilityStatus = 'eligible' | 'ineligible' | 'unknown' | 'conditional';
 export type ConfidenceLevel = 'high' | 'medium' | 'low' | 'unknown';
 
-// API Request Types (matching backend DTO structure)
+// Ranking components the server scores (server/internal/service/ranking/scorer.go).
+export type RankingComponent = 'fees' | 'liquidity' | 'tracking' | 'stability';
+
+// API Request Types — mirror server/internal/api/dto/request.go
 export interface InvestorProfileRequest {
-  country: string;
+  country: Country;
   accountType: AccountType;
   currency: string;
+  riskTolerance?: RiskTolerance;
+  timeHorizonYears?: number;
 }
 
 export interface ExposureRequest {
   assets: {
+    companies: string[];
+    sectors: string[];
     assetClasses: string[];
   };
   geography: {
     markets: string[];
+    emergingMarkets: boolean;
+    developedMarkets: boolean;
   };
 }
 
 export interface ConstraintsRequest {
-  // Empty object for now, can be extended
+  tfsaEligibleOnly: boolean;
+  maxTER?: number;
+  minAUM?: number;
+  minLiquidity?: number; // minimum average daily volume (shares)
+  excludeSyntheticETFs: boolean;
+  excludeLeveragedETFs: boolean;
+  excludeInverseETFs: boolean;
+  physicalOnly: boolean;
+}
+
+export interface RankingPreferencesRequest {
+  weighting: Record<RankingComponent, number>; // must sum to 1.0
 }
 
 export interface OutputOptionsRequest {
   maxResults: number;
+  includeAlternatives: boolean;
   includeSourceLinks: boolean;
+  explainEligibility: boolean;
+  includeWarnings: boolean;
 }
 
 export interface DiscoveryRequest {
@@ -35,12 +59,13 @@ export interface DiscoveryRequest {
   exposure: ExposureRequest;
   investmentVehicles: string[];
   constraints: ConstraintsRequest;
+  rankingPreferences: RankingPreferencesRequest;
   outputOptions: OutputOptionsRequest;
 }
 
 // UI Form State Types (richer than API request)
 export interface InvestorProfile {
-  country: string;
+  country: Country;
   accountType: AccountType;
   currency: string;
   riskTolerance: RiskTolerance;
@@ -64,7 +89,7 @@ export interface Constraints {
   tfsaEligibleOnly: boolean;
   maxTER: number;
   minAUM: number;
-  liquidityThreshold: number;
+  minDailyVolume: number; // 0 = off; otherwise one of LIQUIDITY_STEPS
   excludeSynthetic: boolean;
   excludeLeveraged: boolean;
   excludeInverse: boolean;
@@ -72,7 +97,7 @@ export interface Constraints {
 }
 
 export interface RankingPreference {
-  id: string;
+  id: RankingComponent;
   name: string;
   weight: number;
   priority: number;

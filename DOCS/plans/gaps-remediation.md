@@ -88,10 +88,17 @@ GUI changes (checked with `npm run lint`, `npx tsc --noEmit` and a manual run, s
   - Ranking weights → `rankingPreferences.weighting` `{fees, liquidity, tracking, stability}`, normalised to sum to 1.0.
   - Also send `riskTolerance`, `timeHorizonYears`, `sectors`, `companies`, `includeAlternatives` and `explainEligibility`, which the form already collects.
 - `ConstraintsPanel.tsx`: replace the liquidity % slider with volume steps (off / 10k / 100k / 500k).
-- Ranking panel: four weights; remove `aum` (now `stability`) and `eligibility`.
+- Ranking weights: four (`fees`, `liquidity`, `tracking`, `stability`) in the store defaults; `aum` and `eligibility` removed. (No ranking panel exists in the UI.)
 - `gui/index.html`: real title and meta tags, with the lovable.dev images removed.
 
 End-to-end check: in the browser, setting max TER to 0.1% visibly shrinks the results; changing the weights changes the order.
+
+**Findings and decisions while doing Phase 4 (2026-11-15):**
+- The GUI offered countries (CA/AU/DE/FR) and account values (`TFSA`, `ISA`, `IRA`, `retirement_annuity`) the server rejects, and labelled TFSA as Canadian. Decision: **offer only the server's supported pairs** (ZA/US/GB), in lower case, with the account list depending on the country.
+- There is no ranking-weights panel in the GUI; the four weights are sent from defaults only.
+- Live data has no AUM or TER, so the default `minAUM` dropped every live ETF. Decision: **unknown AUM passes `minAUM` and is flagged `UNVERIFIED_AUM`**. The same rule was applied to TER (`UNVERIFIED_TER`). The planned "max TER 0.1% shrinks results" check therefore can't show a change with live data today.
+- The contract fixtures are generated from the GUI's real code (`npm run contract:fixture`), not written by hand. The router tests post the default request and every account pair the GUI offers.
+- Follow-up (README gotcha 14): ranking scores unknown TER as free and unknown AUM as tiny.
 
 ## Phase 5 — Consolidate docs into `DOCS/` (gotchas 6, 7)
 Rule: **before a command, endpoint or behaviour goes into the docs, run it and confirm it works.** Anything that can't be confirmed is left out or marked as not working.

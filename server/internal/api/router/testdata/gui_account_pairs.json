@@ -1,0 +1,34 @@
+[
+  {
+    "country": "ZA",
+    "accountType": "tfsa"
+  },
+  {
+    "country": "ZA",
+    "accountType": "standard"
+  },
+  {
+    "country": "US",
+    "accountType": "ira"
+  },
+  {
+    "country": "US",
+    "accountType": "roth_ira"
+  },
+  {
+    "country": "US",
+    "accountType": "401k"
+  },
+  {
+    "country": "US",
+    "accountType": "standard"
+  },
+  {
+    "country": "GB",
+    "accountType": "isa"
+  },
+  {
+    "country": "GB",
+    "accountType": "standard"
+  }
+]

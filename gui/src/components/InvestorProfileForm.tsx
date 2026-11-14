@@ -4,24 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, MapPin, Wallet, Shield, Clock } from 'lucide-react';
-
-const countries = [
-  { code: 'CA', name: 'Canada' },
-  { code: 'US', name: 'United States' },
-  { code: 'GB', name: 'United Kingdom' },
-  { code: 'AU', name: 'Australia' },
-  { code: 'DE', name: 'Germany' },
-  { code: 'FR', name: 'France' },
-  { code: 'ZA', name: 'South Africa' },
-];
-
-const accountTypes = [
-  { value: 'TFSA', label: 'TFSA (Canada)', description: 'Tax-Free Savings Account' },
-  { value: 'ISA', label: 'ISA (UK)', description: 'Individual Savings Account' },
-  { value: 'IRA', label: 'IRA (US)', description: 'Individual Retirement Account' },
-  { value: 'standard', label: 'Standard', description: 'Taxable brokerage account' },
-  { value: 'retirement_annuity', label: 'Retirement Annuity (ZA)', description: 'South African retirement fund' },
-];
+import { COUNTRIES, SUPPORTED_ACCOUNTS } from '@/lib/discoveryOptions';
+import type { AccountType, Country, RiskTolerance } from '@/types/api';
 
 const currencies = [
   { code: 'CAD', name: 'Canadian Dollar' },
@@ -32,7 +16,7 @@ const currencies = [
   { code: 'ZAR', name: 'South African Rand' },
 ];
 
-const riskTolerances = [
+const riskTolerances: { value: RiskTolerance; label: string; description: string }[] = [
   { value: 'conservative', label: 'Conservative', description: 'Lower risk, stable returns' },
   { value: 'moderate', label: 'Moderate', description: 'Balanced risk/return' },
   { value: 'aggressive', label: 'Aggressive', description: 'Higher risk, growth-focused' },
@@ -40,6 +24,7 @@ const riskTolerances = [
 
 export function InvestorProfileForm() {
   const { investorProfile, setInvestorProfile } = useDiscoveryStore();
+  const accountTypes = SUPPORTED_ACCOUNTS[investorProfile.country];
 
   return (
     <Card className="border-border/50 shadow-sm">
@@ -62,13 +47,13 @@ export function InvestorProfileForm() {
             </Label>
             <Select
               value={investorProfile.country}
-              onValueChange={(value) => setInvestorProfile({ country: value })}
+              onValueChange={(value) => setInvestorProfile({ country: value as Country })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select country" />
               </SelectTrigger>
               <SelectContent>
-                {countries.map((country) => (
+                {COUNTRIES.map((country) => (
                   <SelectItem key={country.code} value={country.code}>
                     {country.name}
                   </SelectItem>
@@ -85,7 +70,7 @@ export function InvestorProfileForm() {
             </Label>
             <Select
               value={investorProfile.accountType}
-              onValueChange={(value) => setInvestorProfile({ accountType: value as any })}
+              onValueChange={(value) => setInvestorProfile({ accountType: value as AccountType })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select account type" />
@@ -131,7 +116,7 @@ export function InvestorProfileForm() {
             </Label>
             <Select
               value={investorProfile.riskTolerance}
-              onValueChange={(value) => setInvestorProfile({ riskTolerance: value as any })}
+              onValueChange={(value) => setInvestorProfile({ riskTolerance: value as RiskTolerance })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select risk tolerance" />
