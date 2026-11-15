@@ -20,17 +20,25 @@ type UpstonkDailyPrice struct {
 }
 
 type UpstonkEtf struct {
-	Code          string
-	Name          string
-	Isin          *string
-	Issuer        *string
-	Exchange      string
-	Currency      *string
-	Active        bool
-	ListingSource string
-	ListingUrl    *string
-	ListedAsOf    pgtype.Date
-	UpdatedAt     pgtype.Timestamptz
+	Code                string
+	Name                string
+	Isin                *string
+	Issuer              *string
+	Exchange            string
+	Currency            *string
+	Active              bool
+	ListingSource       string
+	ListingUrl          *string
+	ListedAsOf          pgtype.Date
+	UpdatedAt           pgtype.Timestamptz
+	InstrumentType      string
+	Category            *string
+	UnderlyingIndex     *string
+	TfsaFriendly        *bool
+	ForeignStatus       *bool
+	SarbClassification  *string
+	DisclosureFrequency *string
+	IssuerUrl           *string
 }
 
 type UpstonkFactsheet struct {

@@ -331,6 +331,7 @@ func satrix40() domain.ETF {
 		Ticker: "STX40", Exchange: "JSE", ExchangeCountry: "ZA", Currency: "ZAR", Provider: "Satrix",
 		IsPhysical: domain.Flag(true), IsSynthetic: domain.Flag(false),
 		IsLeveraged: domain.Flag(false), IsInverse: domain.Flag(false),
+		TFSAFriendly: domain.Flag(true),
 	}
 }
 

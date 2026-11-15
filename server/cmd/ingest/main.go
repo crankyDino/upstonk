@@ -1,5 +1,6 @@
 // Command ingest fills the UPSTONK store. Run from server/ (reads .env):
 //
+//	go run ./cmd/ingest jse-list    # after downloading a new JSE ETF/ETN List into data/import/
 //	go run ./cmd/ingest prices      # daily: Yahoo closes and volumes for every active ETF
 //	go run ./cmd/ingest factsheets  # monthly: issuer factsheets (Satrix so far)
 //
@@ -12,7 +13,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
+	"regexp"
 	"sort"
+	"strconv"
 	"time"
 
 	"upstonk/internal/config"
@@ -24,11 +28,12 @@ import (
 const usage = `usage: ingest <command>
 
 commands:
+  jse-list [file...]  import the JSE ETF/ETN List (default: newest of each in data/import/)
   prices      fetch ~3 months of daily prices and volumes for every active ETF
   factsheets  fetch and read the latest issuer factsheet for every active ETF`
 
 func main() {
-	if len(os.Args) != 2 {
+	if len(os.Args) < 2 {
 		fmt.Fprintln(os.Stderr, usage)
 		os.Exit(2)
 	}
@@ -53,6 +58,22 @@ func main() {
 	fetcher := ingest.NewPoliteFetcher(3 * time.Second)
 
 	switch os.Args[1] {
+	case "jse-list":
+		files := os.Args[2:]
+		if len(files) == 0 {
+			files, err = newestLists("data/import")
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+		for _, path := range files {
+			report, err := ingest.ImportJSEList(ctx, q, path, time.Now())
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Printf("%s: %d imported, %d no longer listed (marked inactive) from %s",
+				report.Source, report.Imported, report.Deactivated, filepath.Base(path))
+		}
 	case "prices":
 		report, err := ingest.Prices(ctx, q, fetcher)
 		if err != nil {
@@ -83,4 +104,51 @@ func printSorted(failed map[string]string) {
 	for _, c := range codes {
 		log.Printf("  %s: %s", c, failed[c])
 	}
+}
+
+// newestLists picks the highest-version "ETF List" and "ETN List" workbook in
+// dir (the JSE names downloads like "ETF List v.99.xlsx"). AMC lists are out
+// of scope.
+func newestLists(dir string) ([]string, error) {
+	paths, err := filepath.Glob(filepath.Join(dir, "*.xlsx"))
+	if err != nil {
+		return nil, err
+	}
+	version := regexp.MustCompile(`(?i)v\.?\s*(\d+)`)
+	best := map[string]struct {
+		path string
+		v    int
+	}{}
+	for _, p := range paths {
+		base := filepath.Base(p)
+		var kind string
+		switch {
+		case regexp.MustCompile(`(?i)^ETF List`).MatchString(base):
+			kind = "ETF"
+		case regexp.MustCompile(`(?i)^ETN List`).MatchString(base):
+			kind = "ETN"
+		default:
+			continue
+		}
+		v := 0
+		if m := version.FindStringSubmatch(base); m != nil {
+			v, _ = strconv.Atoi(m[1])
+		}
+		if cur, ok := best[kind]; !ok || v > cur.v {
+			best[kind] = struct {
+				path string
+				v    int
+			}{p, v}
+		}
+	}
+	if len(best) == 0 {
+		return nil, fmt.Errorf("no \"ETF List\" or \"ETN List\" .xlsx in %s", dir)
+	}
+	out := []string{}
+	for _, k := range []string{"ETF", "ETN"} {
+		if b, ok := best[k]; ok {
+			out = append(out, b.path)
+		}
+	}
+	return out, nil
 }

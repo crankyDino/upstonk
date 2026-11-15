@@ -130,7 +130,9 @@ func TestAverageDailyVolumeComesFromStoredPrices(t *testing.T) {
 
 func TestTFSAWithAFullyStoredSatrixFactsheetIsEligible(t *testing.T) {
 	pool := dbtest.New(t)
-	storeSatrix40(t, storedb.New(pool), "2026-10-31", 0.10)
+	q := storedb.New(pool)
+	storeSatrix40(t, q, "2026-10-31", 0.10)
+	listing(t, q, "STX40", "ETF", ptr(true))
 
 	if got := storedResult(t, pool, tfsaRequest()).Eligibility.Status; got != "eligible" {
 		t.Fatalf("status = %q, want eligible (JSE, ZAR, Satrix, physical, not leveraged/inverse)", got)
@@ -172,5 +174,68 @@ func TestStoredHoldingsAndSectorsDriveMatchingAndAppearInResults(t *testing.T) {
 	assertScore(t, "matchScore", r.MatchScore, 60)
 	if len(r.TopHoldings) != 1 || r.TopHoldings[0].Name != "NVIDIA" || r.TopHoldings[0].Weight != 8.35 {
 		t.Fatalf("topHoldings = %+v", r.TopHoldings)
+	}
+}
+
+func listing(t *testing.T, q *storedb.Queries, code, instrument string, tfsa *bool) {
+	t.Helper()
+	if err := q.UpsertListing(context.Background(), storedb.UpsertListingParams{
+		Code: code, Name: code + " fund", Issuer: ptr("Satrix"), Currency: ptr("ZAR"), InstrumentType: instrument,
+		TfsaFriendly: tfsa, ListingSource: "JSE ETF List v.99", ListedAsOf: date(t, "2026-11-15"),
+	}); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestStoreServesETFsOnlyNotETNs(t *testing.T) {
+	pool := dbtest.New(t)
+	q := storedb.New(pool)
+	listing(t, q, "STX40", "ETF", ptr(true))
+	listing(t, q, "EXETNC", "ETN", nil)
+
+	res, err := newService(search.NewStoredProvider(pool)).DiscoverETFs(context.Background(), standardRequest(dto.ExposureRequest{}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := tickers(res.Results); len(got) != 1 || got[0] != "STX40" {
+		t.Fatalf("results = %v, want [STX40]", got)
+	}
+}
+
+func TestJSETFSAFlagDecidesTheTFSACriterion(t *testing.T) {
+	cases := []struct {
+		name      string
+		flag      *bool
+		ineligble bool
+	}{
+		{"listed TFSA-friendly", ptr(true), false},
+		{"listed not TFSA-friendly", ptr(false), true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			pool := dbtest.New(t)
+			q := storedb.New(pool)
+			storeSatrix40(t, q, "2026-10-31", 0.10)
+			listing(t, q, "STX40", "ETF", tc.flag) // JSE list facts on top of the factsheet
+
+			res, err := newService(search.NewStoredProvider(pool)).DiscoverETFs(context.Background(), tfsaRequest())
+			if err != nil {
+				t.Fatal(err)
+			}
+			if tc.ineligble {
+				if res.Summary.TotalIneligible != 1 {
+					t.Fatalf("summary = %+v, want STX40 ineligible", res.Summary)
+				}
+				return
+			}
+			passed := onlyFund(t, res).Eligibility.RulesPassed
+			found := false
+			for _, p := range passed {
+				found = found || p == "jse_tfsa_list"
+			}
+			if !found {
+				t.Fatalf("rulesPassed = %v, want jse_tfsa_list", passed)
+			}
+		})
 	}
 }

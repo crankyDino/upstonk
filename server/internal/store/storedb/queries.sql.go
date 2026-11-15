@@ -11,6 +11,26 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const deactivateMissing = `-- name: DeactivateMissing :execrows
+UPDATE upstonk.etfs SET active = false, updated_at = now()
+WHERE instrument_type = $1 AND active AND NOT (code = ANY($2::text[]))
+`
+
+type DeactivateMissingParams struct {
+	InstrumentType string
+	Codes          []string
+}
+
+// After a full list import: instruments of that type not in the new list
+// are no longer listed.
+func (q *Queries) DeactivateMissing(ctx context.Context, arg DeactivateMissingParams) (int64, error) {
+	result, err := q.db.Exec(ctx, deactivateMissing, arg.InstrumentType, arg.Codes)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const deleteFactsheetDetails = `-- name: DeleteFactsheetDetails :exec
 DELETE FROM upstonk.factsheet_holdings WHERE factsheet_id = $1
 `
@@ -145,25 +165,30 @@ func (q *Queries) InsertHolding(ctx context.Context, arg InsertHoldingParams) er
 const listActiveETFs = `-- name: ListActiveETFs :many
 
 SELECT code, name, isin, issuer, exchange, currency,
-       listing_source, listing_url, listed_as_of
+       listing_source, listing_url, listed_as_of,
+       tfsa_friendly, underlying_index, category
 FROM upstonk.etfs
-WHERE active
+WHERE active AND instrument_type = 'ETF'
 ORDER BY code
 `
 
 type ListActiveETFsRow struct {
-	Code          string
-	Name          string
-	Isin          *string
-	Issuer        *string
-	Exchange      string
-	Currency      *string
-	ListingSource string
-	ListingUrl    *string
-	ListedAsOf    pgtype.Date
+	Code            string
+	Name            string
+	Isin            *string
+	Issuer          *string
+	Exchange        string
+	Currency        *string
+	ListingSource   string
+	ListingUrl      *string
+	ListedAsOf      pgtype.Date
+	TfsaFriendly    *bool
+	UnderlyingIndex *string
+	Category        *string
 }
 
 // Reads
+// Active ETFs only (ETNs are stored but not yet searchable).
 func (q *Queries) ListActiveETFs(ctx context.Context) ([]ListActiveETFsRow, error) {
 	rows, err := q.db.Query(ctx, listActiveETFs)
 	if err != nil {
@@ -183,6 +208,9 @@ func (q *Queries) ListActiveETFs(ctx context.Context) ([]ListActiveETFsRow, erro
 			&i.ListingSource,
 			&i.ListingUrl,
 			&i.ListedAsOf,
+			&i.TfsaFriendly,
+			&i.UnderlyingIndex,
+			&i.Category,
 		); err != nil {
 			return nil, err
 		}
@@ -434,6 +462,70 @@ func (q *Queries) ListLatestFactsheets(ctx context.Context) ([]ListLatestFactshe
 	return items, nil
 }
 
+const listListings = `-- name: ListListings :many
+SELECT code, name, issuer, issuer_url, currency, instrument_type, category, underlying_index,
+       tfsa_friendly, foreign_status, sarb_classification, disclosure_frequency,
+       listing_source, listing_url, listed_as_of, active
+FROM upstonk.etfs
+ORDER BY code
+`
+
+type ListListingsRow struct {
+	Code                string
+	Name                string
+	Issuer              *string
+	IssuerUrl           *string
+	Currency            *string
+	InstrumentType      string
+	Category            *string
+	UnderlyingIndex     *string
+	TfsaFriendly        *bool
+	ForeignStatus       *bool
+	SarbClassification  *string
+	DisclosureFrequency *string
+	ListingSource       string
+	ListingUrl          *string
+	ListedAsOf          pgtype.Date
+	Active              bool
+}
+
+func (q *Queries) ListListings(ctx context.Context) ([]ListListingsRow, error) {
+	rows, err := q.db.Query(ctx, listListings)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListListingsRow
+	for rows.Next() {
+		var i ListListingsRow
+		if err := rows.Scan(
+			&i.Code,
+			&i.Name,
+			&i.Issuer,
+			&i.IssuerUrl,
+			&i.Currency,
+			&i.InstrumentType,
+			&i.Category,
+			&i.UnderlyingIndex,
+			&i.TfsaFriendly,
+			&i.ForeignStatus,
+			&i.SarbClassification,
+			&i.DisclosureFrequency,
+			&i.ListingSource,
+			&i.ListingUrl,
+			&i.ListedAsOf,
+			&i.Active,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listVolumeStats = `-- name: ListVolumeStats :many
 SELECT p.etf_code,
        avg(p.volume)::float8      AS avg_volume,
@@ -555,6 +647,65 @@ func (q *Queries) UpsertETF(ctx context.Context, arg UpsertETFParams) error {
 		arg.Issuer,
 		arg.Exchange,
 		arg.Currency,
+		arg.ListingSource,
+		arg.ListingUrl,
+		arg.ListedAsOf,
+	)
+	return err
+}
+
+const upsertListing = `-- name: UpsertListing :exec
+INSERT INTO upstonk.etfs (code, name, issuer, issuer_url, exchange, currency, instrument_type,
+    category, underlying_index, tfsa_friendly, foreign_status, sarb_classification,
+    disclosure_frequency, listing_source, listing_url, listed_as_of, active, updated_at)
+VALUES ($1, $2, $3, $4, 'JSE', $5, $6,
+    $7, $8, $9, $10, $11,
+    $12, $13, $14, $15, true, now())
+ON CONFLICT (code) DO UPDATE SET
+    name = EXCLUDED.name, issuer = EXCLUDED.issuer, issuer_url = EXCLUDED.issuer_url,
+    currency = EXCLUDED.currency, instrument_type = EXCLUDED.instrument_type,
+    category = EXCLUDED.category, underlying_index = EXCLUDED.underlying_index,
+    tfsa_friendly = EXCLUDED.tfsa_friendly, foreign_status = EXCLUDED.foreign_status,
+    sarb_classification = EXCLUDED.sarb_classification,
+    disclosure_frequency = EXCLUDED.disclosure_frequency,
+    listing_source = EXCLUDED.listing_source, listing_url = EXCLUDED.listing_url,
+    listed_as_of = EXCLUDED.listed_as_of, active = true, updated_at = now()
+`
+
+type UpsertListingParams struct {
+	Code                string
+	Name                string
+	Issuer              *string
+	IssuerUrl           *string
+	Currency            *string
+	InstrumentType      string
+	Category            *string
+	UnderlyingIndex     *string
+	TfsaFriendly        *bool
+	ForeignStatus       *bool
+	SarbClassification  *string
+	DisclosureFrequency *string
+	ListingSource       string
+	ListingUrl          *string
+	ListedAsOf          pgtype.Date
+}
+
+// One row of a JSE ETF/ETN List import. Re-imports update in place and
+// re-activate; the factsheet-only columns (isin, exchange) are left alone.
+func (q *Queries) UpsertListing(ctx context.Context, arg UpsertListingParams) error {
+	_, err := q.db.Exec(ctx, upsertListing,
+		arg.Code,
+		arg.Name,
+		arg.Issuer,
+		arg.IssuerUrl,
+		arg.Currency,
+		arg.InstrumentType,
+		arg.Category,
+		arg.UnderlyingIndex,
+		arg.TfsaFriendly,
+		arg.ForeignStatus,
+		arg.SarbClassification,
+		arg.DisclosureFrequency,
 		arg.ListingSource,
 		arg.ListingUrl,
 		arg.ListedAsOf,

@@ -58,6 +58,9 @@ func (r *TFSASouthAfricaRules) Evaluate(ctx context.Context, etf domain.ETF) dom
 	// Rule 3: Must not be leveraged or inverse
 	r.checkETFStructure(&result, etf)
 
+	// JSE ETF List "TFSA Friendly (CIS)" column (from FSCA/issuer info)
+	r.checkJSETFSAList(&result, etf)
+
 	// Rule 4: Must be from approved provider
 	r.checkProvider(&result, etf)
 
@@ -155,6 +158,31 @@ func (r *TFSASouthAfricaRules) checkETFStructure(result *domain.EligibilityResul
 		"Standard tracking ETF", "Inverse ETF detected",
 		"✗ Inverse ETFs are not permitted in TFSAs", "✓ Not inverse",
 		"⚠ Inverse exposure not reported by any data source - verify the ETF is not inverse")
+}
+
+// checkJSETFSAList uses the JSE's published TFSA flag: "No" fails, "Yes"
+// passes, not stated is skipped. The JSE notes firms must confirm it.
+func (r *TFSASouthAfricaRules) checkJSETFSAList(result *domain.EligibilityResult, etf domain.ETF) {
+	const criterion = "jse_tfsa_list"
+	const expected = "Marked TFSA-friendly in the JSE ETF List"
+	switch {
+	case domain.IsTrue(etf.TFSAFriendly):
+		result.RulesPassed = append(result.RulesPassed, criterion)
+		result.Reasons = append(result.Reasons, "✓ JSE ETF List marks it TFSA-friendly")
+	case domain.IsFalse(etf.TFSAFriendly):
+		result.RulesFailed = append(result.RulesFailed, criterion)
+		result.Reasons = append(result.Reasons, "✗ JSE ETF List marks it not TFSA-friendly")
+		result.IsEligible = false
+		result.Evidence = append(result.Evidence, domain.EligibilityEvidence{
+			Criterion: criterion, Expected: expected, Actual: "TFSA Friendly: No", Result: "fail",
+		})
+	default:
+		result.RulesSkipped = append(result.RulesSkipped, criterion)
+		result.Reasons = append(result.Reasons, "⚠ TFSA status not in the JSE ETF List data - verify with your platform")
+		result.Evidence = append(result.Evidence, domain.EligibilityEvidence{
+			Criterion: criterion, Expected: expected, Actual: "not stated", Result: "unknown",
+		})
+	}
 }
 
 // checkStructureFlag fails the criterion when the flag is known true, passes

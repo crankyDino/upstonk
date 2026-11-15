@@ -84,12 +84,14 @@ func (p *StoredProvider) Search(ctx context.Context, criteria Criteria) ([]domai
 	etfs := make([]domain.ETF, 0, len(listed))
 	for _, e := range listed {
 		etf := domain.ETF{
-			Ticker:   e.Code,
-			Name:     e.Name,
-			ISIN:     deref(e.Isin),
-			Provider: deref(e.Issuer),
-			Exchange: e.Exchange,
-			Currency: deref(e.Currency),
+			Ticker:        e.Code,
+			Name:          e.Name,
+			ISIN:          deref(e.Isin),
+			Provider:      deref(e.Issuer),
+			Exchange:      e.Exchange,
+			Currency:      deref(e.Currency),
+			TFSAFriendly:  e.TfsaFriendly,
+			TrackingIndex: deref(e.UnderlyingIndex),
 			DataSources: []domain.DataSource{{
 				Type: "ExchangeListing", Provider: e.ListingSource, URL: deref(e.ListingUrl),
 				AccessDate: dateOf(e.ListedAsOf), Reliability: "Primary",
@@ -121,7 +123,9 @@ func (p *StoredProvider) Search(ctx context.Context, criteria Criteria) ([]domai
 func applyFactsheet(etf *domain.ETF, f storedb.ListLatestFactsheetsRow) {
 	etf.TER = deref(f.TerPercent)
 	etf.AUM = deref(f.Aum)
-	etf.TrackingIndex = deref(f.TrackedIndex)
+	if f.TrackedIndex != nil { // the factsheet's wording wins over the JSE list's
+		etf.TrackingIndex = *f.TrackedIndex
+	}
 	etf.AssetClass = deref(f.AssetClass)
 	etf.Domicile = deref(f.Domicile)
 	etf.LegalStructure = deref(f.LegalStructure)

@@ -34,10 +34,12 @@ RETURNING id;
 -- Reads
 
 -- name: ListActiveETFs :many
+-- Active ETFs only (ETNs are stored but not yet searchable).
 SELECT code, name, isin, issuer, exchange, currency,
-       listing_source, listing_url, listed_as_of
+       listing_source, listing_url, listed_as_of,
+       tfsa_friendly, underlying_index, category
 FROM upstonk.etfs
-WHERE active
+WHERE active AND instrument_type = 'ETF'
 ORDER BY code;
 
 -- name: ListLatestFactsheets :many
@@ -114,3 +116,35 @@ SELECT factsheet_id, kind, name, weight_percent
 FROM upstonk.factsheet_exposures
 WHERE factsheet_id = ANY(@factsheet_ids::bigint[])
 ORDER BY factsheet_id, kind, weight_percent DESC;
+
+-- name: UpsertListing :exec
+-- One row of a JSE ETF/ETN List import. Re-imports update in place and
+-- re-activate; the factsheet-only columns (isin, exchange) are left alone.
+INSERT INTO upstonk.etfs (code, name, issuer, issuer_url, exchange, currency, instrument_type,
+    category, underlying_index, tfsa_friendly, foreign_status, sarb_classification,
+    disclosure_frequency, listing_source, listing_url, listed_as_of, active, updated_at)
+VALUES (@code, @name, @issuer, @issuer_url, 'JSE', @currency, @instrument_type,
+    @category, @underlying_index, @tfsa_friendly, @foreign_status, @sarb_classification,
+    @disclosure_frequency, @listing_source, @listing_url, @listed_as_of, true, now())
+ON CONFLICT (code) DO UPDATE SET
+    name = EXCLUDED.name, issuer = EXCLUDED.issuer, issuer_url = EXCLUDED.issuer_url,
+    currency = EXCLUDED.currency, instrument_type = EXCLUDED.instrument_type,
+    category = EXCLUDED.category, underlying_index = EXCLUDED.underlying_index,
+    tfsa_friendly = EXCLUDED.tfsa_friendly, foreign_status = EXCLUDED.foreign_status,
+    sarb_classification = EXCLUDED.sarb_classification,
+    disclosure_frequency = EXCLUDED.disclosure_frequency,
+    listing_source = EXCLUDED.listing_source, listing_url = EXCLUDED.listing_url,
+    listed_as_of = EXCLUDED.listed_as_of, active = true, updated_at = now();
+
+-- name: DeactivateMissing :execrows
+-- After a full list import: instruments of that type not in the new list
+-- are no longer listed.
+UPDATE upstonk.etfs SET active = false, updated_at = now()
+WHERE instrument_type = @instrument_type AND active AND NOT (code = ANY(@codes::text[]));
+
+-- name: ListListings :many
+SELECT code, name, issuer, issuer_url, currency, instrument_type, category, underlying_index,
+       tfsa_friendly, foreign_status, sarb_classification, disclosure_frequency,
+       listing_source, listing_url, listed_as_of, active
+FROM upstonk.etfs
+ORDER BY code;
