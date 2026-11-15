@@ -42,7 +42,7 @@ export function ConstraintsPanel() {
           <div className="space-y-4 p-4 border rounded-lg">
             <Label className="flex items-center gap-2">
               <Percent className="h-4 w-4 text-muted-foreground" />
-              Max Expense Ratio (TER): {(constraints.maxTER * 100).toFixed(2)}%
+              Max Expense Ratio (TER): {constraints.maxTER.toFixed(2)}%
             </Label>
             <Slider
               value={[constraints.maxTER * 100]}
@@ -63,7 +63,7 @@ export function ConstraintsPanel() {
           <div className="space-y-4 p-4 border rounded-lg">
             <Label className="flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-muted-foreground" />
-              Min AUM: {formatCurrency(constraints.minAUM)}
+              Min Fund Size (AUM): {formatCurrency(constraints.minAUM, 'ZAR')}
             </Label>
             <Slider
               value={[Math.log10(constraints.minAUM)]}
@@ -74,9 +74,9 @@ export function ConstraintsPanel() {
               className="w-full"
             />
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>$1M</span>
-              <span>$1B</span>
-              <span>$1T</span>
+              <span>R1m</span>
+              <span>R1bn</span>
+              <span>R1T</span>
             </div>
           </div>
 

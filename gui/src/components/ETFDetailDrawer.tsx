@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { EligibilityBadge } from './EligibilityBadge';
-import { formatCurrency, formatPercentage } from '@/lib/api/upstonk';
+import { formatCurrency, formatTER } from '@/lib/api/upstonk';
 import { 
   ExternalLink, 
   CheckCircle2, 
@@ -63,11 +63,11 @@ export function ETFDetailDrawer() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 border rounded-lg bg-muted/20">
                   <div className="text-sm text-muted-foreground">Expense Ratio (TER)</div>
-                  <div className="text-2xl font-bold">{formatPercentage(etf.ter)}</div>
+                  <div className="text-2xl font-bold">{formatTER(etf.ter)}</div>
                 </div>
                 <div className="p-4 border rounded-lg bg-muted/20">
                   <div className="text-sm text-muted-foreground">Assets Under Management</div>
-                  <div className="text-2xl font-bold">{formatCurrency(etf.aum)}</div>
+                  <div className="text-2xl font-bold">{formatCurrency(etf.aum, etf.currency)}</div>
                 </div>
                 <div className="p-4 border rounded-lg bg-muted/20">
                   <div className="text-sm text-muted-foreground">Ranking Score</div>
