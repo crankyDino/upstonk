@@ -6,3 +6,7 @@ bin
 
 */node_modules
 gui/dist
+
+# Third-party data files for manual import (personal use; never commit)
+server/data/import/*
+!server/data/import/README.md

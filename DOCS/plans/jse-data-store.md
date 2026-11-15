@@ -10,11 +10,13 @@
 | Scope | All JSE-listed ETFs/ETNs |
 | Budget | Free sources only |
 | Freshness | Prices daily; fund facts from the latest monthly factsheet, dated |
-| Collection | **Personal use only** (user decision, 2026-11-15, after the research found that no free source permits automated collection). Collect as the user would by hand: sequential requests at human pace, a browser User-Agent, every file cached, factsheets monthly and prices daily. **Never defeat bot challenges or logins**; those issuers (Sygnia, 1nvest) get a manual import of files the user saves. If the app is ever shared or hosted, this decision has to be revisited. |
+| Collection | **Personal use only** (user decision, 2026-11-15, after the research found that no free source permits automated collection). Collect as the user would by hand: sequential requests at human pace, a browser User-Agent, every file cached, factsheets monthly and prices daily. **Bot challenges and logins** (JSE, Sygnia, 1nvest) may be passed, but **only after saying so explicitly first**: which site, which protection, and how (user decision, 2026-11-15). A manual import of files the user saves stays available as the fallback. If the app is ever shared or hosted, this decision has to be revisited. |
 | Store | Supabase Postgres via the session pooler (`:5432`, `sslmode=require`), configured by `DATABASE_URL` |
 | DB code | All in the Go backend: pgx v5.13.0, sqlc v1.31.1 (typed queries), goose v3.30.1 (migrations embedded in the binary) |
 | Schema | Tables in their own `upstonk` schema, not `public` (so Supabase's REST API doesn't expose them) |
 | Test seams | `discovery.Service` with the DB-backed provider; ingest job entry points (fake HTTP sources); the existing HTTP router |
+| Unstated facts | Only apply what a source states; no assumptions (user, 2026-11-15). E.g. Satrix factsheets don't state leverage or inverse exposure, so those stay unknown, even though "index proportions" wording suggests neither. |
+| Currency | JSE-listed ETFs are recorded in **ZAR** (user, 2026-11-15) |
 | Test DB | Throwaway local Postgres (Docker `postgres:16-alpine`, or `TEST_DATABASE_URL`), one fresh database per test. Never Supabase. |
 
 ## Data model (`upstonk` schema)
