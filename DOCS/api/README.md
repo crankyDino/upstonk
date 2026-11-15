@@ -2,6 +2,20 @@
 
 Base URL: `http://localhost:8080/api/v1`. Every response, including errors, carries a `requestId` (UUID v4). CORS allows any origin.
 
+**Sign-in:** when `SUPABASE_URL` is set, every route except `/health` needs `Authorization: Bearer <Supabase access token>`. Without a valid token the response is `401 UNAUTHORIZED`. A valid token for someone who isn't admitted gets `403 NOT_INVITED` (send the invite link's token as `X-Invite-Token` to join) or `403 ACCOUNT_DISABLED`.
+
+| Method | Path | Who | Purpose |
+|---|---|---|---|
+| `GET` | `/me` | member | `{id, email, role}` |
+| `POST` | `/invitations` | member | `{"email"}` → one-time invite `{token, link, expiresAt}` (14 days) |
+| `GET` | `/notice` | member | App-wide notice |
+| `GET`/`PUT` | `/admin/settings` | admin | `{inviteOnly, notice}` |
+| `GET` | `/admin/users` | admin | Members with role, status, invited by, last seen |
+| `PATCH` | `/admin/users/{id}` | admin | `{role?, status?}`; `409 LAST_ADMIN` if it would leave no active admin |
+| `GET` | `/admin/invitations` | admin | All invitations |
+| `DELETE` | `/admin/invitations/{id}` | admin | Revoke an open invitation |
+| `GET` | `/admin/data-status` | admin | Listings, price freshness, factsheet coverage, last ingest runs |
+
 | Method | Path | Purpose |
 |---|---|---|
 | `POST` | `/discover` | Full discovery request |

@@ -49,7 +49,13 @@ Read from environment variables. A `server/.env` file is optional and is loaded 
 | `ALPHA_VANTAGE_API_KEY` | Enables the Alpha Vantage provider. The literal `demo` leaves it disabled. | `demo` |
 | `DATABASE_URL` | Postgres store (Supabase **session** pooler, port 5432, `sslmode=require`). When set, the server applies migrations at start-up and answers ZA searches from stored data. If it's set but unreachable, the server won't start. | empty (no store) |
 
-`server/.env.example` lists them. The search cache is fixed at one hour in memory, and logging uses Go's standard `log` package.
+| `SUPABASE_URL` | Turns on sign-in (Supabase Auth): every API route except `/api/v1/health` needs a signed-in, admitted user. Requires `DATABASE_URL`. | empty (API open) |
+| `SUPABASE_PUBLISHABLE_KEY` | Public anon key, handed to the browser via `/config.js` | empty |
+| `ADMIN_EMAILS` | Comma-separated emails that are always admins | empty |
+| `WEB_DIR` | Built GUI (`gui/dist`) to serve at `/` (single instance) | empty |
+| `PORT` | Used when `SERVER_ADDRESS` isn't set (Render sets it) | — |
+
+`server/.env.example` lists them. For hosting, see [deployment](../deployment/README.md). The search cache is fixed at one hour in memory, and logging uses Go's standard `log` package.
 
 ### GUI (`gui/.env`)
 
