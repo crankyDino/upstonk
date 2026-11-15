@@ -60,6 +60,29 @@ One Render **web service**, not separate GUI and API deployments:
 - **Ingest stays on the user's machine**, against Supabase (the JSE list is downloaded by hand anyway). The Render instance only reads. Running it in-process on a timer is unreliable on the free tier, which sleeps idle services.
 - **Must come first:** authentication (known gap 22). A Render URL is public, and the personal-use basis for collecting the data requires the app to stay private. Simplest option: HTTP basic auth or a single shared password in front of everything, set as a Render secret.
 
+### 8g: Supabase Auth, invitations and admin dashboard (requested 2026-11-15)
+**Sharing scope (user decision):** invite-only, for family/friends and ideally a financial adviser who checks whether the insights are accurate. The user judges that circle as still personal use. Anything wider means revisiting the data terms first.
+
+- **Sign-in:** Supabase Auth, email + password, via supabase-js in the GUI (project URL + publishable key).
+- **API protection:** the Go server verifies `Authorization: Bearer <JWT>` against the project's JWKS (ES256, `https://<ref>.supabase.co/auth/v1/.well-known/jwks.json`), plus issuer, audience `authenticated` and expiry. No Supabase secret on the server. `/api/v1/health` stays public.
+- **Membership (ours, `upstonk` schema):**
+  - `app_users`: Supabase user id, email, role admin/member, status active/disabled, invited_by;
+  - `invitations`: email, one-time token, invited_by, expiry, used_at/by, revoked;
+  - `app_settings`: `invite_only` (default **on**), a notice text.
+- **Admission on first call:**
+  - an email in `ADMIN_EMAILS` → admin;
+  - `invite_only` off → member;
+  - otherwise an open invitation whose token (from the invite link) and email both match → member, and the invitation is marked used;
+  - anything else → 403. Disabled users → 403.
+- **Invitations:** any active member can create an invite **link** for an email and share it however they like. Admins can list and revoke them.
+- **Admin dashboard `/admin`** (admins only):
+  - users and roles (promote/demote, disable/enable);
+  - invitations;
+  - app settings (`invite_only`, notice);
+  - data status (per source: last import/run, counts, failures, stalest data).
+- **Without `SUPABASE_URL`** (local development) the API stays open and logs a warning. `SUPABASE_URL` without `DATABASE_URL` is a start-up error.
+- **Tests at the router seam:** tests mint ES256 tokens against a fake JWKS server; nothing touches Supabase.
+
 ## Verification
 - `go test ./...` runs the DB tests against Docker Postgres. They skip with a message if neither Docker nor `TEST_DATABASE_URL` is available.
 - `go run ./cmd/migrate` against Supabase, then `go run ./cmd/ingest prices`, then a ZA discovery returning stored values with their sources.

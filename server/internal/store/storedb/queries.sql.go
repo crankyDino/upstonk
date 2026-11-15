@@ -11,6 +11,58 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countActiveAdmins = `-- name: CountActiveAdmins :one
+SELECT count(*)::int FROM upstonk.app_users WHERE role = 'admin' AND status = 'active'
+`
+
+func (q *Queries) CountActiveAdmins(ctx context.Context) (int32, error) {
+	row := q.db.QueryRow(ctx, countActiveAdmins)
+	var column_1 int32
+	err := row.Scan(&column_1)
+	return column_1, err
+}
+
+const createInvitation = `-- name: CreateInvitation :one
+INSERT INTO upstonk.invitations (email, token, invited_by, expires_at)
+VALUES (lower($1), $2, $3, $4)
+RETURNING id, email, token, invited_by, created_at, expires_at
+`
+
+type CreateInvitationParams struct {
+	Email     string
+	Token     string
+	InvitedBy pgtype.UUID
+	ExpiresAt pgtype.Timestamptz
+}
+
+type CreateInvitationRow struct {
+	ID        int64
+	Email     string
+	Token     string
+	InvitedBy pgtype.UUID
+	CreatedAt pgtype.Timestamptz
+	ExpiresAt pgtype.Timestamptz
+}
+
+func (q *Queries) CreateInvitation(ctx context.Context, arg CreateInvitationParams) (CreateInvitationRow, error) {
+	row := q.db.QueryRow(ctx, createInvitation,
+		arg.Email,
+		arg.Token,
+		arg.InvitedBy,
+		arg.ExpiresAt,
+	)
+	var i CreateInvitationRow
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Token,
+		&i.InvitedBy,
+		&i.CreatedAt,
+		&i.ExpiresAt,
+	)
+	return i, err
+}
+
 const deactivateMissing = `-- name: DeactivateMissing :execrows
 UPDATE upstonk.etfs SET active = false, updated_at = now()
 WHERE instrument_type = $1 AND active AND NOT (code = ANY($2::text[]))
@@ -47,6 +99,100 @@ DELETE FROM upstonk.factsheet_exposures WHERE factsheet_id = $1
 
 func (q *Queries) DeleteFactsheetExposures(ctx context.Context, factsheetID int64) error {
 	_, err := q.db.Exec(ctx, deleteFactsheetExposures, factsheetID)
+	return err
+}
+
+const findOpenInvitation = `-- name: FindOpenInvitation :one
+SELECT id, email, invited_by FROM upstonk.invitations
+WHERE token = $1 AND email = lower($2)
+  AND used_at IS NULL AND revoked_at IS NULL AND expires_at > now()
+`
+
+type FindOpenInvitationParams struct {
+	Token string
+	Email string
+}
+
+type FindOpenInvitationRow struct {
+	ID        int64
+	Email     string
+	InvitedBy pgtype.UUID
+}
+
+// An unused, unrevoked, unexpired invitation matching both link token and email.
+func (q *Queries) FindOpenInvitation(ctx context.Context, arg FindOpenInvitationParams) (FindOpenInvitationRow, error) {
+	row := q.db.QueryRow(ctx, findOpenInvitation, arg.Token, arg.Email)
+	var i FindOpenInvitationRow
+	err := row.Scan(&i.ID, &i.Email, &i.InvitedBy)
+	return i, err
+}
+
+const getAppUser = `-- name: GetAppUser :one
+
+SELECT id, email, role, status, invited_by, created_at, last_seen_at
+FROM upstonk.app_users WHERE id = $1
+`
+
+// Auth and membership
+func (q *Queries) GetAppUser(ctx context.Context, id pgtype.UUID) (UpstonkAppUser, error) {
+	row := q.db.QueryRow(ctx, getAppUser, id)
+	var i UpstonkAppUser
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Role,
+		&i.Status,
+		&i.InvitedBy,
+		&i.CreatedAt,
+		&i.LastSeenAt,
+	)
+	return i, err
+}
+
+const getSettings = `-- name: GetSettings :one
+SELECT invite_only, notice, updated_at, updated_by FROM upstonk.app_settings WHERE id = 1
+`
+
+type GetSettingsRow struct {
+	InviteOnly bool
+	Notice     *string
+	UpdatedAt  pgtype.Timestamptz
+	UpdatedBy  pgtype.UUID
+}
+
+func (q *Queries) GetSettings(ctx context.Context) (GetSettingsRow, error) {
+	row := q.db.QueryRow(ctx, getSettings)
+	var i GetSettingsRow
+	err := row.Scan(
+		&i.InviteOnly,
+		&i.Notice,
+		&i.UpdatedAt,
+		&i.UpdatedBy,
+	)
+	return i, err
+}
+
+const insertAppUser = `-- name: InsertAppUser :exec
+INSERT INTO upstonk.app_users (id, email, role, invited_by)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (id) DO NOTHING
+`
+
+type InsertAppUserParams struct {
+	ID        pgtype.UUID
+	Email     string
+	Role      string
+	InvitedBy pgtype.UUID
+}
+
+// First admission; a concurrent first request may have inserted already.
+func (q *Queries) InsertAppUser(ctx context.Context, arg InsertAppUserParams) error {
+	_, err := q.db.Exec(ctx, insertAppUser,
+		arg.ID,
+		arg.Email,
+		arg.Role,
+		arg.InvitedBy,
+	)
 	return err
 }
 
@@ -222,6 +368,54 @@ func (q *Queries) ListActiveETFs(ctx context.Context) ([]ListActiveETFsRow, erro
 	return items, nil
 }
 
+const listAppUsers = `-- name: ListAppUsers :many
+SELECT u.id, u.email, u.role, u.status, u.invited_by, i.email AS invited_by_email,
+       u.created_at, u.last_seen_at
+FROM upstonk.app_users u
+LEFT JOIN upstonk.app_users i ON i.id = u.invited_by
+ORDER BY u.created_at
+`
+
+type ListAppUsersRow struct {
+	ID             pgtype.UUID
+	Email          string
+	Role           string
+	Status         string
+	InvitedBy      pgtype.UUID
+	InvitedByEmail *string
+	CreatedAt      pgtype.Timestamptz
+	LastSeenAt     pgtype.Timestamptz
+}
+
+func (q *Queries) ListAppUsers(ctx context.Context) ([]ListAppUsersRow, error) {
+	rows, err := q.db.Query(ctx, listAppUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListAppUsersRow
+	for rows.Next() {
+		var i ListAppUsersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.Role,
+			&i.Status,
+			&i.InvitedBy,
+			&i.InvitedByEmail,
+			&i.CreatedAt,
+			&i.LastSeenAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listDailyPrices = `-- name: ListDailyPrices :many
 SELECT etf_code, trade_date, close, currency, volume, source_name, source_url, fetched_at
 FROM upstonk.daily_prices
@@ -380,6 +574,56 @@ func (q *Queries) ListHoldingsFor(ctx context.Context, factsheetIds []int64) ([]
 			&i.Name,
 			&i.Ticker,
 			&i.WeightPercent,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listInvitations = `-- name: ListInvitations :many
+SELECT i.id, i.email, i.invited_by, u.email AS invited_by_email, i.created_at, i.expires_at,
+       i.used_at, i.used_by, i.revoked_at
+FROM upstonk.invitations i
+JOIN upstonk.app_users u ON u.id = i.invited_by
+ORDER BY i.created_at DESC
+`
+
+type ListInvitationsRow struct {
+	ID             int64
+	Email          string
+	InvitedBy      pgtype.UUID
+	InvitedByEmail string
+	CreatedAt      pgtype.Timestamptz
+	ExpiresAt      pgtype.Timestamptz
+	UsedAt         pgtype.Timestamptz
+	UsedBy         pgtype.UUID
+	RevokedAt      pgtype.Timestamptz
+}
+
+func (q *Queries) ListInvitations(ctx context.Context) ([]ListInvitationsRow, error) {
+	rows, err := q.db.Query(ctx, listInvitations)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListInvitationsRow
+	for rows.Next() {
+		var i ListInvitationsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.InvitedBy,
+			&i.InvitedByEmail,
+			&i.CreatedAt,
+			&i.ExpiresAt,
+			&i.UsedAt,
+			&i.UsedBy,
+			&i.RevokedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -581,6 +825,78 @@ func (q *Queries) ListVolumeStats(ctx context.Context) ([]ListVolumeStatsRow, er
 	return items, nil
 }
 
+const revokeInvitation = `-- name: RevokeInvitation :execrows
+UPDATE upstonk.invitations SET revoked_at = now()
+WHERE id = $1 AND used_at IS NULL AND revoked_at IS NULL
+`
+
+func (q *Queries) RevokeInvitation(ctx context.Context, id int64) (int64, error) {
+	result, err := q.db.Exec(ctx, revokeInvitation, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const setAppUserRole = `-- name: SetAppUserRole :exec
+UPDATE upstonk.app_users SET role = $1 WHERE id = $2
+`
+
+type SetAppUserRoleParams struct {
+	Role string
+	ID   pgtype.UUID
+}
+
+func (q *Queries) SetAppUserRole(ctx context.Context, arg SetAppUserRoleParams) error {
+	_, err := q.db.Exec(ctx, setAppUserRole, arg.Role, arg.ID)
+	return err
+}
+
+const setAppUserStatus = `-- name: SetAppUserStatus :exec
+UPDATE upstonk.app_users SET status = $1 WHERE id = $2
+`
+
+type SetAppUserStatusParams struct {
+	Status string
+	ID     pgtype.UUID
+}
+
+func (q *Queries) SetAppUserStatus(ctx context.Context, arg SetAppUserStatusParams) error {
+	_, err := q.db.Exec(ctx, setAppUserStatus, arg.Status, arg.ID)
+	return err
+}
+
+const touchAppUser = `-- name: TouchAppUser :exec
+UPDATE upstonk.app_users SET email = $1, last_seen_at = now() WHERE id = $2
+`
+
+type TouchAppUserParams struct {
+	Email string
+	ID    pgtype.UUID
+}
+
+func (q *Queries) TouchAppUser(ctx context.Context, arg TouchAppUserParams) error {
+	_, err := q.db.Exec(ctx, touchAppUser, arg.Email, arg.ID)
+	return err
+}
+
+const updateSettings = `-- name: UpdateSettings :exec
+UPDATE upstonk.app_settings
+SET invite_only = $1, notice = $2, updated_at = now(), updated_by = $3
+WHERE id = 1
+`
+
+type UpdateSettingsParams struct {
+	InviteOnly bool
+	Notice     *string
+	UpdatedBy  pgtype.UUID
+}
+
+func (q *Queries) UpdateSettings(ctx context.Context, arg UpdateSettingsParams) error {
+	_, err := q.db.Exec(ctx, updateSettings, arg.InviteOnly, arg.Notice, arg.UpdatedBy)
+	return err
+}
+
 const upsertDailyPrice = `-- name: UpsertDailyPrice :exec
 INSERT INTO upstonk.daily_prices (etf_code, trade_date, close, currency, volume, source_name, source_url)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -710,5 +1026,19 @@ func (q *Queries) UpsertListing(ctx context.Context, arg UpsertListingParams) er
 		arg.ListingUrl,
 		arg.ListedAsOf,
 	)
+	return err
+}
+
+const useInvitation = `-- name: UseInvitation :exec
+UPDATE upstonk.invitations SET used_at = now(), used_by = $1 WHERE id = $2 AND used_at IS NULL
+`
+
+type UseInvitationParams struct {
+	UsedBy pgtype.UUID
+	ID     int64
+}
+
+func (q *Queries) UseInvitation(ctx context.Context, arg UseInvitationParams) error {
+	_, err := q.db.Exec(ctx, useInvitation, arg.UsedBy, arg.ID)
 	return err
 }

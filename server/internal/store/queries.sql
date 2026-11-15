@@ -148,3 +148,67 @@ SELECT code, name, issuer, issuer_url, currency, instrument_type, category, unde
        listing_source, listing_url, listed_as_of, active
 FROM upstonk.etfs
 ORDER BY code;
+
+-- Auth and membership
+
+-- name: GetAppUser :one
+SELECT id, email, role, status, invited_by, created_at, last_seen_at
+FROM upstonk.app_users WHERE id = @id;
+
+-- name: InsertAppUser :exec
+-- First admission; a concurrent first request may have inserted already.
+INSERT INTO upstonk.app_users (id, email, role, invited_by)
+VALUES (@id, @email, @role, @invited_by)
+ON CONFLICT (id) DO NOTHING;
+
+-- name: TouchAppUser :exec
+UPDATE upstonk.app_users SET email = @email, last_seen_at = now() WHERE id = @id;
+
+-- name: SetAppUserRole :exec
+UPDATE upstonk.app_users SET role = @role WHERE id = @id;
+
+-- name: SetAppUserStatus :exec
+UPDATE upstonk.app_users SET status = @status WHERE id = @id;
+
+-- name: ListAppUsers :many
+SELECT u.id, u.email, u.role, u.status, u.invited_by, i.email AS invited_by_email,
+       u.created_at, u.last_seen_at
+FROM upstonk.app_users u
+LEFT JOIN upstonk.app_users i ON i.id = u.invited_by
+ORDER BY u.created_at;
+
+-- name: CountActiveAdmins :one
+SELECT count(*)::int FROM upstonk.app_users WHERE role = 'admin' AND status = 'active';
+
+-- name: GetSettings :one
+SELECT invite_only, notice, updated_at, updated_by FROM upstonk.app_settings WHERE id = 1;
+
+-- name: UpdateSettings :exec
+UPDATE upstonk.app_settings
+SET invite_only = @invite_only, notice = @notice, updated_at = now(), updated_by = @updated_by
+WHERE id = 1;
+
+-- name: CreateInvitation :one
+INSERT INTO upstonk.invitations (email, token, invited_by, expires_at)
+VALUES (lower(@email), @token, @invited_by, @expires_at)
+RETURNING id, email, token, invited_by, created_at, expires_at;
+
+-- name: FindOpenInvitation :one
+-- An unused, unrevoked, unexpired invitation matching both link token and email.
+SELECT id, email, invited_by FROM upstonk.invitations
+WHERE token = @token AND email = lower(@email)
+  AND used_at IS NULL AND revoked_at IS NULL AND expires_at > now();
+
+-- name: UseInvitation :exec
+UPDATE upstonk.invitations SET used_at = now(), used_by = @used_by WHERE id = @id AND used_at IS NULL;
+
+-- name: RevokeInvitation :execrows
+UPDATE upstonk.invitations SET revoked_at = now()
+WHERE id = @id AND used_at IS NULL AND revoked_at IS NULL;
+
+-- name: ListInvitations :many
+SELECT i.id, i.email, i.invited_by, u.email AS invited_by_email, i.created_at, i.expires_at,
+       i.used_at, i.used_by, i.revoked_at
+FROM upstonk.invitations i
+JOIN upstonk.app_users u ON u.id = i.invited_by
+ORDER BY i.created_at DESC;

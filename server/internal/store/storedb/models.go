@@ -8,6 +8,24 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type UpstonkAppSetting struct {
+	ID         int32
+	InviteOnly bool
+	Notice     *string
+	UpdatedAt  pgtype.Timestamptz
+	UpdatedBy  pgtype.UUID
+}
+
+type UpstonkAppUser struct {
+	ID         pgtype.UUID
+	Email      string
+	Role       string
+	Status     string
+	InvitedBy  pgtype.UUID
+	CreatedAt  pgtype.Timestamptz
+	LastSeenAt pgtype.Timestamptz
+}
+
 type UpstonkDailyPrice struct {
 	EtfCode    string
 	TradeDate  pgtype.Date
@@ -76,4 +94,16 @@ type UpstonkFactsheetHolding struct {
 	Name          string
 	Ticker        *string
 	WeightPercent *float64
+}
+
+type UpstonkInvitation struct {
+	ID        int64
+	Email     string
+	Token     string
+	InvitedBy pgtype.UUID
+	CreatedAt pgtype.Timestamptz
+	ExpiresAt pgtype.Timestamptz
+	UsedAt    pgtype.Timestamptz
+	UsedBy    pgtype.UUID
+	RevokedAt pgtype.Timestamptz
 }

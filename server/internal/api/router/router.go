@@ -9,11 +9,28 @@ import (
 
 	"upstonk/internal/api/handlers"
 	"upstonk/internal/api/middleware"
+	"upstonk/internal/auth"
 )
+
+type options struct {
+	gate *auth.Gate
+}
+
+// Option configures the router.
+type Option func(*options)
+
+// WithAuth protects every API route except /api/v1/health with Supabase
+// Auth and membership checks. Without it the API is open (local use).
+func WithAuth(g *auth.Gate) Option { return func(o *options) { o.gate = g } }
 
 // New returns the fully wired API handler: global middleware, v1 routes and
 // the documentation page.
-func New(discoveryHandler *handlers.DiscoveryHandler) http.Handler {
+func New(discoveryHandler *handlers.DiscoveryHandler, opts ...Option) http.Handler {
+	var o options
+	for _, opt := range opts {
+		opt(&o)
+	}
+
 	r := mux.NewRouter()
 
 	// Global middleware
@@ -23,9 +40,16 @@ func New(discoveryHandler *handlers.DiscoveryHandler) http.Handler {
 	r.Use(middleware.Timeout(30 * time.Second))
 
 	v1 := r.PathPrefix("/api/v1").Subrouter()
-	v1.HandleFunc("/discover", discoveryHandler.HandleDiscovery).Methods("POST", "OPTIONS")
-	v1.HandleFunc("/discover/{type}", discoveryHandler.HandleTopPerformers).Methods("GET")
 	v1.HandleFunc("/health", discoveryHandler.HandleHealth).Methods("GET")
+
+	// Everything else needs a signed-in member when auth is on.
+	protected := v1.NewRoute().Subrouter()
+	if o.gate != nil {
+		protected.Use(o.gate.Require)
+		protected.HandleFunc("/me", handlers.HandleMe).Methods("GET")
+	}
+	protected.HandleFunc("/discover", discoveryHandler.HandleDiscovery).Methods("POST", "OPTIONS")
+	protected.HandleFunc("/discover/{type}", discoveryHandler.HandleTopPerformers).Methods("GET")
 
 	r.HandleFunc("/", serveDocumentation).Methods("GET")
 
