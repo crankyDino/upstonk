@@ -73,3 +73,9 @@ JOIN (SELECT etf_code, max(trade_date) AS last_day FROM upstonk.daily_prices GRO
   ON l.etf_code = p.etf_code
 WHERE p.trade_date > l.last_day - interval '3 months' AND p.volume IS NOT NULL
 GROUP BY p.etf_code;
+
+-- name: ListDailyPrices :many
+SELECT etf_code, trade_date, close, currency, volume, source_name, source_url, fetched_at
+FROM upstonk.daily_prices
+WHERE etf_code = @etf_code
+ORDER BY trade_date;

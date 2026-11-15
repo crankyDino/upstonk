@@ -129,6 +129,42 @@ func (q *Queries) ListActiveETFs(ctx context.Context) ([]ListActiveETFsRow, erro
 	return items, nil
 }
 
+const listDailyPrices = `-- name: ListDailyPrices :many
+SELECT etf_code, trade_date, close, currency, volume, source_name, source_url, fetched_at
+FROM upstonk.daily_prices
+WHERE etf_code = $1
+ORDER BY trade_date
+`
+
+func (q *Queries) ListDailyPrices(ctx context.Context, etfCode string) ([]UpstonkDailyPrice, error) {
+	rows, err := q.db.Query(ctx, listDailyPrices, etfCode)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UpstonkDailyPrice
+	for rows.Next() {
+		var i UpstonkDailyPrice
+		if err := rows.Scan(
+			&i.EtfCode,
+			&i.TradeDate,
+			&i.Close,
+			&i.Currency,
+			&i.Volume,
+			&i.SourceName,
+			&i.SourceUrl,
+			&i.FetchedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listLatestFactsheets = `-- name: ListLatestFactsheets :many
 SELECT DISTINCT ON (etf_code)
        id, etf_code, as_of, source_name, source_url,
