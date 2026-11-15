@@ -51,6 +51,12 @@ Read from environment variables. A `server/.env` file is optional and is loaded 
 
 `server/.env.example` lists them. The search cache is fixed at one hour in memory, and logging uses Go's standard `log` package.
 
+### GUI (`gui/.env`)
+
+| Variable | Description | Default |
+|---|---|---|
+| `VITE_UPSTONK_API_URL` | Full API base URL, including `/api/v1` | `http://localhost:8080/api/v1` |
+
 ## Filling the store (JSE data)
 
 Personal use only: requests go one at a time, seconds apart (see [the plan](../plans/jse-data-store.md)).
@@ -62,12 +68,6 @@ go run ./cmd/ingest factsheets   # monthly: issuer factsheets (Satrix so far)
 ```
 
 The list of ETFs comes from the JSE's "ETF List" download, which you save yourself because the JSE site shows a bot challenge. The importer for it is still to come.
-
-### GUI (`gui/.env`)
-
-| Variable | Description | Default |
-|---|---|---|
-| `VITE_UPSTONK_API_URL` | Full API base URL, including `/api/v1` | `http://localhost:8080/api/v1` |
 
 ## Smoke-test scripts
 
