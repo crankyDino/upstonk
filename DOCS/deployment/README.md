@@ -20,7 +20,7 @@ UPSTONK runs as **one container**: the Go server serves the API at `/api/v1` and
 | Variable | Value |
 |---|---|
 | `DATABASE_URL` | Supabase session-pooler URL, port 5432, `sslmode=require` |
-| `SUPABASE_URL` | `https://<project-ref>.supabase.co`; turns sign-in on |
+| `SUPABASE_URL` | `https://<project-ref>.supabase.co`, the bare project URL with no `/rest/v1` (the server strips it if it's pasted in); turns sign-in on |
 | `SUPABASE_PUBLISHABLE_KEY` | the anon/publishable key |
 | `ADMIN_EMAILS` | your email (comma-separated list); always admins |
 
