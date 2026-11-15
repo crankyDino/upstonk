@@ -40,7 +40,7 @@ upstonk/
 
 ```bash
 cd server
-go test ./...              # offline; no network needed
+go test ./...              # offline; DB tests use a local Docker Postgres (see below)
 go test -tags live ./...   # adds tests against the real data sources
 go vet ./... && go vet -tags live ./...
 ```
@@ -51,6 +51,16 @@ Tests only run at two **seams** (public entry points):
 |---|---|---|
 | HTTP router | `internal/api/router/router_test.go` | Real router, handler, service and engines through `httptest`: health, CORS, preflight, and the GUI contract |
 | `discovery.Service` | `internal/service/discovery/discovery_test.go` | `DiscoverETFs` end to end: matching, constraints, unknown-value flags, ranking order, cache behaviour |
+
+**Database tests** (`testutil/dbtest`) give each test a fresh, migrated database: on `TEST_DATABASE_URL` if set, otherwise in a Docker container `upstonk-testdb` (`postgres:16-alpine`, port 55432), started on first use and reused. They never read `DATABASE_URL`. If neither Docker nor `TEST_DATABASE_URL` is available, those tests skip. Remove the container with `docker rm -f upstonk-testdb`.
+
+**Ingest tests** (`internal/ingest`) are the third seam: a fake `Fetcher` serves canned responses and a fake `TextExtractor` stands in for `pdftotext`. Factsheet fixtures are **synthetic text in the issuer's layout with invented values**; real issuer documents aren't committed.
+
+**Store code:** migrations in `internal/store/migrations` (goose, embedded), queries in `internal/store/queries.sql`. After changing either, regenerate the typed Go code and commit it:
+
+```bash
+go run github.com/sqlc-dev/sqlc/cmd/sqlc@v1.31.1 generate
+```
 
 External data is replaced by `testutil/fakeprovider`, which returns fixed ETFs and counts calls. Everything else is real: eligibility rules, scorer, and the aggregated provider and its cache. Expected values in tests are hand-worked literals.
 

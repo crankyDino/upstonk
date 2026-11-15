@@ -47,8 +47,21 @@ Read from environment variables. A `server/.env` file is optional and is loaded 
 |---|---|---|
 | `SERVER_ADDRESS` | Bind address | `:8080` |
 | `ALPHA_VANTAGE_API_KEY` | Enables the Alpha Vantage provider. The literal `demo` leaves it disabled. | `demo` |
+| `DATABASE_URL` | Postgres store (Supabase **session** pooler, port 5432, `sslmode=require`). When set, the server applies migrations at start-up and answers ZA searches from stored data. If it's set but unreachable, the server won't start. | empty (no store) |
 
-Those are the only two settings. The search cache is fixed at one hour in memory, and logging uses Go's standard `log` package.
+`server/.env.example` lists them. The search cache is fixed at one hour in memory, and logging uses Go's standard `log` package.
+
+## Filling the store (JSE data)
+
+Personal use only: requests go one at a time, seconds apart (see [the plan](../plans/jse-data-store.md)).
+
+```bash
+cd server
+go run ./cmd/ingest prices       # daily: ~3 months of Yahoo closes and volumes for every stored ETF
+go run ./cmd/ingest factsheets   # monthly: issuer factsheets (Satrix so far)
+```
+
+The list of ETFs comes from the JSE's "ETF List" download, which you save yourself because the JSE site shows a bot challenge. The importer for it is still to come.
 
 ### GUI (`gui/.env`)
 

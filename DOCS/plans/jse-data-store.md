@@ -1,6 +1,6 @@
 # Plan: stored, sourced data for every JSE ETF
 
-**Status:** in progress (started 2026-11-15) on `dev`.
+**Status:** in progress (started 2026-11-15) on `dev`. Done: 8a (store, stored provider, ZA routing), 8b (daily prices), 8d for Satrix. Waiting on the user: the JSE ETF List file (8c), and the Supabase password in `server/.env`.
 **Goal:** accurate data for every ETF listed on the JSE, with the source and "as of" date of every value. Free sources only: the JSE list, issuer factsheets and Yahoo end-of-day prices. Use an API where one exists; otherwise scrape within robots.txt.
 
 ## Decisions (2026-11-15)
