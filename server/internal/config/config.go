@@ -40,7 +40,7 @@ func Load() (*Config, error) {
 		ServerAddress:   serverAddress(),
 		AlphaVantageKey: getEnv("ALPHA_VANTAGE_API_KEY", "demo"),
 		DatabaseURL:     getEnv("DATABASE_URL", ""),
-		SupabaseURL:     getEnv("SUPABASE_URL", ""),
+		SupabaseURL:     supabaseProjectURL(getEnv("SUPABASE_URL", "")),
 		AdminEmails:     splitList(getEnv("ADMIN_EMAILS", "")),
 
 		SupabasePublishableKey: getEnv("SUPABASE_PUBLISHABLE_KEY", ""),
@@ -74,6 +74,23 @@ func serverAddress() string {
 		return ":" + p
 	}
 	return ":8080"
+}
+
+// supabaseProjectURL reduces a pasted Supabase URL to the project URL
+// (https://<ref>.supabase.co). The dashboard also shows the REST endpoint
+// (…/rest/v1); using that as the base breaks sign-up and token checks.
+func supabaseProjectURL(s string) string {
+	s = strings.TrimSpace(s)
+	for {
+		trimmed := strings.TrimSuffix(s, "/")
+		for _, suffix := range []string{"/rest/v1", "/auth/v1"} {
+			trimmed = strings.TrimSuffix(trimmed, suffix)
+		}
+		if trimmed == s {
+			return s
+		}
+		s = trimmed
+	}
 }
 
 func splitList(s string) []string {

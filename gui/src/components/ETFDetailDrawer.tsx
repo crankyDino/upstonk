@@ -1,3 +1,4 @@
+import { ruleLabel } from '@/lib/labels';
 import { useState } from 'react';
 import { useDiscoveryStore } from '@/stores/discoveryStore';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
@@ -6,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { EligibilityBadge } from './EligibilityBadge';
+import { EligibilityReasons } from './EligibilityReasons';
 import { formatCurrency, formatTER } from '@/lib/api/upstonk';
 import { 
   ExternalLink, 
@@ -43,7 +45,7 @@ export function ETFDetailDrawer() {
             <SheetHeader className="pb-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <SheetTitle className="text-2xl font-bold">
+                  <SheetTitle className="text-2xl font-bold break-words">
                     <span className="font-mono text-primary">{etf.ticker}</span>
                   </SheetTitle>
                   <SheetDescription className="text-base mt-1">
@@ -61,21 +63,21 @@ export function ETFDetailDrawer() {
             <div className="space-y-6">
               {/* Key Metrics */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="p-4 border rounded-lg bg-muted/20 min-w-0">
                   <div className="text-sm text-muted-foreground">Expense Ratio (TER)</div>
-                  <div className="text-2xl font-bold">{formatTER(etf.ter)}</div>
+                  <div className="text-2xl font-bold break-words">{formatTER(etf.ter)}</div>
                 </div>
-                <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="p-4 border rounded-lg bg-muted/20 min-w-0">
                   <div className="text-sm text-muted-foreground">Assets Under Management</div>
-                  <div className="text-2xl font-bold">{formatCurrency(etf.aum, etf.currency)}</div>
+                  <div className="text-2xl font-bold break-words">{formatCurrency(etf.aum, etf.currency)}</div>
                 </div>
-                <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="p-4 border rounded-lg bg-muted/20 min-w-0">
                   <div className="text-sm text-muted-foreground">Ranking Score</div>
-                  <div className="text-2xl font-bold text-primary">{etf.rankingScore.toFixed(1)}</div>
+                  <div className="text-2xl font-bold text-primary break-words">{etf.rankingScore.toFixed(1)}</div>
                 </div>
-                <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="p-4 border rounded-lg bg-muted/20 min-w-0">
                   <div className="text-sm text-muted-foreground">Match Score</div>
-                  <div className="text-2xl font-bold">{etf.matchScore}%</div>
+                  <div className="text-2xl font-bold break-words">{Math.round(etf.matchScore)}%</div>
                 </div>
               </div>
 
@@ -243,9 +245,7 @@ export function ETFDetailDrawer() {
                   <CheckCircle2 className="h-4 w-4" />
                   Eligibility Assessment
                 </h4>
-                <p className="text-sm bg-muted/30 p-3 rounded-lg">
-                  {etf.eligibility.justification}
-                </p>
+                <EligibilityReasons justification={etf.eligibility.justification} />
                 {etf.eligibility.ruleVersion && (
                   <div className="text-xs text-muted-foreground">
                     Rule Version: <code className="font-mono">{etf.eligibility.ruleVersion}</code>
@@ -260,7 +260,7 @@ export function ETFDetailDrawer() {
                       {etf.eligibility.rulesPassed.map((rule, i) => (
                         <Badge key={i} variant="outline" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
-                          {rule}
+                          {ruleLabel(rule)}
                         </Badge>
                       ))}
                     </div>
@@ -275,7 +275,7 @@ export function ETFDetailDrawer() {
                       {etf.eligibility.rulesFailed.map((rule, i) => (
                         <Badge key={i} variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
                           <AlertTriangle className="h-3 w-3 mr-1" />
-                          {rule}
+                          {ruleLabel(rule)}
                         </Badge>
                       ))}
                     </div>
