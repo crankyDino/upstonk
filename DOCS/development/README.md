@@ -28,7 +28,7 @@ upstonk/
 └── gui/                 Vite + React 18 + TypeScript SPA (port 5173)
     ├── scripts/write-contract-fixture.ts
     └── src/
-        ├── components/      feature components; shadcn/ui primitives in ui/
+        ├── components/      feature components (RankingWeightsPanel = weight sliders); shadcn/ui primitives in ui/
         ├── lib/api/         upstonk.ts (fetch client), buildRequest.ts (UI state → request)
         ├── lib/discoveryOptions.ts   supported country/account pairs, defaults
         ├── stores/discoveryStore.ts  zustand: form state + submit

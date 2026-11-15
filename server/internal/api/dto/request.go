@@ -55,7 +55,7 @@ type RankingPreferences struct {
 }
 
 type OutputOptions struct {
-	MaxResults          int  `json:"maxResults" validate:"min=1,max=100"`
+	MaxResults          int  `json:"maxResults" validate:"omitempty,min=1,max=100"` // 0 or omitted → 10
 	IncludeAlternatives bool `json:"includeAlternatives"`
 	IncludeSourceLinks  bool `json:"includeSourceLinks"`
 	ExplainEligibility  bool `json:"explainEligibility"`

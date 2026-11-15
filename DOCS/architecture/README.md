@@ -40,7 +40,7 @@ The three engines are interfaces (`search.Provider`, `eligibility.Engine`, `rank
 
 | # | Step | What happens |
 |---|---|---|
-| 1 | **Search** | Query every provider in parallel, then dedupe and merge by ticker/ISIN. No candidates → `NoResultsError` (HTTP 404). Reports whether the result came from cache. |
+| 1 | **Search** | Query every provider in parallel, then dedupe and merge by ticker/ISIN. Every provider failing → `DataSourceError` (HTTP 503); no candidates → `NoResultsError` (HTTP 404). Reports whether the result came from cache. |
 | 2 | **Eligibility** | Evaluate each candidate against the rule whose `AppliesTo(country, accountType)` matches, and tally eligible / ineligible / unknown. |
 | 3 | **Constraints** | Drop candidates that fail `maxTER`, `minAUM`, `minLiquidity`, `allowedExchanges`, or the synthetic / leveraged / inverse / physical-only switches. With `tfsaEligibleOnly`, only `eligible` and `conditional` funds are kept; otherwise only `ineligible` ones are dropped. **Unknown AUM or TER (reported as 0) is not treated as failing** `minAUM`/`maxTER`. |
 | 4 | **Match score** | How well the fund matches the requested exposure, normalised to 0–100 (50 when no criteria are given): geography 30 pts, sectors 25, asset classes 25, company holdings 20. Sectors, asset classes and companies match case-insensitively as substrings ("tech" matches "Technology"). Regions match by whole name, ignoring case. |
@@ -51,7 +51,7 @@ The three engines are interfaces (`search.Provider`, `eligibility.Engine`, `rank
 ## Search providers
 
 `search.AggregatedProvider` wraps the individual providers:
-- It queries them in parallel. A provider error is logged and skipped rather than failing the request.
+- It queries them in parallel. A provider error is logged and skipped rather than failing the request; only when **every** provider fails does the search fail (an outage, never cached). `LiveProvider` applies the same rule to its own sub-sources.
 - Results are deduped and merged field by field: the first non-empty value wins, and the longest holdings/sector list wins.
 - The merged set is cached in memory for **1 hour**, keyed on every search criterion (country, markets, sectors, asset classes, companies, vehicles).
 
@@ -107,11 +107,11 @@ Confidence runs `high` → `medium` → `low` → `none`, dropping as criteria a
 
 | Component | Score |
 |---|---|
-| `fees` | `1 − TER` (TER in percent); 0 once TER ≥ 1.0% |
+| `fees` | `1 − TER` (TER in percent); 0 once TER ≥ 1.0%; **0.5 when TER is unknown** |
 | `liquidity` | Average daily volume: <10k → 0.3, <100k → 0.6, <500k → 0.8, otherwise 1.0 |
-| `stability` | AUM: <50M → 0.3, <500M → 0.6, <1B → 0.8, otherwise 1.0 |
+| `stability` | AUM: unknown → 0.5, <50M → 0.3, <500M → 0.6, <1B → 0.8, otherwise 1.0 |
 | `tracking` | Tracking difference: unknown → 0.7, <0.1 → 1.0, <0.3 → 0.8, <0.5 → 0.6, otherwise 0.4 |
 
 Default weights: `fees 0.4, liquidity 0.3, tracking 0.2, stability 0.1`. `rankingPreferences.weighting` replaces them; the handler requires the weights to sum to 1.0 (±0.01). A component missing from a custom weighting contributes 0.
 
-Unknown TER and AUM are scored as if they were real values (see [known gaps](../development/known-gaps.md)).
+Unknown values never count as good or bad: unknown TER and AUM score a neutral 0.5, and unknown tracking difference 0.7.

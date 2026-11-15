@@ -2,6 +2,7 @@ package discovery
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -48,6 +49,10 @@ func (s *Service) DiscoverETFs(ctx context.Context, req dto.DiscoveryRequest) (*
 	// Step 1: Search for candidate ETFs
 	candidates, cacheHit, err := s.searchCandidates(ctx, req)
 	if err != nil {
+		var outage *search.SourcesFailedError
+		if errors.As(err, &outage) {
+			return nil, &DataSourceError{Source: "all", Err: outage}
+		}
 		return nil, fmt.Errorf("search failed: %w", err)
 	}
 
@@ -120,7 +125,7 @@ func (s *Service) evaluateEligibility(
 
 	summary := EligibilitySummary{
 		TotalSearched:      len(etfs),
-		DataSourcesQueried: []string{"JSE", "FactSheets", "Provider APIs"},
+		DataSourcesQueried: contributingSources(etfs),
 	}
 
 	discovered := make([]domain.DiscoveredETF, 0, len(etfs))
@@ -507,6 +512,23 @@ func appendUnverified(warnings []dto.Warning, results []dto.ETFResult, code, fie
 	})
 }
 
+// contributingSources lists, sorted and de-duplicated, the data source
+// providers recorded in the candidates' provenance.
+func contributingSources(etfs []domain.ETF) []string {
+	seen := map[string]bool{}
+	out := []string{}
+	for _, etf := range etfs {
+		for _, ds := range etf.DataSources {
+			if ds.Provider != "" && !seen[ds.Provider] {
+				seen[ds.Provider] = true
+				out = append(out, ds.Provider)
+			}
+		}
+	}
+	sort.Strings(out)
+	return out
+}
+
 // Helper functions
 func formatJustification(eligibility domain.EligibilityResult) string {
 	if len(eligibility.Reasons) == 0 {
@@ -563,14 +585,6 @@ type NoResultsError struct {
 
 func (e *NoResultsError) Error() string {
 	return e.Message
-}
-
-type UnsupportedCountryError struct {
-	Country string
-}
-
-func (e *UnsupportedCountryError) Error() string {
-	return fmt.Sprintf("country '%s' is not supported", e.Country)
 }
 
 type DataSourceError struct {

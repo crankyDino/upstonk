@@ -3,6 +3,7 @@ package search
 
 import (
 	"context"
+	"strings"
 	"upstonk/internal/domain"
 )
 
@@ -24,4 +25,18 @@ type Criteria struct {
 	Companies    []string
 	Country      string
 	Vehicles     []string
+}
+
+// SourcesFailedError means every data source failed, so the search has no
+// basis for an answer (as opposed to sources answering with no matches).
+type SourcesFailedError struct {
+	Errs []error
+}
+
+func (e *SourcesFailedError) Error() string {
+	msgs := make([]string, len(e.Errs))
+	for i, err := range e.Errs {
+		msgs[i] = err.Error()
+	}
+	return "all data sources failed: " + strings.Join(msgs, "; ")
 }

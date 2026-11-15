@@ -162,9 +162,6 @@ func (h *DiscoveryHandler) handleServiceError(w http.ResponseWriter, requestID s
 	case *discovery.NoResultsError:
 		h.respondError(w, requestID, http.StatusNotFound, "NO_RESULTS",
 			"No ETFs found matching the criteria", err.Error())
-	case *discovery.UnsupportedCountryError:
-		h.respondError(w, requestID, http.StatusBadRequest, "UNSUPPORTED_COUNTRY",
-			"Country not supported", err.Error())
 	case *discovery.DataSourceError:
 		h.respondError(w, requestID, http.StatusServiceUnavailable, "DATA_SOURCE_ERROR",
 			"Unable to retrieve data from external sources", err.Error())
@@ -245,11 +242,6 @@ func (h *DiscoveryHandler) HandleTopPerformers(w http.ResponseWriter, r *http.Re
 	// Get type from URL path
 	vars := mux.Vars(r)
 	assetType := vars["type"]
-	if assetType == "" {
-		h.respondError(w, requestID, http.StatusBadRequest, "INVALID_PARAMETER",
-			"Type parameter is required", "Use: /api/v1/discover/{assetClass or investmentVehicle}")
-		return
-	}
 
 	// Determine if it's an asset class or investment vehicle
 	var assetClass string

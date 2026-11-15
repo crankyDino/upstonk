@@ -83,7 +83,7 @@ Supported pairs: **ZA** → `tfsa`, `standard` · **US** → `ira`, `roth_ira`, 
 
 | Field | Type | Effect |
 |---|---|---|
-| `maxResults` | int, 1–100 | **Required.** Leaving it out or sending 0 fails validation. |
+| `maxResults` | int, 1–100 | Optional; omitted or 0 means 10. |
 | `includeAlternatives` | bool | Include up to 5 non-result funds as `alternatives` |
 | `includeSourceLinks` | bool | Include `dataSources` on each fund |
 | `explainEligibility` | bool | Include `rulesPassed`, `rulesFailed` and eligibility `warnings` |
@@ -122,7 +122,7 @@ A real response (2026-11-15) to the GUI's default request (`server/internal/api/
   "summary": {
     "totalSearched": 2, "totalEligible": 2, "totalIneligible": 0, "totalUnknown": 0,
     "searchDurationMs": 787,
-    "dataSourcesQueried": ["JSE", "FactSheets", "Provider APIs"]   // fixed list, not the sources actually used
+    "dataSourcesQueried": ["JSE", "Yahoo Finance"]   // providers in the candidates' provenance
   },
   "warnings": [
     { "code": "UNVERIFIED_AUM", "message": "Fund size (AUM) is unavailable for STX500, STXNDQ, so the minimum AUM constraint could not be checked for them.", "severity": "warning" },
@@ -147,18 +147,19 @@ A real response (2026-11-15) to the GUI's default request (`server/internal/api/
 { "error": "CODE", "message": "…", "code": "CODE", "details": { "details": "…" }, "requestId": "…" }
 ```
 
-Every code below was triggered against a running server on 2026-11-15, except `NO_RESULTS` and `INTERNAL_ERROR`. `NO_RESULTS` is covered by tests: live searches always fall back to some tickers, so it's hard to trigger.
+Every code below was triggered against a running server on 2026-11-15, except `NO_RESULTS` and `INTERNAL_ERROR`. `NO_RESULTS` is covered by tests: live searches always fall back to some tickers, so it's hard to trigger. `DATA_SOURCE_ERROR` was triggered by running the server with `HTTPS_PROXY` pointing at a closed port.
 
 | HTTP | Code | Cause (observed message) |
 |---|---|---|
 | 400 | `INVALID_JSON` | Body isn't JSON ("Failed to parse request body") |
-| 400 | `VALIDATION_ERROR` | Struct validation; `details` maps Go field names to messages, e.g. `{"Country":"This field is required"}`, `{"MaxResults":"Must be at least 1"}` |
+| 400 | `VALIDATION_ERROR` | Struct validation; `details` maps Go field names to messages, e.g. `{"Country":"This field is required"}`, `{"MaxResults":"Must be at most 100"}` |
 | 400 | `INVALID_REQUEST` | Business rules: "account type 'ira' is not supported for country 'ZA'", "at least one exposure criterion must be specified", "unsupported investment vehicle: crypto", "ranking weights must sum to 1.0, got 0.50" |
 | 400 | `INVALID_TYPE` | Unknown `{type}` on `GET /discover/{type}` |
-| 404 | `NO_RESULTS` | The search returned no candidates |
-| 500 | `INTERNAL_ERROR` | Anything else, e.g. a search failure |
+| 404 | `NO_RESULTS` | The data sources answered, but returned no candidates |
+| 503 | `DATA_SOURCE_ERROR` | Every data source failed (e.g. all Yahoo lookups refused). If only some fail, the others' results are returned. |
+| 500 | `INTERNAL_ERROR` | Anything else |
 
-`UNSUPPORTED_COUNTRY`, `DATA_SOURCE_ERROR` and `INVALID_PARAMETER` exist in the handler, but nothing currently produces them. Unsupported countries come back as `INVALID_REQUEST`, and upstream failures are logged and skipped.
+Unsupported countries come back as `INVALID_REQUEST`.
 
 ## Timeouts
 
