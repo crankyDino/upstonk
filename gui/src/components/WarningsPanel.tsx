@@ -1,6 +1,7 @@
 import { useDiscoveryStore } from '@/stores/discoveryStore';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { errorTitle, warningTitle } from '@/lib/labels';
 import { AlertTriangle, Info, XCircle, RefreshCw } from 'lucide-react';
 
 export function WarningsPanel() {
@@ -10,7 +11,7 @@ export function WarningsPanel() {
     return (
       <Alert variant="destructive" className="mb-6">
         <XCircle className="h-4 w-4" />
-        <AlertTitle>API Error</AlertTitle>
+        <AlertTitle>{errorTitle(error.code)}</AlertTitle>
         <AlertDescription className="mt-2">
           <p>{error.message}</p>
           {error.requestId && (
@@ -58,7 +59,7 @@ export function WarningsPanel() {
           >
             <Icon className="h-5 w-5 shrink-0 mt-0.5" />
             <div>
-              <div className="font-medium">{warning.code}</div>
+              <div className="font-medium">{warningTitle(warning.code)}</div>
               <div className="text-sm mt-0.5">{warning.message}</div>
             </div>
           </div>

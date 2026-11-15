@@ -1,3 +1,4 @@
+import { ruleLabel } from '@/lib/labels';
 import { useState } from 'react';
 import { useDiscoveryStore } from '@/stores/discoveryStore';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
@@ -260,7 +261,7 @@ export function ETFDetailDrawer() {
                       {etf.eligibility.rulesPassed.map((rule, i) => (
                         <Badge key={i} variant="outline" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
-                          {rule}
+                          {ruleLabel(rule)}
                         </Badge>
                       ))}
                     </div>
@@ -275,7 +276,7 @@ export function ETFDetailDrawer() {
                       {etf.eligibility.rulesFailed.map((rule, i) => (
                         <Badge key={i} variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
                           <AlertTriangle className="h-3 w-3 mr-1" />
-                          {rule}
+                          {ruleLabel(rule)}
                         </Badge>
                       ))}
                     </div>
