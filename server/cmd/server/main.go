@@ -68,6 +68,12 @@ func main() {
 	} else {
 		log.Printf("WARNING: SUPABASE_URL not set, so the API is open to anyone who can reach it")
 	}
+	if cfg.WebDir != "" {
+		routerOpts = append(routerOpts, router.WithWebApp(os.DirFS(cfg.WebDir), router.PublicConfig{
+			SupabaseURL: cfg.SupabaseURL, SupabasePublishableKey: cfg.SupabasePublishableKey,
+		}))
+		log.Printf("Serving the GUI from %s", cfg.WebDir)
+	}
 	apiHandler := router.New(discoveryHandler, routerOpts...)
 
 	// Create server

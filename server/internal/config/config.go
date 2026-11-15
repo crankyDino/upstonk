@@ -22,6 +22,12 @@ type Config struct {
 	SupabaseURL string
 	// AdminEmails are always admins (comma-separated ADMIN_EMAILS).
 	AdminEmails []string
+	// SupabasePublishableKey is the public (anon) key handed to the browser
+	// via /config.js in the single-instance deployment.
+	SupabasePublishableKey string
+	// WebDir, when set, is the built GUI (gui/dist) served at / alongside
+	// the API: the single-instance deployment.
+	WebDir string
 }
 
 func Load() (*Config, error) {
@@ -36,6 +42,9 @@ func Load() (*Config, error) {
 		DatabaseURL:     getEnv("DATABASE_URL", ""),
 		SupabaseURL:     getEnv("SUPABASE_URL", ""),
 		AdminEmails:     splitList(getEnv("ADMIN_EMAILS", "")),
+
+		SupabasePublishableKey: getEnv("SUPABASE_PUBLISHABLE_KEY", ""),
+		WebDir:                 getEnv("WEB_DIR", ""),
 	}
 
 	if err := cfg.Validate(); err != nil {

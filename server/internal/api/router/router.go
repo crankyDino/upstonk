@@ -2,6 +2,7 @@
 package router
 
 import (
+	"io/fs"
 	"net/http"
 	"time"
 
@@ -13,7 +14,9 @@ import (
 )
 
 type options struct {
-	gate *auth.Gate
+	gate         *auth.Gate
+	web          fs.FS
+	publicConfig PublicConfig
 }
 
 // Option configures the router.
@@ -64,7 +67,14 @@ func New(discoveryHandler *handlers.DiscoveryHandler, opts ...Option) http.Handl
 	protected.HandleFunc("/discover", discoveryHandler.HandleDiscovery).Methods("POST", "OPTIONS")
 	protected.HandleFunc("/discover/{type}", discoveryHandler.HandleTopPerformers).Methods("GET")
 
-	r.HandleFunc("/", serveDocumentation).Methods("GET")
+	if o.web != nil {
+		// Single instance: unknown API paths stay JSON; everything else is the GUI.
+		r.HandleFunc("/config.js", configJS(o.publicConfig)).Methods("GET")
+		r.PathPrefix("/api/").HandlerFunc(apiNotFound)
+		r.PathPrefix("/").Handler(spa(o.web)).Methods("GET", "HEAD")
+	} else {
+		r.HandleFunc("/", serveDocumentation).Methods("GET")
+	}
 
 	return r
 }
