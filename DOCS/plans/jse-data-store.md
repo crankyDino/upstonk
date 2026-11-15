@@ -53,6 +53,13 @@ A reader per issuer for factsheets/MDDs → `factsheets` (+ holdings, exposures)
 ### 8e: Retire the hardcoded JSE ticker list
 Once the JSE list and factsheet ingest are running.
 
+### 8f: Single-instance deployment on Render (requested 2026-11-15)
+One Render **web service**, not separate GUI and API deployments:
+- A multi-stage Dockerfile builds the GUI (`npm run build`) and the Go server. The server serves the built GUI at `/` (SPA fallback to `index.html`) and the API at `/api/v1`. Same origin, so the GUI calls `/api/v1` relatively.
+- `DATABASE_URL` (Supabase session pooler) is a Render secret. Migrations run at start-up.
+- **Ingest stays on the user's machine**, against Supabase (the JSE list is downloaded by hand anyway). The Render instance only reads. Running it in-process on a timer is unreliable on the free tier, which sleeps idle services.
+- **Must come first:** authentication (known gap 22). A Render URL is public, and the personal-use basis for collecting the data requires the app to stay private. Simplest option: HTTP basic auth or a single shared password in front of everything, set as a Render secret.
+
 ## Verification
 - `go test ./...` runs the DB tests against Docker Postgres. They skip with a message if neither Docker nor `TEST_DATABASE_URL` is available.
 - `go run ./cmd/migrate` against Supabase, then `go run ./cmd/ingest prices`, then a ZA discovery returning stored values with their sources.
