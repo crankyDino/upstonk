@@ -29,7 +29,7 @@ func requireNetwork(t *testing.T) {
 
 func newLiveService() *discovery.Service {
 	return discovery.NewService(
-		app.NewSearchProvider(os.Getenv("ALPHA_VANTAGE_API_KEY")),
+		app.NewSearchProvider(os.Getenv("ALPHA_VANTAGE_API_KEY"), nil),
 		app.NewEligibilityEngine(),
 		app.NewRankingEngine(),
 	)

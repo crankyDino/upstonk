@@ -8,6 +8,7 @@ Everything here was checked against the code, or by running it, on 2026-11-15. W
 | [architecture/](architecture/README.md) | The discovery pipeline, search providers, eligibility model, ranking |
 | [api/](api/README.md) | Endpoints, request and response reference, validation, errors |
 | [data-sources/](data-sources/README.md) | Each external data source and its current status |
+| [deployment/](deployment/README.md) | One Render web service + Supabase (database and sign-in), first sign-in, keeping data fresh |
 | [development/](development/README.md) | Repo layout, tests, the GUI contract fixtures, adding rules and providers |
 | [development/known-gaps.md](development/known-gaps.md) | What the code doesn't do yet |
 | [UBIQUITOUS_LANGUAGE.md](UBIQUITOUS_LANGUAGE.md) | Glossary: the domain terms to use, the aliases to avoid, and known ambiguities |

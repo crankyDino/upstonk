@@ -1,0 +1,46 @@
+Satrix Example ETF
+Minimum Disclosure Document
+31 October 2026
+
+
+
+
+  INVESTMENT OBJECTIVE                                                                                  FUND PERFORMANCE (%) AT 31 OCTOBER 2026
+
+  The mandate of the Satrix Example ETF is to track, as closely as                                                                             Fund              Benchmark
+  possible, the value of the Example Index. Satrix Example is an index tracking fund, registered as a Collective Investment Scheme,
+  and is also listed on the Johannesburg Stock Exchange as an Exchange
+  Traded Fund. It provides investors with the price performance of the
+  Index through direct replication, investing in securities that represent index                            20
+
+  FUND INFORMATION                                                                                      HIGHEST AND LOWEST RETURN (%)
+   Inception Date                           1 March 2010                                                 Highest Annual Rolling Return                                                                    30.00
+   JSE Code                                 STXEX                                                        Lowest Annual Rolling Return                                                                      1.00
+   ISIN Code                                ZAE000000001                                                The highest and lowest annualised performance numbers are based on 10 non-overlapping one
+
+   Benchmark                                Example Top 40 Index (X40)                                  history does not yet exist for 10 years.
+
+   ASISA Classification                     South African - Equity - SA General
+                                                                                                        FEE DETAILS (%) (INCL. VAT)
+   Distribution Frequency                   Quarterly
+   Distribution Yield                       4.00%                                                                                                                                1-YEAR               3-YEAR
+   Rebalance Frequency                      Quarterly                                                     Annual Management Fee                                                       0.08                0.08
+   Scrip Lending Ratio                      1.00%                                                         Total Expense Ratio (TER)                                                   0.11                0.12
+
+   Portfolio Value                          R12.5 billion                                                 Transaction Cost (TC)                                                       0.02                0.03
+
+   NAV Price                                R50.00
+
+This monthly Minimum Disclosure Document should be viewed in conjunction with the Glossary Terms Sheet                                                    Issue Date: 20 Nov 2026
+Satrix Example ETF
+Minimum Disclosure Document
+31 October 2026
+
+  PORTFOLIO ALLOCATION (%) AT 31 OCTOBER 2026                                                          TOP HOLDINGS (%) AT 31 OCTOBER 2026
+   Financials                                                                                40.00%       HOLDING                                                        WEIGHT (%)
+   Basic Materials                                                                           25.50%       Alpha Holdings Ltd                                                      9.10
+   Technology                                                                                10.25%      Beta Group plc                                                          8.00
+
+  Portfolio allocations exclude cash, money market instruments, settlement account balances and           Gamma Bank Ltd                                                          6.75
+  CONTACT DETAILS
+  Portfolio Managers                                                                                   Investment Manager

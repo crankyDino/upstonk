@@ -3,7 +3,7 @@ import { useDiscoveryStore } from '@/stores/discoveryStore';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { EligibilityBadge } from './EligibilityBadge';
-import { formatCurrency, formatPercentage } from '@/lib/api/upstonk';
+import { formatCurrency, formatTER } from '@/lib/api/upstonk';
 import { ArrowUpDown, ArrowUp, ArrowDown, ChevronRight } from 'lucide-react';
 import type { ETFResult } from '@/types/api';
 
@@ -92,8 +92,8 @@ export function ResultsTable() {
                 </TableCell>
                 <TableCell className="font-medium">{etf.name || '-'}</TableCell>
                 <TableCell className="text-muted-foreground">{etf.provider || '-'}</TableCell>
-                <TableCell>{formatPercentage(etf.ter)}</TableCell>
-                <TableCell>{formatCurrency(etf.aum)}</TableCell>
+                <TableCell>{formatTER(etf.ter)}</TableCell>
+                <TableCell>{formatCurrency(etf.aum, etf.currency)}</TableCell>
                 <TableCell>
                   <span className="font-semibold">{etf.rankingScore.toFixed(1)}</span>
                 </TableCell>

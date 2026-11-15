@@ -1,0 +1,11 @@
+# Never ship secrets or local data in the image
+**/.env
+**/.env.*
+!**/.env.example
+server/data/
+gui/node_modules/
+gui/dist/
+server/tmp/
+server/bin/
+.git/
+DOCS/

@@ -1,0 +1,18 @@
+# Render blueprint: one web service for GUI + API (single instance).
+# Secrets are set in the Render dashboard (sync: false), never in git.
+services:
+  - type: web
+    name: upstonk
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: DATABASE_URL          # Supabase session pooler, port 5432, sslmode=require
+        sync: false
+      - key: SUPABASE_URL          # https://<ref>.supabase.co (turns on sign-in)
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY  # public anon key, handed to the browser
+        sync: false
+      - key: ADMIN_EMAILS          # comma-separated, always admins
+        sync: false

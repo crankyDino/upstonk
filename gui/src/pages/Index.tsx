@@ -10,6 +10,8 @@ import { RankingWeightsPanel } from '@/components/RankingWeightsPanel';
 import { ResultsTable } from '@/components/ResultsTable';
 import { ETFDetailDrawer } from '@/components/ETFDetailDrawer';
 import { WarningsPanel } from '@/components/WarningsPanel';
+import { UserMenu } from '@/components/UserMenu';
+import { NoticeBanner } from '@/components/NoticeBanner';
 import { 
   Search, 
   TrendingUp, 
@@ -51,14 +53,16 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             <Button variant="ghost" size="sm" onClick={resetForm}>
               <RotateCcw className="h-4 w-4 mr-2" />
               Reset
             </Button>
+            <UserMenu />
           </div>
         </div>
       </header>
+      <NoticeBanner />
 
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}

@@ -21,6 +21,10 @@ type ETF struct {
 	IsInverse         *bool  `json:"isInverse,omitempty"`
 	ReplicationMethod string `json:"replicationMethod"` // "Physical Full", "Physical Sampling", "Synthetic Swap"
 
+	// TFSAFriendly is the JSE ETF List's "TFSA Friendly (CIS)" column; nil
+	// when no list states it.
+	TFSAFriendly *bool `json:"tfsaFriendly,omitempty"`
+
 	// Exposure
 	AssetClass         string             `json:"assetClass"`
 	TrackingIndex      string             `json:"trackingIndex"`
