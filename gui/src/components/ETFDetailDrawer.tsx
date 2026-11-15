@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { EligibilityBadge } from './EligibilityBadge';
+import { EligibilityReasons } from './EligibilityReasons';
 import { formatCurrency, formatTER } from '@/lib/api/upstonk';
 import { 
   ExternalLink, 
@@ -244,9 +245,7 @@ export function ETFDetailDrawer() {
                   <CheckCircle2 className="h-4 w-4" />
                   Eligibility Assessment
                 </h4>
-                <p className="text-sm bg-muted/30 p-3 rounded-lg">
-                  {etf.eligibility.justification}
-                </p>
+                <EligibilityReasons justification={etf.eligibility.justification} />
                 {etf.eligibility.ruleVersion && (
                   <div className="text-xs text-muted-foreground">
                     Rule Version: <code className="font-mono">{etf.eligibility.ruleVersion}</code>
