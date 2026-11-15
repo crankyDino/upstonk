@@ -44,7 +44,7 @@ export function ETFDetailDrawer() {
             <SheetHeader className="pb-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <SheetTitle className="text-2xl font-bold">
+                  <SheetTitle className="text-2xl font-bold break-words">
                     <span className="font-mono text-primary">{etf.ticker}</span>
                   </SheetTitle>
                   <SheetDescription className="text-base mt-1">
@@ -62,21 +62,21 @@ export function ETFDetailDrawer() {
             <div className="space-y-6">
               {/* Key Metrics */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="p-4 border rounded-lg bg-muted/20 min-w-0">
                   <div className="text-sm text-muted-foreground">Expense Ratio (TER)</div>
-                  <div className="text-2xl font-bold">{formatTER(etf.ter)}</div>
+                  <div className="text-2xl font-bold break-words">{formatTER(etf.ter)}</div>
                 </div>
-                <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="p-4 border rounded-lg bg-muted/20 min-w-0">
                   <div className="text-sm text-muted-foreground">Assets Under Management</div>
-                  <div className="text-2xl font-bold">{formatCurrency(etf.aum, etf.currency)}</div>
+                  <div className="text-2xl font-bold break-words">{formatCurrency(etf.aum, etf.currency)}</div>
                 </div>
-                <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="p-4 border rounded-lg bg-muted/20 min-w-0">
                   <div className="text-sm text-muted-foreground">Ranking Score</div>
-                  <div className="text-2xl font-bold text-primary">{etf.rankingScore.toFixed(1)}</div>
+                  <div className="text-2xl font-bold text-primary break-words">{etf.rankingScore.toFixed(1)}</div>
                 </div>
-                <div className="p-4 border rounded-lg bg-muted/20">
+                <div className="p-4 border rounded-lg bg-muted/20 min-w-0">
                   <div className="text-sm text-muted-foreground">Match Score</div>
-                  <div className="text-2xl font-bold">{etf.matchScore}%</div>
+                  <div className="text-2xl font-bold break-words">{Math.round(etf.matchScore)}%</div>
                 </div>
               </div>
 
