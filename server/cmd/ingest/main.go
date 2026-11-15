@@ -1,6 +1,7 @@
 // Command ingest fills the UPSTONK store. Run from server/ (reads .env):
 //
 //	go run ./cmd/ingest prices      # daily: Yahoo closes and volumes for every active ETF
+//	go run ./cmd/ingest factsheets  # monthly: issuer factsheets (Satrix so far)
 //
 // Personal use only: requests are sequential and spaced out (see
 // DOCS/plans/jse-data-store.md).
@@ -23,7 +24,8 @@ import (
 const usage = `usage: ingest <command>
 
 commands:
-  prices   fetch ~3 months of daily prices and volumes for every active ETF`
+  prices      fetch ~3 months of daily prices and volumes for every active ETF
+  factsheets  fetch and read the latest issuer factsheet for every active ETF`
 
 func main() {
 	if len(os.Args) != 2 {
@@ -57,16 +59,28 @@ func main() {
 			log.Fatal(err)
 		}
 		log.Printf("prices: %d trading days stored, %d ETFs failed", report.Stored, len(report.Failed))
-		codes := make([]string, 0, len(report.Failed))
-		for c := range report.Failed {
-			codes = append(codes, c)
+		printSorted(report.Failed)
+	case "factsheets":
+		report, err := ingest.Factsheets(ctx, q, fetcher, ingest.PdfToText{})
+		if err != nil {
+			log.Fatal(err)
 		}
-		sort.Strings(codes)
-		for _, c := range codes {
-			log.Printf("  %s: %s", c, report.Failed[c])
-		}
+		log.Printf("factsheets: %d stored, %d failed, %d skipped (no reader for issuer)",
+			report.Stored, len(report.Failed), len(report.Skipped))
+		printSorted(report.Failed)
 	default:
 		fmt.Fprintln(os.Stderr, usage)
 		os.Exit(2)
+	}
+}
+
+func printSorted(failed map[string]string) {
+	codes := make([]string, 0, len(failed))
+	for c := range failed {
+		codes = append(codes, c)
+	}
+	sort.Strings(codes)
+	for _, c := range codes {
+		log.Printf("  %s: %s", c, failed[c])
 	}
 }

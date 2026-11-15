@@ -11,6 +11,47 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const deleteFactsheetDetails = `-- name: DeleteFactsheetDetails :exec
+DELETE FROM upstonk.factsheet_holdings WHERE factsheet_id = $1
+`
+
+// Clears a factsheet's holdings and exposures before re-writing them.
+func (q *Queries) DeleteFactsheetDetails(ctx context.Context, factsheetID int64) error {
+	_, err := q.db.Exec(ctx, deleteFactsheetDetails, factsheetID)
+	return err
+}
+
+const deleteFactsheetExposures = `-- name: DeleteFactsheetExposures :exec
+DELETE FROM upstonk.factsheet_exposures WHERE factsheet_id = $1
+`
+
+func (q *Queries) DeleteFactsheetExposures(ctx context.Context, factsheetID int64) error {
+	_, err := q.db.Exec(ctx, deleteFactsheetExposures, factsheetID)
+	return err
+}
+
+const insertExposure = `-- name: InsertExposure :exec
+INSERT INTO upstonk.factsheet_exposures (factsheet_id, kind, name, weight_percent)
+VALUES ($1, $2, $3, $4)
+`
+
+type InsertExposureParams struct {
+	FactsheetID   int64
+	Kind          string
+	Name          string
+	WeightPercent float64
+}
+
+func (q *Queries) InsertExposure(ctx context.Context, arg InsertExposureParams) error {
+	_, err := q.db.Exec(ctx, insertExposure,
+		arg.FactsheetID,
+		arg.Kind,
+		arg.Name,
+		arg.WeightPercent,
+	)
+	return err
+}
+
 const insertFactsheet = `-- name: InsertFactsheet :one
 INSERT INTO upstonk.factsheets (etf_code, as_of, source_name, source_url,
     ter_percent, aum, aum_currency, tracked_index, asset_class, domicile,
@@ -75,6 +116,30 @@ func (q *Queries) InsertFactsheet(ctx context.Context, arg InsertFactsheetParams
 	var id int64
 	err := row.Scan(&id)
 	return id, err
+}
+
+const insertHolding = `-- name: InsertHolding :exec
+INSERT INTO upstonk.factsheet_holdings (factsheet_id, position, name, ticker, weight_percent)
+VALUES ($1, $2, $3, $4, $5)
+`
+
+type InsertHoldingParams struct {
+	FactsheetID   int64
+	Position      int32
+	Name          string
+	Ticker        *string
+	WeightPercent *float64
+}
+
+func (q *Queries) InsertHolding(ctx context.Context, arg InsertHoldingParams) error {
+	_, err := q.db.Exec(ctx, insertHolding,
+		arg.FactsheetID,
+		arg.Position,
+		arg.Name,
+		arg.Ticker,
+		arg.WeightPercent,
+	)
+	return err
 }
 
 const listActiveETFs = `-- name: ListActiveETFs :many
@@ -154,6 +219,74 @@ func (q *Queries) ListDailyPrices(ctx context.Context, etfCode string) ([]Upston
 			&i.SourceName,
 			&i.SourceUrl,
 			&i.FetchedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listExposures = `-- name: ListExposures :many
+SELECT kind, name, weight_percent
+FROM upstonk.factsheet_exposures WHERE factsheet_id = $1 ORDER BY kind, weight_percent DESC
+`
+
+type ListExposuresRow struct {
+	Kind          string
+	Name          string
+	WeightPercent float64
+}
+
+func (q *Queries) ListExposures(ctx context.Context, factsheetID int64) ([]ListExposuresRow, error) {
+	rows, err := q.db.Query(ctx, listExposures, factsheetID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListExposuresRow
+	for rows.Next() {
+		var i ListExposuresRow
+		if err := rows.Scan(&i.Kind, &i.Name, &i.WeightPercent); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listHoldings = `-- name: ListHoldings :many
+SELECT position, name, ticker, weight_percent
+FROM upstonk.factsheet_holdings WHERE factsheet_id = $1 ORDER BY position
+`
+
+type ListHoldingsRow struct {
+	Position      int32
+	Name          string
+	Ticker        *string
+	WeightPercent *float64
+}
+
+func (q *Queries) ListHoldings(ctx context.Context, factsheetID int64) ([]ListHoldingsRow, error) {
+	rows, err := q.db.Query(ctx, listHoldings, factsheetID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListHoldingsRow
+	for rows.Next() {
+		var i ListHoldingsRow
+		if err := rows.Scan(
+			&i.Position,
+			&i.Name,
+			&i.Ticker,
+			&i.WeightPercent,
 		); err != nil {
 			return nil, err
 		}

@@ -79,3 +79,26 @@ SELECT etf_code, trade_date, close, currency, volume, source_name, source_url, f
 FROM upstonk.daily_prices
 WHERE etf_code = @etf_code
 ORDER BY trade_date;
+
+-- name: DeleteFactsheetDetails :exec
+-- Clears a factsheet's holdings and exposures before re-writing them.
+DELETE FROM upstonk.factsheet_holdings WHERE factsheet_id = @factsheet_id;
+
+-- name: DeleteFactsheetExposures :exec
+DELETE FROM upstonk.factsheet_exposures WHERE factsheet_id = @factsheet_id;
+
+-- name: InsertHolding :exec
+INSERT INTO upstonk.factsheet_holdings (factsheet_id, position, name, ticker, weight_percent)
+VALUES (@factsheet_id, @position, @name, @ticker, @weight_percent);
+
+-- name: InsertExposure :exec
+INSERT INTO upstonk.factsheet_exposures (factsheet_id, kind, name, weight_percent)
+VALUES (@factsheet_id, @kind, @name, @weight_percent);
+
+-- name: ListHoldings :many
+SELECT position, name, ticker, weight_percent
+FROM upstonk.factsheet_holdings WHERE factsheet_id = @factsheet_id ORDER BY position;
+
+-- name: ListExposures :many
+SELECT kind, name, weight_percent
+FROM upstonk.factsheet_exposures WHERE factsheet_id = @factsheet_id ORDER BY kind, weight_percent DESC;
