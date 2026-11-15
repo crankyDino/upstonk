@@ -37,7 +37,7 @@ func Load() (*Config, error) {
 	}
 
 	cfg := &Config{
-		ServerAddress:   getEnv("SERVER_ADDRESS", ":8080"),
+		ServerAddress:   serverAddress(),
 		AlphaVantageKey: getEnv("ALPHA_VANTAGE_API_KEY", "demo"),
 		DatabaseURL:     getEnv("DATABASE_URL", ""),
 		SupabaseURL:     getEnv("SUPABASE_URL", ""),
@@ -62,6 +62,18 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("SUPABASE_URL needs DATABASE_URL (membership is stored in the database)")
 	}
 	return nil
+}
+
+// serverAddress: SERVER_ADDRESS, else PORT (set by hosts such as Render),
+// else :8080.
+func serverAddress() string {
+	if a := os.Getenv("SERVER_ADDRESS"); a != "" {
+		return a
+	}
+	if p := os.Getenv("PORT"); p != "" {
+		return ":" + p
+	}
+	return ":8080"
 }
 
 func splitList(s string) []string {
