@@ -136,3 +136,41 @@ func TestTFSAWithAFullyStoredSatrixFactsheetIsEligible(t *testing.T) {
 		t.Fatalf("status = %q, want eligible (JSE, ZAR, Satrix, physical, not leveraged/inverse)", got)
 	}
 }
+
+func TestStoredHoldingsAndSectorsDriveMatchingAndAppearInResults(t *testing.T) {
+	pool := dbtest.New(t)
+	q := storedb.New(pool)
+	ctx := context.Background()
+	if err := q.UpsertETF(ctx, storedb.UpsertETFParams{
+		Code: "STXNDQ", Name: "Satrix Nasdaq 100 ETF", Issuer: ptr("Satrix"), Exchange: "JSE", Currency: ptr("ZAR"),
+		ListingSource: "JSE", ListedAsOf: date(t, "2026-11-10"),
+	}); err != nil {
+		t.Fatal(err)
+	}
+	id, err := q.InsertFactsheet(ctx, storedb.InsertFactsheetParams{
+		EtfCode: "STXNDQ", AsOf: date(t, "2026-10-31"), SourceName: "Satrix MDD", SourceUrl: "https://satrix.co.za/fund/mdd/STXNDQ",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, x := range []storedb.InsertExposureParams{
+		{FactsheetID: id, Kind: "sector", Name: "Information Technology", WeightPercent: 60},
+		{FactsheetID: id, Kind: "sector", Name: "Communication", WeightPercent: 15},
+	} {
+		if err := q.InsertExposure(ctx, x); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := q.InsertHolding(ctx, storedb.InsertHoldingParams{FactsheetID: id, Position: 1, Name: "NVIDIA", WeightPercent: ptr(8.35)}); err != nil {
+		t.Fatal(err)
+	}
+
+	req := standardRequest(dto.ExposureRequest{Assets: dto.AssetExposureRequest{Sectors: []string{"technology"}}})
+	r := storedResult(t, pool, req)
+
+	// 60% of the fund is in the requested sector.
+	assertScore(t, "matchScore", r.MatchScore, 60)
+	if len(r.TopHoldings) != 1 || r.TopHoldings[0].Name != "NVIDIA" || r.TopHoldings[0].Weight != 8.35 {
+		t.Fatalf("topHoldings = %+v", r.TopHoldings)
+	}
+}

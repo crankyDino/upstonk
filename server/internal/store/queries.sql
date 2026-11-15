@@ -102,3 +102,15 @@ FROM upstonk.factsheet_holdings WHERE factsheet_id = @factsheet_id ORDER BY posi
 -- name: ListExposures :many
 SELECT kind, name, weight_percent
 FROM upstonk.factsheet_exposures WHERE factsheet_id = @factsheet_id ORDER BY kind, weight_percent DESC;
+
+-- name: ListHoldingsFor :many
+SELECT factsheet_id, position, name, ticker, weight_percent
+FROM upstonk.factsheet_holdings
+WHERE factsheet_id = ANY(@factsheet_ids::bigint[])
+ORDER BY factsheet_id, position;
+
+-- name: ListExposuresFor :many
+SELECT factsheet_id, kind, name, weight_percent
+FROM upstonk.factsheet_exposures
+WHERE factsheet_id = ANY(@factsheet_ids::bigint[])
+ORDER BY factsheet_id, kind, weight_percent DESC;

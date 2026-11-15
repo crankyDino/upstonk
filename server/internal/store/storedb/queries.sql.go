@@ -261,6 +261,38 @@ func (q *Queries) ListExposures(ctx context.Context, factsheetID int64) ([]ListE
 	return items, nil
 }
 
+const listExposuresFor = `-- name: ListExposuresFor :many
+SELECT factsheet_id, kind, name, weight_percent
+FROM upstonk.factsheet_exposures
+WHERE factsheet_id = ANY($1::bigint[])
+ORDER BY factsheet_id, kind, weight_percent DESC
+`
+
+func (q *Queries) ListExposuresFor(ctx context.Context, factsheetIds []int64) ([]UpstonkFactsheetExposure, error) {
+	rows, err := q.db.Query(ctx, listExposuresFor, factsheetIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UpstonkFactsheetExposure
+	for rows.Next() {
+		var i UpstonkFactsheetExposure
+		if err := rows.Scan(
+			&i.FactsheetID,
+			&i.Kind,
+			&i.Name,
+			&i.WeightPercent,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listHoldings = `-- name: ListHoldings :many
 SELECT position, name, ticker, weight_percent
 FROM upstonk.factsheet_holdings WHERE factsheet_id = $1 ORDER BY position
@@ -283,6 +315,39 @@ func (q *Queries) ListHoldings(ctx context.Context, factsheetID int64) ([]ListHo
 	for rows.Next() {
 		var i ListHoldingsRow
 		if err := rows.Scan(
+			&i.Position,
+			&i.Name,
+			&i.Ticker,
+			&i.WeightPercent,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listHoldingsFor = `-- name: ListHoldingsFor :many
+SELECT factsheet_id, position, name, ticker, weight_percent
+FROM upstonk.factsheet_holdings
+WHERE factsheet_id = ANY($1::bigint[])
+ORDER BY factsheet_id, position
+`
+
+func (q *Queries) ListHoldingsFor(ctx context.Context, factsheetIds []int64) ([]UpstonkFactsheetHolding, error) {
+	rows, err := q.db.Query(ctx, listHoldingsFor, factsheetIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UpstonkFactsheetHolding
+	for rows.Next() {
+		var i UpstonkFactsheetHolding
+		if err := rows.Scan(
+			&i.FactsheetID,
 			&i.Position,
 			&i.Name,
 			&i.Ticker,

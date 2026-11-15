@@ -34,8 +34,43 @@ func (p *StoredProvider) Search(ctx context.Context, criteria Criteria) ([]domai
 		return nil, fmt.Errorf("stored factsheets: %w", err)
 	}
 	latest := make(map[string]storedb.ListLatestFactsheetsRow, len(sheets))
+	ids := make([]int64, 0, len(sheets))
 	for _, f := range sheets {
 		latest[f.EtfCode] = f
+		ids = append(ids, f.ID)
+	}
+	holdings, err := p.q.ListHoldingsFor(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("stored holdings: %w", err)
+	}
+	holdingsBy := map[int64][]domain.Holding{}
+	for _, h := range holdings {
+		holdingsBy[h.FactsheetID] = append(holdingsBy[h.FactsheetID], domain.Holding{
+			Name: h.Name, Ticker: deref(h.Ticker), Weight: deref(h.WeightPercent),
+		})
+	}
+	exposures, err := p.q.ListExposuresFor(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("stored exposures: %w", err)
+	}
+	sectorsBy := map[int64][]domain.SectorAllocation{}
+	regionsBy := map[int64]map[string]float64{}
+	countriesBy := map[int64]map[string]float64{}
+	for _, x := range exposures {
+		switch x.Kind {
+		case "sector":
+			sectorsBy[x.FactsheetID] = append(sectorsBy[x.FactsheetID], domain.SectorAllocation{Sector: x.Name, Percentage: x.WeightPercent})
+		case "region":
+			if regionsBy[x.FactsheetID] == nil {
+				regionsBy[x.FactsheetID] = map[string]float64{}
+			}
+			regionsBy[x.FactsheetID][x.Name] = x.WeightPercent
+		case "country":
+			if countriesBy[x.FactsheetID] == nil {
+				countriesBy[x.FactsheetID] = map[string]float64{}
+			}
+			countriesBy[x.FactsheetID][x.Name] = x.WeightPercent
+		}
 	}
 	volStats, err := p.q.ListVolumeStats(ctx)
 	if err != nil {
@@ -65,6 +100,9 @@ func (p *StoredProvider) Search(ctx context.Context, criteria Criteria) ([]domai
 		}
 		if f, ok := latest[e.Code]; ok {
 			applyFactsheet(&etf, f)
+			etf.TopHoldings = holdingsBy[f.ID]
+			etf.SectorExposure = sectorsBy[f.ID]
+			etf.GeographicExposure = domain.GeographicExposure{Regions: regionsBy[f.ID], Countries: countriesBy[f.ID]}
 		}
 		if v, ok := volumes[e.Code]; ok {
 			etf.AverageDailyVolume = v.AvgVolume
