@@ -47,6 +47,19 @@ func New(discoveryHandler *handlers.DiscoveryHandler, opts ...Option) http.Handl
 	if o.gate != nil {
 		protected.Use(o.gate.Require)
 		protected.HandleFunc("/me", handlers.HandleMe).Methods("GET")
+		membership := handlers.NewMembershipHandler(o.gate.Queries())
+		protected.HandleFunc("/invitations", membership.HandleCreateInvitation).Methods("POST")
+		protected.HandleFunc("/notice", membership.HandleNotice).Methods("GET")
+
+		admin := protected.PathPrefix("/admin").Subrouter()
+		admin.Use(auth.RequireAdmin)
+		admin.HandleFunc("/settings", membership.HandleGetSettings).Methods("GET")
+		admin.HandleFunc("/settings", membership.HandlePutSettings).Methods("PUT")
+		admin.HandleFunc("/users", membership.HandleListUsers).Methods("GET")
+		admin.HandleFunc("/users/{id}", membership.HandlePatchUser).Methods("PATCH")
+		admin.HandleFunc("/invitations", membership.HandleListInvitations).Methods("GET")
+		admin.HandleFunc("/invitations/{id}", membership.HandleRevokeInvitation).Methods("DELETE")
+		admin.HandleFunc("/data-status", membership.HandleDataStatus).Methods("GET")
 	}
 	protected.HandleFunc("/discover", discoveryHandler.HandleDiscovery).Methods("POST", "OPTIONS")
 	protected.HandleFunc("/discover/{type}", discoveryHandler.HandleTopPerformers).Methods("GET")

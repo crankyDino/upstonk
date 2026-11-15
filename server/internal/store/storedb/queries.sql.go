@@ -63,6 +63,151 @@ func (q *Queries) CreateInvitation(ctx context.Context, arg CreateInvitationPara
 	return i, err
 }
 
+const dataStatusFactsheets = `-- name: DataStatusFactsheets :many
+SELECT coalesce(e.issuer, '(unknown)')::text AS issuer,
+       count(DISTINCT e.code)::int AS etfs,
+       count(DISTINCT f.etf_code)::int AS with_factsheet,
+       min(f.as_of)::date AS oldest, max(f.as_of)::date AS newest
+FROM upstonk.etfs e
+LEFT JOIN upstonk.factsheets f ON f.etf_code = e.code
+WHERE e.active AND e.instrument_type = 'ETF'
+GROUP BY 1 ORDER BY 2 DESC, 1
+`
+
+type DataStatusFactsheetsRow struct {
+	Issuer        string
+	Etfs          int32
+	WithFactsheet int32
+	Oldest        pgtype.Date
+	Newest        pgtype.Date
+}
+
+// Per issuer: ETFs listed, ETFs with a factsheet, oldest/newest factsheet date.
+func (q *Queries) DataStatusFactsheets(ctx context.Context) ([]DataStatusFactsheetsRow, error) {
+	rows, err := q.db.Query(ctx, dataStatusFactsheets)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []DataStatusFactsheetsRow
+	for rows.Next() {
+		var i DataStatusFactsheetsRow
+		if err := rows.Scan(
+			&i.Issuer,
+			&i.Etfs,
+			&i.WithFactsheet,
+			&i.Oldest,
+			&i.Newest,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const dataStatusListings = `-- name: DataStatusListings :many
+SELECT instrument_type, count(*) FILTER (WHERE active)::int AS active,
+       count(*) FILTER (WHERE NOT active)::int AS inactive,
+       max(listed_as_of)::date AS last_import, max(listing_source)::text AS source
+FROM upstonk.etfs GROUP BY instrument_type ORDER BY instrument_type
+`
+
+type DataStatusListingsRow struct {
+	InstrumentType string
+	Active         int32
+	Inactive       int32
+	LastImport     pgtype.Date
+	Source         string
+}
+
+// Per instrument type: active count and the newest JSE list import.
+func (q *Queries) DataStatusListings(ctx context.Context) ([]DataStatusListingsRow, error) {
+	rows, err := q.db.Query(ctx, dataStatusListings)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []DataStatusListingsRow
+	for rows.Next() {
+		var i DataStatusListingsRow
+		if err := rows.Scan(
+			&i.InstrumentType,
+			&i.Active,
+			&i.Inactive,
+			&i.LastImport,
+			&i.Source,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const dataStatusPrices = `-- name: DataStatusPrices :one
+SELECT count(DISTINCT etf_code)::int AS etfs_with_prices,
+       max(trade_date)::date AS latest_day,
+       max(fetched_at)::timestamptz AS last_fetch
+FROM upstonk.daily_prices
+`
+
+type DataStatusPricesRow struct {
+	EtfsWithPrices int32
+	LatestDay      pgtype.Date
+	LastFetch      pgtype.Timestamptz
+}
+
+func (q *Queries) DataStatusPrices(ctx context.Context) (DataStatusPricesRow, error) {
+	row := q.db.QueryRow(ctx, dataStatusPrices)
+	var i DataStatusPricesRow
+	err := row.Scan(&i.EtfsWithPrices, &i.LatestDay, &i.LastFetch)
+	return i, err
+}
+
+const dataStatusStalePrices = `-- name: DataStatusStalePrices :many
+SELECT e.code, max(p.trade_date)::date AS latest_day
+FROM upstonk.etfs e
+LEFT JOIN upstonk.daily_prices p ON p.etf_code = e.code
+WHERE e.active AND e.instrument_type = 'ETF'
+GROUP BY e.code
+HAVING max(p.trade_date) IS NULL
+    OR max(p.trade_date) < (SELECT max(trade_date) FROM upstonk.daily_prices) - 7
+ORDER BY e.code
+`
+
+type DataStatusStalePricesRow struct {
+	Code      string
+	LatestDay pgtype.Date
+}
+
+// Active ETFs whose latest stored price is more than 7 days older than the newest, or missing.
+func (q *Queries) DataStatusStalePrices(ctx context.Context) ([]DataStatusStalePricesRow, error) {
+	rows, err := q.db.Query(ctx, dataStatusStalePrices)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []DataStatusStalePricesRow
+	for rows.Next() {
+		var i DataStatusStalePricesRow
+		if err := rows.Scan(&i.Code, &i.LatestDay); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const deactivateMissing = `-- name: DeactivateMissing :execrows
 UPDATE upstonk.etfs SET active = false, updated_at = now()
 WHERE instrument_type = $1 AND active AND NOT (code = ANY($2::text[]))
@@ -125,6 +270,21 @@ func (q *Queries) FindOpenInvitation(ctx context.Context, arg FindOpenInvitation
 	var i FindOpenInvitationRow
 	err := row.Scan(&i.ID, &i.Email, &i.InvitedBy)
 	return i, err
+}
+
+const finishIngestRun = `-- name: FinishIngestRun :exec
+UPDATE upstonk.ingest_runs SET finished_at = now(), stored = $1, failed = $2 WHERE id = $3
+`
+
+type FinishIngestRunParams struct {
+	Stored int32
+	Failed []byte
+	ID     int64
+}
+
+func (q *Queries) FinishIngestRun(ctx context.Context, arg FinishIngestRunParams) error {
+	_, err := q.db.Exec(ctx, finishIngestRun, arg.Stored, arg.Failed, arg.ID)
+	return err
 }
 
 const getAppUser = `-- name: GetAppUser :one
@@ -706,6 +866,38 @@ func (q *Queries) ListLatestFactsheets(ctx context.Context) ([]ListLatestFactshe
 	return items, nil
 }
 
+const listLatestIngestRuns = `-- name: ListLatestIngestRuns :many
+SELECT DISTINCT ON (kind) id, kind, started_at, finished_at, stored, failed
+FROM upstonk.ingest_runs ORDER BY kind, started_at DESC
+`
+
+func (q *Queries) ListLatestIngestRuns(ctx context.Context) ([]UpstonkIngestRun, error) {
+	rows, err := q.db.Query(ctx, listLatestIngestRuns)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []UpstonkIngestRun
+	for rows.Next() {
+		var i UpstonkIngestRun
+		if err := rows.Scan(
+			&i.ID,
+			&i.Kind,
+			&i.StartedAt,
+			&i.FinishedAt,
+			&i.Stored,
+			&i.Failed,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listListings = `-- name: ListListings :many
 SELECT code, name, issuer, issuer_url, currency, instrument_type, category, underlying_index,
        tfsa_friendly, foreign_status, sarb_classification, disclosure_frequency,
@@ -864,6 +1056,17 @@ type SetAppUserStatusParams struct {
 func (q *Queries) SetAppUserStatus(ctx context.Context, arg SetAppUserStatusParams) error {
 	_, err := q.db.Exec(ctx, setAppUserStatus, arg.Status, arg.ID)
 	return err
+}
+
+const startIngestRun = `-- name: StartIngestRun :one
+INSERT INTO upstonk.ingest_runs (kind) VALUES ($1) RETURNING id
+`
+
+func (q *Queries) StartIngestRun(ctx context.Context, kind string) (int64, error) {
+	row := q.db.QueryRow(ctx, startIngestRun, kind)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
 }
 
 const touchAppUser = `-- name: TouchAppUser :exec

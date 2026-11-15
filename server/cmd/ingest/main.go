@@ -10,6 +10,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -57,6 +58,21 @@ func main() {
 	q := storedb.New(pool)
 	fetcher := ingest.NewPoliteFetcher(3 * time.Second)
 
+	// Every run is recorded for the admin data-status page.
+	runID, err := q.StartIngestRun(ctx, os.Args[1])
+	if err != nil {
+		log.Fatalf("record run: %v", err)
+	}
+	stored, failed := 0, map[string]string{}
+	defer func() {
+		f, _ := json.Marshal(failed)
+		if err := q.FinishIngestRun(context.Background(), storedb.FinishIngestRunParams{
+			ID: runID, Stored: int32(stored), Failed: f,
+		}); err != nil {
+			log.Printf("record run: %v", err)
+		}
+	}()
+
 	switch os.Args[1] {
 	case "jse-list":
 		files := os.Args[2:]
@@ -73,6 +89,7 @@ func main() {
 			}
 			log.Printf("%s: %d imported, %d no longer listed (marked inactive) from %s",
 				report.Source, report.Imported, report.Deactivated, filepath.Base(path))
+			stored += report.Imported
 		}
 	case "prices":
 		report, err := ingest.Prices(ctx, q, fetcher)
@@ -81,6 +98,7 @@ func main() {
 		}
 		log.Printf("prices: %d trading days stored, %d ETFs failed", report.Stored, len(report.Failed))
 		printSorted(report.Failed)
+		stored, failed = report.Stored, report.Failed
 	case "factsheets":
 		report, err := ingest.Factsheets(ctx, q, fetcher, ingest.PdfToText{})
 		if err != nil {
@@ -89,6 +107,7 @@ func main() {
 		log.Printf("factsheets: %d stored, %d failed, %d skipped (no reader for issuer)",
 			report.Stored, len(report.Failed), len(report.Skipped))
 		printSorted(report.Failed)
+		stored, failed = report.Stored, report.Failed
 	default:
 		fmt.Fprintln(os.Stderr, usage)
 		os.Exit(2)

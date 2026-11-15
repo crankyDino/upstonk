@@ -96,6 +96,15 @@ type UpstonkFactsheetHolding struct {
 	WeightPercent *float64
 }
 
+type UpstonkIngestRun struct {
+	ID         int64
+	Kind       string
+	StartedAt  pgtype.Timestamptz
+	FinishedAt pgtype.Timestamptz
+	Stored     int32
+	Failed     []byte
+}
+
 type UpstonkInvitation struct {
 	ID        int64
 	Email     string

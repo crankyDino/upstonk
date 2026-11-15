@@ -47,6 +47,9 @@ type Member struct {
 
 func (m Member) IsAdmin() bool { return m.Role == "admin" }
 
+// Queries exposes the membership store to the HTTP handlers.
+func (g *Gate) Queries() *storedb.Queries { return g.q }
+
 // UUIDString renders the member's id.
 func (m Member) UUIDString() string { return uuidString(m.ID) }
 

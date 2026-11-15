@@ -14,6 +14,7 @@ import (
 	"upstonk/internal/api/handlers"
 	"upstonk/internal/api/router"
 	"upstonk/internal/app"
+	"upstonk/internal/auth"
 	"upstonk/internal/config"
 	"upstonk/internal/service/discovery"
 	"upstonk/internal/store"
@@ -55,8 +56,19 @@ func main() {
 	// Initialize handlers
 	discoveryHandler := handlers.NewDiscoveryHandler(discoveryService)
 
-	// Setup router
-	apiHandler := router.New(discoveryHandler)
+	// Setup router; sign-in is required when SUPABASE_URL is set.
+	var routerOpts []router.Option
+	if cfg.SupabaseURL != "" {
+		gate, err := auth.New(auth.Config{SupabaseURL: cfg.SupabaseURL, AdminEmails: cfg.AdminEmails}, pool)
+		if err != nil {
+			log.Fatalf("Auth: %v", err)
+		}
+		routerOpts = append(routerOpts, router.WithAuth(gate))
+		log.Printf("Sign-in required (Supabase Auth); admins: %v", cfg.AdminEmails)
+	} else {
+		log.Printf("WARNING: SUPABASE_URL not set, so the API is open to anyone who can reach it")
+	}
+	apiHandler := router.New(discoveryHandler, routerOpts...)
 
 	// Create server
 	server := &http.Server{

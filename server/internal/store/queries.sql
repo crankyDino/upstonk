@@ -212,3 +212,48 @@ SELECT i.id, i.email, i.invited_by, u.email AS invited_by_email, i.created_at, i
 FROM upstonk.invitations i
 JOIN upstonk.app_users u ON u.id = i.invited_by
 ORDER BY i.created_at DESC;
+
+-- name: DataStatusListings :many
+-- Per instrument type: active count and the newest JSE list import.
+SELECT instrument_type, count(*) FILTER (WHERE active)::int AS active,
+       count(*) FILTER (WHERE NOT active)::int AS inactive,
+       max(listed_as_of)::date AS last_import, max(listing_source)::text AS source
+FROM upstonk.etfs GROUP BY instrument_type ORDER BY instrument_type;
+
+-- name: DataStatusPrices :one
+SELECT count(DISTINCT etf_code)::int AS etfs_with_prices,
+       max(trade_date)::date AS latest_day,
+       max(fetched_at)::timestamptz AS last_fetch
+FROM upstonk.daily_prices;
+
+-- name: DataStatusStalePrices :many
+-- Active ETFs whose latest stored price is more than 7 days older than the newest, or missing.
+SELECT e.code, max(p.trade_date)::date AS latest_day
+FROM upstonk.etfs e
+LEFT JOIN upstonk.daily_prices p ON p.etf_code = e.code
+WHERE e.active AND e.instrument_type = 'ETF'
+GROUP BY e.code
+HAVING max(p.trade_date) IS NULL
+    OR max(p.trade_date) < (SELECT max(trade_date) FROM upstonk.daily_prices) - 7
+ORDER BY e.code;
+
+-- name: DataStatusFactsheets :many
+-- Per issuer: ETFs listed, ETFs with a factsheet, oldest/newest factsheet date.
+SELECT coalesce(e.issuer, '(unknown)')::text AS issuer,
+       count(DISTINCT e.code)::int AS etfs,
+       count(DISTINCT f.etf_code)::int AS with_factsheet,
+       min(f.as_of)::date AS oldest, max(f.as_of)::date AS newest
+FROM upstonk.etfs e
+LEFT JOIN upstonk.factsheets f ON f.etf_code = e.code
+WHERE e.active AND e.instrument_type = 'ETF'
+GROUP BY 1 ORDER BY 2 DESC, 1;
+
+-- name: StartIngestRun :one
+INSERT INTO upstonk.ingest_runs (kind) VALUES (@kind) RETURNING id;
+
+-- name: FinishIngestRun :exec
+UPDATE upstonk.ingest_runs SET finished_at = now(), stored = @stored, failed = @failed WHERE id = @id;
+
+-- name: ListLatestIngestRuns :many
+SELECT DISTINCT ON (kind) id, kind, started_at, finished_at, stored, failed
+FROM upstonk.ingest_runs ORDER BY kind, started_at DESC;
